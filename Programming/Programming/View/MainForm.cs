@@ -16,7 +16,12 @@ namespace Programming
 {
     public partial class MainForm : Form
     {
-        
+
+        private List<Rectangle> _rectangles;
+        private Rectangle _currentRectangle;
+
+        private List<Film> _films;
+        private Film _currentFilm;
 
         public MainForm()
         {
@@ -24,6 +29,44 @@ namespace Programming
             LoadEnumTypes();
 
             WeekParsedLabel.Text = string.Empty;
+
+            var rand = new Random();
+
+            _rectangles = new List<Rectangle>
+            {
+                new Rectangle(rand.Next(10, 100), rand.Next(10, 100), "Red"),
+                new Rectangle(rand.Next(10, 100), rand.Next(10, 100), "Green"),
+                new Rectangle(rand.Next(10, 100), rand.Next(10, 100), "Blue"),
+                new Rectangle(rand.Next(10, 100), rand.Next(10, 100), "Yellow"),
+                new Rectangle(rand.Next(10, 100), rand.Next(10, 100), "Purple")
+            };
+
+            RectanglesListBox.DataSource = _rectangles.Select((r, index) => new { Text = $"Rectangle {index + 1}", Value = r }).ToList();
+
+            RectanglesListBox.DisplayMember = "Text";
+            RectanglesListBox.ValueMember = "Value";
+
+            RectanglesListBox.SelectedIndex = 0;
+
+            _currentRectangle = _rectangles[0];
+
+            _films = new List<Film>
+            {
+                new Film("Inception", 148, 2010, "Sci-Fi", 8.8),
+                new Film("The Godfather", 175, 1972, "Crime", 9.2),
+                new Film("Interstellar", 169, 2014, "Sci-Fi", 8.6),
+                new Film("Shrek", 90, 2001, "Comedy", 7.8),
+                new Film("Titanic", 195, 1997, "Romance", 7.9),
+            };
+
+            FilmsListBox.DataSource = _films.Select((r, index) => new { Text = $"Film {index + 1}", Value = r }).ToList();
+
+            FilmsListBox.DisplayMember = "Text";
+            FilmsListBox.ValueMember = "Value";
+
+            FilmsListBox.SelectedIndex = 0;
+
+            _currentFilm = _films[0];
         }
 
         private void LoadEnumTypes()
@@ -115,6 +158,146 @@ namespace Programming
 
                     break;
             }
+        }
+
+        private void RectanglesListBoxIndexChanged(object sender, EventArgs e)
+        {
+            _currentRectangle = _rectangles[RectanglesListBox.SelectedIndex];
+
+            LengthTextBox.Text = _currentRectangle.Length.ToString();
+            WidthTextBox.Text = _currentRectangle.Width.ToString();
+            ColorTextBox.Text = _currentRectangle.Color;
+        }
+
+        private void LengthTextBox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                _currentRectangle.Length = Convert.ToDouble(LengthTextBox.Text);
+
+                LengthTextBox.BackColor = System.Drawing.Color.White;
+            }
+
+            catch
+            {
+                LengthTextBox.BackColor = System.Drawing.Color.LightPink;
+            }
+        }
+
+        private void WidthTextBox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                _currentRectangle.Width = Convert.ToDouble(WidthTextBox.Text);
+
+                WidthTextBox.BackColor = System.Drawing.Color.White;
+            }
+
+            catch
+            {
+                WidthTextBox.BackColor = System.Drawing.Color.LightPink;
+            }
+        }
+
+        private void ColorTextBox_TextChanged(object sender, EventArgs e)
+        {
+            _currentRectangle.Color = ColorTextBox.Text;
+        }
+
+        private void FindButton_Click(object sender, EventArgs e)
+        {
+            int maxWidthIndex = FindRectangleWithMaxWidth(_rectangles);
+
+            RectanglesListBox.SelectedIndex = maxWidthIndex;
+        }
+
+        private int FindRectangleWithMaxWidth(List<Rectangle> rectangles)
+        {
+            int maxIndex = 0;
+
+            for (int i = 1; i < rectangles.Count; i++)
+            {
+                if (rectangles[i].Width > rectangles[maxIndex].Width) maxIndex = i;
+            }
+
+            return maxIndex;
+        }
+
+        private void FilmsListBoxIndexChanged(object sender, EventArgs e)
+        {
+            _currentFilm = _films[FilmsListBox.SelectedIndex];
+
+            TitleTextBox.Text = _currentFilm.Title;
+            DurationTextBox.Text = _currentFilm.DurationMinutes.ToString();
+            ReleaseTextBox.Text = _currentFilm.ReleaseYear.ToString();
+            GenreTextBox.Text = _currentFilm.Genre;
+            RatingTextBox.Text = _currentFilm.Rating.ToString("0.0");
+            
+        }
+
+        private void DurationTextBox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                int duration = int.Parse(DurationTextBox.Text);
+
+                _currentFilm.DurationMinutes = duration;
+
+                DurationTextBox.BackColor = System.Drawing.Color.White;
+            }
+
+            catch
+            {
+                DurationTextBox.BackColor = System.Drawing.Color.LightPink;
+            }
+        }
+
+        private void YearTextBox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                int year = int.Parse(ReleaseTextBox.Text);
+
+                _currentFilm.ReleaseYear = year;
+
+                ReleaseTextBox.BackColor = System.Drawing.Color.White;
+            }
+
+            catch
+            {
+                ReleaseTextBox.BackColor = System.Drawing.Color.LightPink;
+            }
+        }
+
+        private void RatingTextBox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                double rating = double.Parse(RatingTextBox.Text);
+
+                _currentFilm.Rating = rating;
+
+                RatingTextBox.BackColor = System.Drawing.Color.White;
+            }
+
+            catch
+            {
+                RatingTextBox.BackColor = System.Drawing.Color.LightPink;
+            }
+        }
+
+        private void FilmFindButton_Click(object sender, EventArgs e)
+        {
+            int bestIndex = FindBestRatedFilmIndex(_films);
+
+            FilmsListBox.SelectedIndex = bestIndex;
+        }
+
+        private int FindBestRatedFilmIndex(List<Film> movies)
+        {
+            double maxRating = movies.Max(m => m.Rating);
+
+            return movies.FindIndex(m => m.Rating == maxRating);
         }
     }
 }
