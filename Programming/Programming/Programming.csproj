@@ -46,13 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Classes\CollisionManager.cs" />
     <Compile Include="Model\Classes\Contact.cs" />
     <Compile Include="Model\Classes\Discipline.cs" />
     <Compile Include="Model\Classes\Flight.cs" />
     <Compile Include="Model\Classes\Film.cs" />
+    <Compile Include="Model\Classes\Point2D.cs" />
     <Compile Include="Model\Classes\Rectangle.cs" />
+    <Compile Include="Model\Classes\Ring.cs" />
     <Compile Include="Model\Classes\Song.cs" />
     <Compile Include="Model\Classes\Time.cs" />
+    <Compile Include="Model\Classes\Validator.cs" />
     <Compile Include="Model\Enums\Color.cs" />
     <Compile Include="Model\Enums\Education Form.cs" />
     <Compile Include="Model\Enums\Genre.cs" />

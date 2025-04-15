@@ -69,6 +69,12 @@
             this.WidthLabel = new System.Windows.Forms.Label();
             this.LengthLabel = new System.Windows.Forms.Label();
             this.RectanglesListBox = new System.Windows.Forms.ListBox();
+            this.CenterYTextBox = new System.Windows.Forms.TextBox();
+            this.CenterYLabel = new System.Windows.Forms.Label();
+            this.CenterXTextBox = new System.Windows.Forms.TextBox();
+            this.CenterXLabel = new System.Windows.Forms.Label();
+            this.RectangleIdLabel = new System.Windows.Forms.Label();
+            this.RectangleIdTextBox = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.WeekdayParsingGroupBox.SuspendLayout();
             this.SeasonGroupBox.SuspendLayout();
@@ -339,7 +345,7 @@
             // 
             // FilmFindButton
             // 
-            this.FilmFindButton.Location = new System.Drawing.Point(135, 221);
+            this.FilmFindButton.Location = new System.Drawing.Point(135, 260);
             this.FilmFindButton.Name = "FilmFindButton";
             this.FilmFindButton.Size = new System.Drawing.Size(100, 23);
             this.FilmFindButton.TabIndex = 16;
@@ -360,7 +366,7 @@
             this.FilmsListBox.FormattingEnabled = true;
             this.FilmsListBox.Location = new System.Drawing.Point(6, 19);
             this.FilmsListBox.Name = "FilmsListBox";
-            this.FilmsListBox.Size = new System.Drawing.Size(120, 225);
+            this.FilmsListBox.Size = new System.Drawing.Size(120, 264);
             this.FilmsListBox.TabIndex = 9;
             this.FilmsListBox.SelectedIndexChanged += new System.EventHandler(this.FilmsListBoxIndexChanged);
             // 
@@ -400,8 +406,14 @@
             // 
             // RectanglesGroupBox
             // 
+            this.RectanglesGroupBox.Controls.Add(this.RectangleIdTextBox);
+            this.RectanglesGroupBox.Controls.Add(this.RectangleIdLabel);
+            this.RectanglesGroupBox.Controls.Add(this.CenterYTextBox);
             this.RectanglesGroupBox.Controls.Add(this.FindButton);
+            this.RectanglesGroupBox.Controls.Add(this.CenterYLabel);
             this.RectanglesGroupBox.Controls.Add(this.ColorTextBox);
+            this.RectanglesGroupBox.Controls.Add(this.CenterXTextBox);
+            this.RectanglesGroupBox.Controls.Add(this.CenterXLabel);
             this.RectanglesGroupBox.Controls.Add(this.WidthTextBox);
             this.RectanglesGroupBox.Controls.Add(this.LengthTextBox);
             this.RectanglesGroupBox.Controls.Add(this.ColorLabel);
@@ -418,7 +430,7 @@
             // 
             // FindButton
             // 
-            this.FindButton.Location = new System.Drawing.Point(132, 221);
+            this.FindButton.Location = new System.Drawing.Point(135, 260);
             this.FindButton.Name = "FindButton";
             this.FindButton.Size = new System.Drawing.Size(100, 23);
             this.FindButton.TabIndex = 8;
@@ -482,9 +494,60 @@
             this.RectanglesListBox.FormattingEnabled = true;
             this.RectanglesListBox.Location = new System.Drawing.Point(6, 19);
             this.RectanglesListBox.Name = "RectanglesListBox";
-            this.RectanglesListBox.Size = new System.Drawing.Size(120, 225);
+            this.RectanglesListBox.Size = new System.Drawing.Size(120, 264);
             this.RectanglesListBox.TabIndex = 1;
             this.RectanglesListBox.SelectedIndexChanged += new System.EventHandler(this.RectanglesListBoxIndexChanged);
+            // 
+            // CenterYTextBox
+            // 
+            this.CenterYTextBox.Location = new System.Drawing.Point(135, 191);
+            this.CenterYTextBox.Name = "CenterYTextBox";
+            this.CenterYTextBox.ReadOnly = true;
+            this.CenterYTextBox.Size = new System.Drawing.Size(100, 20);
+            this.CenterYTextBox.TabIndex = 24;
+            // 
+            // CenterYLabel
+            // 
+            this.CenterYLabel.AutoSize = true;
+            this.CenterYLabel.Location = new System.Drawing.Point(132, 175);
+            this.CenterYLabel.Name = "CenterYLabel";
+            this.CenterYLabel.Size = new System.Drawing.Size(48, 13);
+            this.CenterYLabel.TabIndex = 23;
+            this.CenterYLabel.Text = "Center Y";
+            // 
+            // CenterXTextBox
+            // 
+            this.CenterXTextBox.Location = new System.Drawing.Point(135, 152);
+            this.CenterXTextBox.Name = "CenterXTextBox";
+            this.CenterXTextBox.ReadOnly = true;
+            this.CenterXTextBox.Size = new System.Drawing.Size(100, 20);
+            this.CenterXTextBox.TabIndex = 22;
+            // 
+            // CenterXLabel
+            // 
+            this.CenterXLabel.AutoSize = true;
+            this.CenterXLabel.Location = new System.Drawing.Point(132, 136);
+            this.CenterXLabel.Name = "CenterXLabel";
+            this.CenterXLabel.Size = new System.Drawing.Size(48, 13);
+            this.CenterXLabel.TabIndex = 21;
+            this.CenterXLabel.Text = "Center X";
+            // 
+            // RectangleIdLabel
+            // 
+            this.RectangleIdLabel.AutoSize = true;
+            this.RectangleIdLabel.Location = new System.Drawing.Point(132, 214);
+            this.RectangleIdLabel.Name = "RectangleIdLabel";
+            this.RectangleIdLabel.Size = new System.Drawing.Size(16, 13);
+            this.RectangleIdLabel.TabIndex = 25;
+            this.RectangleIdLabel.Text = "Id";
+            // 
+            // RectangleIdTextBox
+            // 
+            this.RectangleIdTextBox.Location = new System.Drawing.Point(135, 230);
+            this.RectangleIdTextBox.Name = "RectangleIdTextBox";
+            this.RectangleIdTextBox.ReadOnly = true;
+            this.RectangleIdTextBox.Size = new System.Drawing.Size(100, 20);
+            this.RectangleIdTextBox.TabIndex = 26;
             // 
             // MainForm
             // 
@@ -554,6 +617,12 @@
         private System.Windows.Forms.Label DurationLabel;
         private System.Windows.Forms.TextBox RatingTextBox;
         private System.Windows.Forms.Label RatingLabel;
+        private System.Windows.Forms.TextBox CenterYTextBox;
+        private System.Windows.Forms.Label CenterYLabel;
+        private System.Windows.Forms.TextBox CenterXTextBox;
+        private System.Windows.Forms.Label CenterXLabel;
+        private System.Windows.Forms.TextBox RectangleIdTextBox;
+        private System.Windows.Forms.Label RectangleIdLabel;
     }
 }
 

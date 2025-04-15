@@ -1,41 +1,52 @@
-﻿public class Contact
+﻿using System.Text.RegularExpressions;
+using System;
+
+public class Contact
 {
-    private string name;
-    private string phoneNumber;
-    private string email;
-    private string address;
+    private string _name;
+    private string _surname;
+    private string _phoneNumber;
 
     public string Name
     {
-        get => name;
-        set => name = value;
+        get => _name;
+        set
+        {
+            AssertStringContainsOnlyLetters(value, nameof(Name));
+            _name = value;
+        }
+    }
+
+    public string Surname
+    {
+        get => _surname;
+        set
+        {
+            AssertStringContainsOnlyLetters(value, nameof(Surname));
+            _surname = value;
+        }
     }
 
     public string PhoneNumber
     {
-        get => phoneNumber;
-        set => phoneNumber = value;
+        get => _phoneNumber;
+        set => _phoneNumber = value;
     }
 
-    public string Email
+    private void AssertStringContainsOnlyLetters(string value, string propertyName)
     {
-        get => email;
-        set => email = value;
-    }
-
-    public string Address
-    {
-        get => address;
-        set => address = value;
-    }
-
-    public Contact(string name, string phoneNumber, string email, string address)
-    {
-        Name = name;
-        PhoneNumber = phoneNumber;
-        Email = email;
-        Address = address;
+        if (string.IsNullOrWhiteSpace(value) || !Regex.IsMatch(value, @"^[A-Za-z]+$"))
+        {
+            throw new ArgumentException($"Property {propertyName} must contain only English letters.");
+        }
     }
 
     public Contact() { }
+
+    public Contact(string name, string surname, string phoneNumber)
+    {
+        Name = name;
+        Surname = surname;
+        PhoneNumber = phoneNumber;
+    }
 }

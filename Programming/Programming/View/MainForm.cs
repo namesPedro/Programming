@@ -32,14 +32,25 @@ namespace Programming
 
             var rand = new Random();
 
-            _rectangles = new List<Rectangle>
+            var colors = new List<string>
             {
-                new Rectangle(rand.Next(10, 100), rand.Next(10, 100), "Red"),
-                new Rectangle(rand.Next(10, 100), rand.Next(10, 100), "Green"),
-                new Rectangle(rand.Next(10, 100), rand.Next(10, 100), "Blue"),
-                new Rectangle(rand.Next(10, 100), rand.Next(10, 100), "Yellow"),
-                new Rectangle(rand.Next(10, 100), rand.Next(10, 100), "Purple")
+                "Red", "Green", "Blue", "Yellow", "Purple", "Orange", "Pink",
+                "Brown", "Black", "White", "Cyan", "Magenta", "Gray", "Gold", "Lime"
             };
+
+            _rectangles = new List<Rectangle>();
+
+            for (int i = 0; i < colors.Count; i++)
+            {
+                double width = rand.Next(10, 100);
+                double height = rand.Next(10, 100);
+                string color = colors[i];
+
+                var center = new Point2D(rand.Next(0, 500), rand.Next(0, 500));
+
+                var rectangle = new Rectangle(width, height, color, center);
+                _rectangles.Add(rectangle);
+            }
 
             RectanglesListBox.DataSource = _rectangles.Select((r, index) => new { Text = $"Rectangle {index + 1}", Value = r }).ToList();
 
@@ -167,6 +178,11 @@ namespace Programming
             LengthTextBox.Text = _currentRectangle.Length.ToString();
             WidthTextBox.Text = _currentRectangle.Width.ToString();
             ColorTextBox.Text = _currentRectangle.Color;
+
+            CenterXTextBox.Text = _currentRectangle.Center.X.ToString();
+            CenterYTextBox.Text = _currentRectangle.Center.Y.ToString();
+
+            RectangleIdTextBox.Text = _currentRectangle.Id.ToString();
         }
 
         private void LengthTextBox_TextChanged(object sender, EventArgs e)
@@ -299,5 +315,6 @@ namespace Programming
 
             return movies.FindIndex(m => m.Rating == maxRating);
         }
+
     }
 }

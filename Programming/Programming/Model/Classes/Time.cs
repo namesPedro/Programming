@@ -11,7 +11,7 @@ public class Time
         get => hours;
         set
         {
-            if (value < 0 || value > 23) throw new ArgumentException("Часы должны быть в пределах от 0 до 23.");
+            Validator.AssertValueInRange(value, 0, 60, nameof(Hours));
 
             hours = value;
         }
@@ -22,7 +22,7 @@ public class Time
         get => minutes;
         set
         {
-            if (value < 0 || value > 60) throw new ArgumentException("Минуты должны быть в пределах от 0 до 60.");
+            Validator.AssertValueInRange(value, 0, 60, nameof(Minutes));
 
             minutes = value;
         }
@@ -33,7 +33,7 @@ public class Time
         get => seconds;
         set
         {
-            if (value < 0 || value > 60) throw new ArgumentException("Секунды должны быть в пределах от 0 до 60.");
+            Validator.AssertValueInRange(value, 0, 60, nameof(Seconds));
 
             seconds = value;
         }

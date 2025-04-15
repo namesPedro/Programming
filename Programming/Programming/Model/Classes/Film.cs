@@ -25,7 +25,7 @@ public class Film
         get => releaseYear;
         set
         {
-            if (value < 1900 || value > DateTime.Now.Year) throw new ArgumentException("Год выпуска должен быть между 1900 и текущим годом.");
+            Validator.AssertValueInRange(value, 1900, DateTime.Now.Year, nameof(ReleaseYear));
 
             releaseYear = value;
         }
@@ -42,7 +42,7 @@ public class Film
         get => rating;
         set
         {
-            if (value < 0 || value > 10) throw new ArgumentException("Рейтинг должен быть от 0 до 10.");
+            Validator.AssertValueInRange(value, 0, 10, nameof(Rating));
 
             rating = value;
         }
