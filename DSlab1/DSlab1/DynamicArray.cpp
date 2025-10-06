@@ -107,20 +107,30 @@ int DynamicArray::GetElement(int index)
     return _array[index];
 }
 
+int getNextGap(int gap)
+{
+    gap = (gap * 10) / 13;
+
+    if (gap < 1)
+        return 1;
+    return gap;
+}
+
 void DynamicArray::SortArray()
 {
     int gap = _size;
     bool swapped = true;
-    double shrink = 1.3;
 
-    while (gap > 1 || swapped) {
-        gap = static_cast<int>(gap / shrink);
-        if (gap < 1) gap = 1;
+    while (gap != 1 || swapped == true)
+    {
+        gap = getNextGap(gap);
 
         swapped = false;
 
-        for (int i = 0; i + gap < _size; i++) {
-            if (_array[i] > _array[i + gap]) {
+        for (int i = 0; i < _size - gap; i++)
+        {
+            if (_array[i] > _array[i + gap])
+            {
                 std::swap(_array[i], _array[i + gap]);
                 swapped = true;
             }
