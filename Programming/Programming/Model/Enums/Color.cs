@@ -1,3 +1,6 @@
+/// <summary>
+/// Представляет цвета.
+/// </summary>
 public enum Color
 {
     Black,

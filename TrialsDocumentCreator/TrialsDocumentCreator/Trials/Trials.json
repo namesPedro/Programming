@@ -1,0 +1,47 @@
+[
+  {
+    "type": "TRIAL",
+    "location": "POLICE STATION",
+    "story": "KILL THE SNITCH"
+  },
+  {
+    "type": "TRIAL",
+    "location": "ORPHANAGE",
+    "story": "CLEANSE THE ORPHANS"
+  },
+  {
+    "type": "TRIAL",
+    "location": "FUN PARK",
+    "story": "GRIND THE BAD APPLES"
+  },
+  {
+    "type": "TRIAL",
+    "location": "COURTHOUSE",
+    "story": "VINDICATE THE GUILTY"
+  },
+  {
+    "type": "TRIAL",
+    "location": "TOY FACTORY",
+    "story": "PERVERT THE FUTTERMAN"
+  },
+  {
+    "type": "TRIAL",
+    "location": "DOCKS",
+    "story": "POISON THE MEDICINE"
+  },
+  {
+    "type": "TRIAL",
+    "location": "DOWNTOWN",
+    "story": "PLEASURE THE PROSECUTOR"
+  },
+  {
+    "type": "TRIAL",
+    "location": "SUBURBS",
+    "story": "LIQUIDATE THE UNION"
+  },
+  {
+    "type": "TRIAL",
+    "location": "SHOPPING MALL",
+    "story": "KILL THE POLITICIAN"
+  }
+]

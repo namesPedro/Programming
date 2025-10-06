@@ -1,3 +1,6 @@
+/// <summary>
+/// Представляет жанры.
+/// </summary>
 public enum Genre
 {
     Comedy,

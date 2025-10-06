@@ -1,3 +1,6 @@
+/// <summary>
+/// Представляет производителей.
+/// </summary>
 public enum Manufacturer
 {
     Samsung,

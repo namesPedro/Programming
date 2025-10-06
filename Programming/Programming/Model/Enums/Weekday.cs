@@ -1,3 +1,6 @@
+/// <summary>
+/// Представляет дни недели.
+/// </summary>
 public enum Weekday
 {
     Monday,
