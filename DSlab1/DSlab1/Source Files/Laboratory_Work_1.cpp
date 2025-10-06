@@ -1,6 +1,6 @@
 #include <iostream>
 #include <limits>
-#include "DynamicArray.h"
+#include "../Header Files/DynamicArray.h"
 
 void DisplayMenu(DynamicArray& array)
 {
@@ -44,6 +44,7 @@ int GetValidatedInput(const std::string& prompt)
 
 int main()
 {
+    // TODO: использовать указатель
     DynamicArray array;
     bool running = true;
 
@@ -52,6 +53,7 @@ int main()
     array.InsertAtEnd(8);
     array.InsertAtEnd(25);
 
+    // TODO: RSDN
     while (running) {
         DisplayMenu(array);
 
@@ -59,6 +61,7 @@ int main()
 
         try {
             switch (choice) {
+                // TODO: единообразно
             case 0:
                 running = false;
                 std::cout << "Goodbye!" << std::endl;

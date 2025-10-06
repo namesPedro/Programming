@@ -1,4 +1,4 @@
-#include "DynamicArray.h"
+#include "../Header Files/DynamicArray.h"
 #include <iostream>
 #include <algorithm>
 
@@ -74,6 +74,7 @@ void DynamicArray::RemoveByIndex(int index)
     }
     _size--;
 
+    // TODO: Магические числа
     if (_capacity > 4 && _size < _capacity / _growthFactor) {
         int newCapacity = static_cast<int>(_capacity / _growthFactor);
         if (newCapacity < 4) newCapacity = 4;
@@ -107,6 +108,7 @@ int DynamicArray::GetElement(int index)
     return _array[index];
 }
 
+// TODO: RSDN
 int getNextGap(int gap)
 {
     gap = (gap * 10) / 13;
@@ -192,6 +194,7 @@ void DynamicArray::InsertAfterElement(int afterValue, int value)
 
 void DynamicArray::PrintArray()
 {
+    // TODO: Вывод пользователю в main
     if (_size == 0) {
         std::cout << "Array is empty" << std::endl;
         return;
