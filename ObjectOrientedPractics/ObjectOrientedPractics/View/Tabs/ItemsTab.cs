@@ -50,6 +50,7 @@ namespace ObjectOrientedPractics.View.Tabs
 
             if (_selectedItem != null)
             {
+                selectedItemIdTextBox.Text = _selectedItem.Id.ToString();
                 selectedItemNameTextBox.Text = _selectedItem.Name;
                 selectedItemDescriptionTextBox.Text = _selectedItem.Info;
                 selectedItemCostTextBox.Text = _selectedItem.Cost.ToString();
@@ -64,6 +65,7 @@ namespace ObjectOrientedPractics.View.Tabs
 
         private void ClearInputFields()
         {
+            selectedItemIdTextBox.Text = string.Empty;
             selectedItemNameTextBox.Text = string.Empty;
             selectedItemDescriptionTextBox.Text = string.Empty;
             selectedItemCostTextBox.Text = string.Empty;
@@ -75,7 +77,6 @@ namespace ObjectOrientedPractics.View.Tabs
             _items.Add(newItem);
             RefreshListBox();
 
-            // Выбираем новый товар в списке
             itemsListBox.SelectedItem = newItem;
         }
 
@@ -90,26 +91,28 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        // Обработчик выбора товара в ListBox
         private void itemsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedItem = itemsListBox.SelectedItem as Item;
             UpdateSelectedItemFields();
         }
 
-        // Обработчики изменения текстовых полей
         private void selectedItemNameTextBox_TextChanged(object sender, EventArgs e)
         {
             if (_selectedItem != null && !_updatingFields)
             {
                 try
                 {
-                    _selectedItem.Name = selectedItemNameTextBox.Text;
-                    RefreshListBox(); // Обновляем отображение имени в ListBox
+                    _selectedItem.Update(
+                        selectedItemNameTextBox.Text,
+                        _selectedItem.Info,
+                        _selectedItem.Cost
+                    );
+                    RefreshListBox();
+                    selectedItemNameTextBox.BackColor = SystemColors.Window;
                 }
                 catch (ArgumentException ex)
                 {
-                    // Можно показать подсветку ошибки или просто игнорировать невалидный ввод
                     selectedItemNameTextBox.BackColor = Color.LightPink;
                 }
             }
@@ -125,7 +128,11 @@ namespace ObjectOrientedPractics.View.Tabs
             {
                 try
                 {
-                    _selectedItem.Info = selectedItemDescriptionTextBox.Text;
+                    _selectedItem.Update(
+                        _selectedItem.Name,
+                        selectedItemDescriptionTextBox.Text,
+                        _selectedItem.Cost
+                    );
                     selectedItemDescriptionTextBox.BackColor = SystemColors.Window;
                 }
                 catch (ArgumentException ex)
@@ -147,7 +154,10 @@ namespace ObjectOrientedPractics.View.Tabs
                 {
                     if (double.TryParse(selectedItemCostTextBox.Text, out double cost))
                     {
-                        _selectedItem.Cost = cost;
+                        if (Math.Abs(_selectedItem.Cost - cost) > 0.01)
+                        {
+                            _selectedItem.Update(_selectedItem.Name, _selectedItem.Info, cost);
+                        }
                         selectedItemCostTextBox.BackColor = SystemColors.Window;
                     }
                     else
@@ -164,40 +174,6 @@ namespace ObjectOrientedPractics.View.Tabs
             {
                 selectedItemCostTextBox.BackColor = SystemColors.Window;
             }
-        }
-
-        // Обработчик для проверки ввода стоимости (только числа)
-        private void selectedItemCostTextBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // Разрешаем цифры, точку, запятую и управляющие символы
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
-                e.KeyChar != '.' && e.KeyChar != ',')
-            {
-                e.Handled = true;
-            }
-
-            // Разрешаем только одну точку или запятую
-            if ((e.KeyChar == '.' || e.KeyChar == ',') &&
-                ((sender as TextBox).Text.Contains('.') || (sender as TextBox).Text.Contains(',')))
-            {
-                e.Handled = true;
-            }
-        }
-
-        // Восстанавливаем нормальный цвет когда поле получает фокус
-        private void selectedItemNameTextBox_Enter(object sender, EventArgs e)
-        {
-            selectedItemNameTextBox.BackColor = SystemColors.Window;
-        }
-
-        private void selectedItemDescriptionTextBox_Enter(object sender, EventArgs e)
-        {
-            selectedItemDescriptionTextBox.BackColor = SystemColors.Window;
-        }
-
-        private void selectedItemCostTextBox_Enter(object sender, EventArgs e)
-        {
-            selectedItemCostTextBox.BackColor = SystemColors.Window;
         }
     }
 }
