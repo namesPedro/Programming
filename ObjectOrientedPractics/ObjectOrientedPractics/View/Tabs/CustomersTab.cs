@@ -11,18 +11,40 @@ using ObjectOrientedPractics.Model;
 
 namespace ObjectOrientedPractics.View.Tabs
 {
+    /// <summary>
+    /// Представляет вкладку для управления списком покупателей.
+    /// Обеспечивает функциональность добавления, удаления и редактирования покупателей.
+    /// </summary>
     public partial class CustomersTab : UserControl
     {
+        /// <summary>
+        /// Список покупателей.
+        /// </summary>
         private List<Customer> _customers = new List<Customer>();
+
+        /// <summary>
+        /// Текущий выбранный покупатель.
+        /// </summary>
         private Customer _selectedCustomer;
+
+        /// <summary>
+        /// Флаг, указывающий на обновление полей ввода.
+        /// Используется для предотвращения рекурсивных обновлений.
+        /// </summary>
         private bool _updatingFields = false;
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса CustomersTab.
+        /// </summary>
         public CustomersTab()
         {
             InitializeComponent();
             InitializeListBox();
         }
 
+        /// <summary>
+        /// Инициализирует ListBox для отображения покупателей.
+        /// </summary>
         private void InitializeListBox()
         {
             customersListBox.DisplayMember = "FullName";
@@ -30,6 +52,10 @@ namespace ObjectOrientedPractics.View.Tabs
             RefreshListBox();
         }
 
+        /// <summary>
+        /// Обновляет данные в ListBox.
+        /// Сохраняет выбранный элемент после обновления.
+        /// </summary>
         private void RefreshListBox()
         {
             int selectedIndex = customersListBox.SelectedIndex;
@@ -44,6 +70,9 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
+        /// <summary>
+        /// Обновляет поля ввода данными выбранного покупателя.
+        /// </summary>
         private void UpdateSelectedCustomerFields()
         {
             _updatingFields = true;
@@ -62,6 +91,9 @@ namespace ObjectOrientedPractics.View.Tabs
             _updatingFields = false;
         }
 
+        /// <summary>
+        /// Очищает поля ввода.
+        /// </summary>
         private void ClearInputFields()
         {
             selectedCustomerIdTextBox.Text = string.Empty;
@@ -69,6 +101,9 @@ namespace ObjectOrientedPractics.View.Tabs
             selectedCustomerAddressTextBox.Text = string.Empty;
         }
 
+        /// <summary>
+        /// Обрабатывает событие нажатия кнопки добавления покупателя.
+        /// </summary>
         private void customersAddButton_Click(object sender, EventArgs e)
         {
             var newCustomer = new Customer("New Customer", "New Address");
@@ -78,6 +113,9 @@ namespace ObjectOrientedPractics.View.Tabs
             customersListBox.SelectedItem = newCustomer;
         }
 
+        /// <summary>
+        /// Обрабатывает событие нажатия кнопки удаления покупателя.
+        /// </summary>
         private void customersRemoveButton_Click(object sender, EventArgs e)
         {
             if (_selectedCustomer != null)
@@ -89,12 +127,19 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
+        /// <summary>
+        /// Обрабатывает событие изменения выбранного элемента в ListBox.
+        /// </summary>
         private void customersListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedCustomer = customersListBox.SelectedItem as Customer;
             UpdateSelectedCustomerFields();
         }
 
+        /// <summary>
+        /// Обрабатывает событие изменения текста в поле полного имени покупателя.
+        /// Обновляет данные покупателя и валидирует ввод.
+        /// </summary>
         private void selectedCustomerFullNameTextBox_TextChanged(object sender, EventArgs e)
         {
             if (_selectedCustomer != null && !_updatingFields)
@@ -119,6 +164,10 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
+        /// <summary>
+        /// Обрабатывает событие изменения текста в поле адреса покупателя.
+        /// Обновляет данные покупателя и валидирует ввод.
+        /// </summary>
         private void selectedCustomerAddressTextBox_TextChanged(object sender, EventArgs e)
         {
             if (_selectedCustomer != null && !_updatingFields)

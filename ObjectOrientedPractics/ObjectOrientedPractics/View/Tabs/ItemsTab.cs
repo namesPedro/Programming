@@ -11,18 +11,40 @@ using ObjectOrientedPractics.Model;
 
 namespace ObjectOrientedPractics.View.Tabs
 {
+    /// <summary>
+    /// Представляет вкладку для управления списком товаров.
+    /// Обеспечивает функциональность добавления, удаления и редактирования товаров.
+    /// </summary>
     public partial class ItemsTab : UserControl
     {
+        /// <summary>
+        /// Список товаров.
+        /// </summary>
         private List<Item> _items = new List<Item>();
+
+        /// <summary>
+        /// Текущий выбранный товар.
+        /// </summary>
         private Item _selectedItem;
+
+        /// <summary>
+        /// Флаг, указывающий на обновление полей ввода.
+        /// Используется для предотвращения рекурсивных обновлений.
+        /// </summary>
         private bool _updatingFields = false;
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса ItemsTab.
+        /// </summary>
         public ItemsTab()
         {
             InitializeComponent();
             InitializeListBox();
         }
 
+        /// <summary>
+        /// Инициализирует ListBox для отображения товаров.
+        /// </summary>
         private void InitializeListBox()
         {
             itemsListBox.DisplayMember = "Name";
@@ -30,6 +52,10 @@ namespace ObjectOrientedPractics.View.Tabs
             RefreshListBox();
         }
 
+        /// <summary>
+        /// Обновляет данные в ListBox.
+        /// Сохраняет выбранный элемент после обновления.
+        /// </summary>
         private void RefreshListBox()
         {
             int selectedIndex = itemsListBox.SelectedIndex;
@@ -44,9 +70,12 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
+        /// <summary>
+        /// Обновляет поля ввода данными выбранного товара.
+        /// </summary>
         private void UpdateSelectedItemFields()
         {
-            _updatingFields = true; // Блокируем обновления чтобы избежать рекурсии
+            _updatingFields = true;
 
             if (_selectedItem != null)
             {
@@ -63,6 +92,9 @@ namespace ObjectOrientedPractics.View.Tabs
             _updatingFields = false;
         }
 
+        /// <summary>
+        /// Очищает поля ввода.
+        /// </summary>
         private void ClearInputFields()
         {
             selectedItemIdTextBox.Text = string.Empty;
@@ -71,6 +103,9 @@ namespace ObjectOrientedPractics.View.Tabs
             selectedItemCostTextBox.Text = string.Empty;
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки добавления товара.
+        /// </summary>
         private void itemsAddButton_Click(object sender, EventArgs e)
         {
             var newItem = new Item("New Name", "New Description", 0.0);
@@ -80,6 +115,9 @@ namespace ObjectOrientedPractics.View.Tabs
             itemsListBox.SelectedItem = newItem;
         }
 
+        /// <summary>
+        /// Обрабатывает нажатие кнопки удаления товара.
+        /// </summary>
         private void itemsRemoveButton_Click(object sender, EventArgs e)
         {
             if (_selectedItem != null)
@@ -91,12 +129,19 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
+        /// <summary>
+        /// Обрабатывает изменение выбранного элемента в ListBox.
+        /// </summary>
         private void itemsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedItem = itemsListBox.SelectedItem as Item;
             UpdateSelectedItemFields();
         }
 
+        /// <summary>
+        /// Обрабатывает изменение текста в поле названия товара.
+        /// Обновляет данные товара и валидирует ввод.
+        /// </summary>
         private void selectedItemNameTextBox_TextChanged(object sender, EventArgs e)
         {
             if (_selectedItem != null && !_updatingFields)
@@ -111,7 +156,7 @@ namespace ObjectOrientedPractics.View.Tabs
                     RefreshListBox();
                     selectedItemNameTextBox.BackColor = SystemColors.Window;
                 }
-                catch (ArgumentException ex)
+                catch (ArgumentException)
                 {
                     selectedItemNameTextBox.BackColor = Color.LightPink;
                 }
@@ -122,6 +167,10 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
+        /// <summary>
+        /// Обрабатывает изменение текста в поле описания товара.
+        /// Обновляет данные товара и валидирует ввод.
+        /// </summary>
         private void selectedItemDescriptionTextBox_TextChanged(object sender, EventArgs e)
         {
             if (_selectedItem != null && !_updatingFields)
@@ -135,7 +184,7 @@ namespace ObjectOrientedPractics.View.Tabs
                     );
                     selectedItemDescriptionTextBox.BackColor = SystemColors.Window;
                 }
-                catch (ArgumentException ex)
+                catch (ArgumentException)
                 {
                     selectedItemDescriptionTextBox.BackColor = Color.LightPink;
                 }
@@ -146,6 +195,10 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
+        /// <summary>
+        /// Обрабатывает изменение текста в поле стоимости товара.
+        /// Обновляет данные товара и валидирует ввод.
+        /// </summary>
         private void selectedItemCostTextBox_TextChanged(object sender, EventArgs e)
         {
             if (_selectedItem != null && !_updatingFields)
@@ -165,7 +218,7 @@ namespace ObjectOrientedPractics.View.Tabs
                         selectedItemCostTextBox.BackColor = Color.LightPink;
                     }
                 }
-                catch (ArgumentException ex)
+                catch (ArgumentException)
                 {
                     selectedItemCostTextBox.BackColor = Color.LightPink;
                 }
