@@ -28,12 +28,6 @@ namespace ObjectOrientedPractics.View.Tabs
         private Customer _selectedCustomer;
 
         /// <summary>
-        /// Флаг, указывающий на обновление полей ввода.
-        /// Используется для предотвращения рекурсивных обновлений.
-        /// </summary>
-        private bool _updatingFields = false;
-
-        /// <summary>
         /// Инициализирует новый экземпляр класса CustomersTab.
         /// </summary>
         public CustomersTab()
@@ -64,10 +58,24 @@ namespace ObjectOrientedPractics.View.Tabs
             customersListBox.DataSource = _customers;
             customersListBox.DisplayMember = "FullName";
 
-            if (selectedIndex >= 0 && selectedIndex < customersListBox.Items.Count)
+            if (_customers.Count == 0)
             {
-                customersListBox.SelectedIndex = selectedIndex;
+                _selectedCustomer = null;
+                ClearInputFields();
+                return;
             }
+
+            if (selectedIndex >= _customers.Count)
+            {
+                selectedIndex = _customers.Count - 1;
+            }
+
+            if (selectedIndex < 0)
+            {
+                selectedIndex = 0;
+            }
+
+            customersListBox.SelectedIndex = selectedIndex;
         }
 
         /// <summary>
@@ -75,8 +83,6 @@ namespace ObjectOrientedPractics.View.Tabs
         /// </summary>
         private void UpdateSelectedCustomerFields()
         {
-            _updatingFields = true;
-
             if (_selectedCustomer != null)
             {
                 selectedCustomerIdTextBox.Text = _selectedCustomer.Id.ToString();
@@ -87,8 +93,6 @@ namespace ObjectOrientedPractics.View.Tabs
             {
                 ClearInputFields();
             }
-
-            _updatingFields = false;
         }
 
         /// <summary>
@@ -140,27 +144,23 @@ namespace ObjectOrientedPractics.View.Tabs
         /// Обрабатывает событие изменения текста в поле полного имени покупателя.
         /// Обновляет данные покупателя и валидирует ввод.
         /// </summary>
-        private void selectedCustomerFullNameTextBox_TextChanged(object sender, EventArgs e)
+        private void selectedCustomerFullNameTextBox_Leave(object sender, EventArgs e)
         {
-            if (_selectedCustomer != null && !_updatingFields)
+            if (_selectedCustomer == null) return;
+
+            try
             {
-                try
-                {
-                    _selectedCustomer.Update(
-                        selectedCustomerFullNameTextBox.Text,
-                        _selectedCustomer.Address
-                    );
-                    RefreshListBox();
-                    selectedCustomerFullNameTextBox.BackColor = SystemColors.Window;
-                }
-                catch (ArgumentException ex)
-                {
-                    selectedCustomerFullNameTextBox.BackColor = Color.LightPink;
-                }
-            }
-            else
-            {
+                _selectedCustomer.Update(
+                selectedCustomerFullNameTextBox.Text,
+                _selectedCustomer.Address
+                );
+
+                RefreshListBox();
                 selectedCustomerFullNameTextBox.BackColor = SystemColors.Window;
+            }
+            catch
+            {
+                selectedCustomerFullNameTextBox.BackColor = Color.LightPink;
             }
         }
 
@@ -168,26 +168,21 @@ namespace ObjectOrientedPractics.View.Tabs
         /// Обрабатывает событие изменения текста в поле адреса покупателя.
         /// Обновляет данные покупателя и валидирует ввод.
         /// </summary>
-        private void selectedCustomerAddressTextBox_TextChanged(object sender, EventArgs e)
+        private void selectedCustomerAddressTextBox_Leave(object sender, EventArgs e)
         {
-            if (_selectedCustomer != null && !_updatingFields)
+            if (_selectedCustomer == null) return;
+
+            try
             {
-                try
-                {
-                    _selectedCustomer.Update(
-                        _selectedCustomer.Fullname,
-                        selectedCustomerAddressTextBox.Text
-                    );
-                    selectedCustomerAddressTextBox.BackColor = SystemColors.Window;
-                }
-                catch (ArgumentException ex)
-                {
-                    selectedCustomerAddressTextBox.BackColor = Color.LightPink;
-                }
-            }
-            else
-            {
+                _selectedCustomer.Update(
+                    _selectedCustomer.Fullname,
+                    selectedCustomerAddressTextBox.Text
+                );
                 selectedCustomerAddressTextBox.BackColor = SystemColors.Window;
+            }
+            catch
+            {
+                selectedCustomerAddressTextBox.BackColor = Color.LightPink;
             }
         }
     }

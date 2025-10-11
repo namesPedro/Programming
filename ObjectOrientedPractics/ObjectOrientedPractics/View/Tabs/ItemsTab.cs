@@ -28,12 +28,6 @@ namespace ObjectOrientedPractics.View.Tabs
         private Item _selectedItem;
 
         /// <summary>
-        /// Флаг, указывающий на обновление полей ввода.
-        /// Используется для предотвращения рекурсивных обновлений.
-        /// </summary>
-        private bool _updatingFields = false;
-
-        /// <summary>
         /// Инициализирует новый экземпляр класса ItemsTab.
         /// </summary>
         public ItemsTab()
@@ -64,10 +58,24 @@ namespace ObjectOrientedPractics.View.Tabs
             itemsListBox.DataSource = _items;
             itemsListBox.DisplayMember = "Name";
 
-            if (selectedIndex >= 0 && selectedIndex < itemsListBox.Items.Count)
+            if (_items.Count == 0)
             {
-                itemsListBox.SelectedIndex = selectedIndex;
+                _selectedItem = null;
+                ClearInputFields();
+                return;
             }
+
+            if (selectedIndex >= _items.Count)
+            {
+                selectedIndex = _items.Count - 1;
+            }
+
+            if (selectedIndex < 0)
+            {
+                selectedIndex = 0;
+            }
+
+            itemsListBox.SelectedIndex = selectedIndex;
         }
 
         /// <summary>
@@ -75,8 +83,6 @@ namespace ObjectOrientedPractics.View.Tabs
         /// </summary>
         private void UpdateSelectedItemFields()
         {
-            _updatingFields = true;
-
             if (_selectedItem != null)
             {
                 selectedItemIdTextBox.Text = _selectedItem.Id.ToString();
@@ -88,8 +94,6 @@ namespace ObjectOrientedPractics.View.Tabs
             {
                 ClearInputFields();
             }
-
-            _updatingFields = false;
         }
 
         /// <summary>
@@ -142,28 +146,24 @@ namespace ObjectOrientedPractics.View.Tabs
         /// Обрабатывает изменение текста в поле названия товара.
         /// Обновляет данные товара и валидирует ввод.
         /// </summary>
-        private void selectedItemNameTextBox_TextChanged(object sender, EventArgs e)
+        private void selectedItemNameTextBox_Leave(object sender, EventArgs e)
         {
-            if (_selectedItem != null && !_updatingFields)
+            if (_selectedItem == null) return;
+
+            try
             {
-                try
-                {
-                    _selectedItem.Update(
-                        selectedItemNameTextBox.Text,
-                        _selectedItem.Info,
-                        _selectedItem.Cost
-                    );
-                    RefreshListBox();
-                    selectedItemNameTextBox.BackColor = SystemColors.Window;
-                }
-                catch (ArgumentException)
-                {
-                    selectedItemNameTextBox.BackColor = Color.LightPink;
-                }
-            }
-            else
-            {
+                _selectedItem.Update(
+                selectedItemNameTextBox.Text,
+                _selectedItem.Info,
+                _selectedItem.Cost
+                );
+
+                RefreshListBox();
                 selectedItemNameTextBox.BackColor = SystemColors.Window;
+            }
+            catch
+            {
+                selectedItemNameTextBox.BackColor = Color.LightPink;
             }
         }
 
@@ -171,61 +171,53 @@ namespace ObjectOrientedPractics.View.Tabs
         /// Обрабатывает изменение текста в поле описания товара.
         /// Обновляет данные товара и валидирует ввод.
         /// </summary>
-        private void selectedItemDescriptionTextBox_TextChanged(object sender, EventArgs e)
+        private void selectedItemDescriptionTextBox_Leave(object sender, EventArgs e)
         {
-            if (_selectedItem != null && !_updatingFields)
+            if (_selectedItem == null) return;
+
+            try
             {
-                try
-                {
-                    _selectedItem.Update(
-                        _selectedItem.Name,
-                        selectedItemDescriptionTextBox.Text,
-                        _selectedItem.Cost
-                    );
-                    selectedItemDescriptionTextBox.BackColor = SystemColors.Window;
-                }
-                catch (ArgumentException)
-                {
-                    selectedItemDescriptionTextBox.BackColor = Color.LightPink;
-                }
-            }
-            else
-            {
+                _selectedItem.Update(
+                    _selectedItem.Name,
+                    selectedItemDescriptionTextBox.Text,
+                    _selectedItem.Cost
+                );
+
                 selectedItemDescriptionTextBox.BackColor = SystemColors.Window;
             }
+            catch
+            {
+                selectedItemDescriptionTextBox.BackColor = Color.LightPink;
+            }
+
         }
 
         /// <summary>
         /// Обрабатывает изменение текста в поле стоимости товара.
         /// Обновляет данные товара и валидирует ввод.
         /// </summary>
-        private void selectedItemCostTextBox_TextChanged(object sender, EventArgs e)
+        private void selectedItemCostTextBox_Leave(object sender, EventArgs e)
         {
-            if (_selectedItem != null && !_updatingFields)
+            if (_selectedItem == null) return;
+
+            try
             {
-                try
+                if (double.TryParse(selectedItemCostTextBox.Text, out double cost))
                 {
-                    if (double.TryParse(selectedItemCostTextBox.Text, out double cost))
+                    if (Math.Abs(_selectedItem.Cost - cost) > 0.01)
                     {
-                        if (Math.Abs(_selectedItem.Cost - cost) > 0.01)
-                        {
-                            _selectedItem.Update(_selectedItem.Name, _selectedItem.Info, cost);
-                        }
-                        selectedItemCostTextBox.BackColor = SystemColors.Window;
+                        _selectedItem.Update(_selectedItem.Name, _selectedItem.Info, cost);
                     }
-                    else
-                    {
-                        selectedItemCostTextBox.BackColor = Color.LightPink;
-                    }
+                    selectedItemCostTextBox.BackColor = SystemColors.Window;
                 }
-                catch (ArgumentException)
+                else
                 {
                     selectedItemCostTextBox.BackColor = Color.LightPink;
                 }
             }
-            else
+            catch (ArgumentException)
             {
-                selectedItemCostTextBox.BackColor = SystemColors.Window;
+                selectedItemCostTextBox.BackColor = Color.LightPink;
             }
         }
     }
