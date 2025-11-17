@@ -3,18 +3,23 @@
 #include <algorithm>
 
 // Константы для управления динамическим массивом
-const int DEFAULT_CAPACITY = 4;          ///< Начальная емкость массива по умолчанию
-const double GROWTH_FACTOR = 1.5;        ///< Коэффициент увеличения емкости массива
-const int MIN_CAPACITY = 4;              ///< Минимальная емкость массива
+// Начальная емкость массива по умолчанию
+const int DefaultCapacity = 4;
+// Коэффициент увеличения емкости массива
+const double GrowthFactor = 1.5;
+// Минимальная емкость массива
+const int MinCapacity = 4;              
 
 // Константы для алгоритма сортировки расческой
-const int COMB_SORT_SHRINK_FACTOR = 13;  ///< Коэффициент уменьшения шага для сортировки расческой
-const int COMB_SORT_MULTIPLIER = 10;     ///< Множитель для вычисления шага сортировки расческой
+// Коэффициент уменьшения шага для сортировки расческой
+const int CombSortShrinkFactor = 13;
+/// Множитель для вычисления шага сортировки расческой
+const int CombSortMultiplier = 10;
 
 /// <summary>
 /// Конструктор по умолчанию. Инициализирует пустой динамический массив.
 /// </summary>
-DynamicArray::DynamicArray() : _size(0), _capacity(DEFAULT_CAPACITY), _growthFactor(GROWTH_FACTOR)
+DynamicArray::DynamicArray() : _size(0), _capacity(DefaultCapacity), _growthFactor(GrowthFactor)
 {
     _array = new int[_capacity];
 }
@@ -118,10 +123,9 @@ void DynamicArray::RemoveByIndex(int index)
     }
     _size--;
 
-    // TODO: Магические числа *
-    if (_capacity > MIN_CAPACITY && _size < _capacity / _growthFactor) {
+    if (_capacity > MinCapacity && _size < _capacity / _growthFactor) {
         int newCapacity = static_cast<int>(_capacity / _growthFactor);
-        if (newCapacity < MIN_CAPACITY) newCapacity = MIN_CAPACITY;
+        if (newCapacity < MinCapacity) newCapacity = MinCapacity;
 
         int* newArray = new int[newCapacity];
         for (int i = 0; i < _size; i++) {
@@ -169,7 +173,7 @@ int DynamicArray::GetElement(int index)
 /// <returns>Следующий шаг для сортировки</returns>
 int getNextGap(int gap)
 {
-    gap = (gap * COMB_SORT_MULTIPLIER) / COMB_SORT_SHRINK_FACTOR;
+    gap = (gap * CombSortMultiplier) / CombSortShrinkFactor;
 
     if (gap < 1)
         return 1;
@@ -228,16 +232,20 @@ int DynamicArray::BinarySearch(int value)
     int left = 0;
     int right = _size - 1;
 
-    while (left <= right) {
+    while (left <= right)
+    {
         int mid = left + (right - left) / 2;
 
-        if (_array[mid] == value) {
+        if (_array[mid] == value)
+        {
             return mid;
         }
-        else if (_array[mid] < value) {
+        else if (_array[mid] < value)
+        {
             left = mid + 1;
         }
-        else {
+        else
+        {
             right = mid - 1;
         }
     }
@@ -271,12 +279,12 @@ void DynamicArray::InsertAtEnd(int value)
 void DynamicArray::InsertAfterElement(int afterValue, int value)
 {
     int index = LinearSearch(afterValue);
-    if (index != -1) {
+    if (index != -1)
+    {
         AddElement(index + 1, value);
     }
-    else {
+    else
+    {
         throw std::invalid_argument("Element not found");
     }
 }
-
-// TODO: Вывод пользователю в main *

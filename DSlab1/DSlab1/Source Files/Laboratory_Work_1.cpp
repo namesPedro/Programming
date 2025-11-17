@@ -3,16 +3,16 @@
 #include "../Header Files/DynamicArray.h"
 
 // Константы для меню
-const int EXIT_OPTION = 0;
-const int REMOVE_BY_INDEX_OPTION = 1;
-const int REMOVE_BY_VALUE_OPTION = 2;
-const int INSERT_AT_BEGINNING_OPTION = 3;
-const int INSERT_AT_END_OPTION = 4;
-const int INSERT_AFTER_ELEMENT_OPTION = 5;
-const int SORT_ARRAY_OPTION = 6;
-const int LINEAR_SEARCH_OPTION = 7;
-const int BINARY_SEARCH_OPTION = 8;
-const int PRINT_ARRAY_OPTION = 9;
+const int ExitOption = 0;
+const int RemoveByIndexOption = 1;
+const int RemoveByValueOption = 2;
+const int InsertAtBeginningOption = 3;
+const int InsertAtEndOption = 4;
+const int InsertAfterElementOption = 5;
+const int SortArrayOption = 6;
+const int LinearSearchOption = 7;
+const int BinarySearchOption = 8;
+const int PrintArrayOption = 9;
 
 /// <summary>
 /// Выводит содержимое динамического массива в консоль.
@@ -94,8 +94,7 @@ int GetValidatedInput(const std::string& prompt)
 /// <returns>Код завершения программы</returns>
 int main()
 {
-    // TODO: использовать указатель *
-    std::unique_ptr<DynamicArray> array = std::make_unique<DynamicArray>();
+    DynamicArray* array = new DynamicArray();
     bool running = true;
 
     // Инициализация массива тестовыми данными
@@ -112,40 +111,40 @@ int main()
 
         try {
             switch (choice) {
-            case EXIT_OPTION:
+            case ExitOption:
                 running = false;
                 std::cout << "Goodbye!" << std::endl;
                 break;
 
-            case REMOVE_BY_INDEX_OPTION: {
+            case RemoveByIndexOption: {
                 int index = GetValidatedInput("Enter index to remove: ");
                 array->RemoveByIndex(index);
                 std::cout << "Element removed successfully." << std::endl;
                 break;
             }
 
-            case REMOVE_BY_VALUE_OPTION: {
+            case RemoveByValueOption: {
                 int value = GetValidatedInput("Enter value to remove: ");
                 array->RemoveByValue(value);
                 std::cout << "Element removed successfully." << std::endl;
                 break;
             }
 
-            case INSERT_AT_BEGINNING_OPTION: {
+            case InsertAtBeginningOption: {
                 int value = GetValidatedInput("Enter value to insert at beginning: ");
                 array->InsertAtBeginning(value);
                 std::cout << "Element inserted successfully." << std::endl;
                 break;
             }
 
-            case INSERT_AT_END_OPTION: {
+            case InsertAtEndOption: {
                 int value = GetValidatedInput("Enter value to insert at end: ");
                 array->InsertAtEnd(value);
                 std::cout << "Element inserted successfully." << std::endl;
                 break;
             }
 
-            case INSERT_AFTER_ELEMENT_OPTION: {
+            case InsertAfterElementOption: {
                 int afterValue = GetValidatedInput("Enter value after which to insert: ");
                 int value = GetValidatedInput("Enter value to insert: ");
                 array->InsertAfterElement(afterValue, value);
@@ -153,12 +152,12 @@ int main()
                 break;
             }
 
-            case SORT_ARRAY_OPTION:
+            case SortArrayOption:
                 array->SortArray();
                 std::cout << "Array sorted successfully." << std::endl;
                 break;
 
-            case LINEAR_SEARCH_OPTION: {
+            case LinearSearchOption: {
                 int value = GetValidatedInput("Enter value to search: ");
                 int index = array->LinearSearch(value);
                 if (index != -1) {
@@ -170,7 +169,7 @@ int main()
                 break;
             }
 
-            case BINARY_SEARCH_OPTION: {
+            case BinarySearchOption: {
                 int value = GetValidatedInput("Enter value to search: ");
                 int index = array->BinarySearch(value);
                 if (index != -1) {
@@ -182,7 +181,7 @@ int main()
                 break;
             }
 
-            case PRINT_ARRAY_OPTION:
+            case PrintArrayOption:
                 std::cout << "Current array: ";
                 PrintArray(*array);
                 break;
@@ -198,6 +197,8 @@ int main()
 
         std::cout << std::endl;
     }
+
+    delete array;
 
     return 0;
 }

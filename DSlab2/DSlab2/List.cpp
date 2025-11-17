@@ -2,8 +2,8 @@
 #include <iostream>
 
 // Константы для лучшей читаемости
-const int INVALID_INDEX = -1;
-const int EMPTY_LIST_SIZE = 0;
+const int InvalidIndex = -1;
+const int EmptyListSize = 0;
 
 /// <summary>
 /// Получает узел списка по указанному индексу.
@@ -106,7 +106,7 @@ bool List::AddNode(Node* node, int index) {
 bool List::InsertAfter(Node* node, int value) {
     if (node == nullptr) return false; // Добавляем проверку
 
-    Node* target = FindNodeByValue(value);
+    Node* target = GetNodeByIndex(value);
     if (target == nullptr) return false;
 
     Node* nextNode = target->GetNextNode();
@@ -135,7 +135,7 @@ bool List::InsertAfter(Node* node, int value) {
 bool List::InsertBefore(Node* node, int value) {
     if (node == nullptr) return false;
 
-    Node* target = FindNodeByValue(value);
+    Node* target = GetNodeByIndex(value);
     if (target == nullptr) return false;
 
     // Если целевой узел - голова списка

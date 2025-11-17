@@ -2,16 +2,18 @@
 #include <limits>
 #include "List.h"
 
+
+
 // Константы для меню
-const int EXIT_OPTION = 9;
-const int REMOVE_BY_INDEX_OPTION = 1;
-const int REMOVE_BY_VALUE_OPTION = 2;
-const int INSERT_AT_BEGINNING_OPTION = 3;
-const int INSERT_AT_END_OPTION = 4;
-const int INSERT_AFTER_ELEMENT_OPTION = 5;
-const int INSERT_BEFORE_ELEMENT_OPTION = 6;
-const int SORT_LIST_OPTION = 7;
-const int LINEAR_SEARCH_OPTION = 8;
+const int ExitOption = 9;
+const int RemoveByIndexOption = 1;
+const int RemoveByValueOption = 2;
+const int InsertAtBeginningOption = 3;
+const int InsertAtEndOption = 4;
+const int InsertAfterIndexOption = 5;
+const int InsertBeforeIndexOption = 6;
+const int SortListOption = 7;
+const int LinearSearchOption = 8;
 
 /// <summary>
 /// Получает валидный числовой ввод от пользователя
@@ -45,15 +47,15 @@ void printMenu(const List& list) {
     std::cout << "Current list: ";
     list.Print();
     std::cout << "\nSelect the action you want to do:\n";
-    std::cout << REMOVE_BY_INDEX_OPTION << ". Remove an element by index from a list\n";
-    std::cout << REMOVE_BY_VALUE_OPTION << ". Remove an element by value from a list\n";
-    std::cout << INSERT_AT_BEGINNING_OPTION << ". Insert an element at the beginning\n";
-    std::cout << INSERT_AT_END_OPTION << ". Insert an element at the end\n";
-    std::cout << INSERT_AFTER_ELEMENT_OPTION << ". Insert after a certain element\n";
-    std::cout << INSERT_BEFORE_ELEMENT_OPTION << ". Insert before a certain element\n";
-    std::cout << SORT_LIST_OPTION << ". Sort list\n";
-    std::cout << LINEAR_SEARCH_OPTION << ". Linear search for an element in a list\n";
-    std::cout << EXIT_OPTION << ". Exit\n";
+    std::cout << RemoveByIndexOption << ". Remove an element by index from a list\n";
+    std::cout << RemoveByValueOption << ". Remove an element by value from a list\n";
+    std::cout << InsertAtBeginningOption << ". Insert an element at the beginning\n";
+    std::cout << InsertAtEndOption << ". Insert an element at the end\n";
+    std::cout << InsertAfterIndexOption << ". Insert after a certain index\n";
+    std::cout << InsertBeforeIndexOption << ". Insert before a certain index\n";
+    std::cout << SortListOption << ". Sort list\n";
+    std::cout << LinearSearchOption << ". Linear search for an element in a list\n";
+    std::cout << ExitOption << ". Exit\n";
     std::cout << "Your input: ";
 }
 
@@ -76,13 +78,13 @@ int main() {
     /// <summary>
     /// Главный цикл приложения
     /// </summary>
-    while (choice != EXIT_OPTION) {
+    while (choice != ExitOption) {
         printMenu(list);
         choice = GetValidatedInput("");
 
         // Обработка выбора пользователя
         switch (choice) {
-        case REMOVE_BY_INDEX_OPTION: {
+        case RemoveByIndexOption: {
             int index = GetValidatedInput("Enter index to remove: ");
             if (list.RemoveNodeByIndex(index)) {
                 std::cout << "Element removed successfully.\n";
@@ -92,7 +94,7 @@ int main() {
             }
             break;
         }
-        case REMOVE_BY_VALUE_OPTION: {
+        case RemoveByValueOption: {
             int value = GetValidatedInput("Enter value to remove: ");
             if (list.RemoveNodeByValue(value)) {
                 std::cout << "Element removed successfully.\n";
@@ -102,22 +104,22 @@ int main() {
             }
             break;
         }
-        case INSERT_AT_BEGINNING_OPTION: {
+        case InsertAtBeginningOption: {
             int value = GetValidatedInput("Enter value to insert at the beginning: ");
             list.AddToFront(new Node(value));
             std::cout << "Element added.\n";
             break;
         }
-        case INSERT_AT_END_OPTION: {
+        case InsertAtEndOption: {
             int value = GetValidatedInput("Enter value to insert at the end: ");
             list.AddToEnd(new Node(value));
             std::cout << "Element added.\n";
             break;
         }
-        case INSERT_AFTER_ELEMENT_OPTION: {
+        case InsertAfterIndexOption: {
             int newValue = GetValidatedInput("Enter value to insert: ");
-            int targetValue = GetValidatedInput("Enter value after which to insert: ");
-            if (list.InsertAfter(new Node(newValue), targetValue)) {
+            int targetIndex = GetValidatedInput("Enter index after which to insert: ");
+            if (list.InsertAfter(new Node(newValue), targetIndex)) {
                 std::cout << "Element inserted successfully.\n";
             }
             else {
@@ -125,10 +127,10 @@ int main() {
             }
             break;
         }
-        case INSERT_BEFORE_ELEMENT_OPTION: {
+        case InsertBeforeIndexOption: {
             int newValue = GetValidatedInput("Enter value to insert: ");
-            int targetValue = GetValidatedInput("Enter value before which to insert: ");
-            if (list.InsertBefore(new Node(newValue), targetValue)) {
+            int targetIndex = GetValidatedInput("Enter index before which to insert: ");
+            if (list.InsertBefore(new Node(newValue), targetIndex)) {
                 std::cout << "Element inserted successfully.\n";
             }
             else {
@@ -136,12 +138,12 @@ int main() {
             }
             break;
         }
-        case SORT_LIST_OPTION: {
+        case SortListOption: {
             list.Sort();
             std::cout << "List sorted successfully.\n";
             break;
         }
-        case LINEAR_SEARCH_OPTION: {
+        case LinearSearchOption: {
             int value = GetValidatedInput("Enter value to search for: ");
             Node* found = list.FindNodeByValue(value);
             if (found != nullptr) {
@@ -152,7 +154,7 @@ int main() {
             }
             break;
         }
-        case EXIT_OPTION: {
+        case ExitOption: {
             std::cout << "Exiting...\n";
             break;
         }
