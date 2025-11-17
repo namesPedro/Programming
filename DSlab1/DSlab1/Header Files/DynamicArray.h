@@ -82,7 +82,4 @@ public:
     //! \param afterValue Значение, после которого нужно вставить.
     //! \param value Значение для вставки.
     void InsertAfterElement(int afterValue, int value);
-
-    //! \brief Выводит массив в консоль.
-    void PrintArray();
 };

@@ -2,11 +2,49 @@
 #include <limits>
 #include "../Header Files/DynamicArray.h"
 
+// Константы для меню
+const int EXIT_OPTION = 0;
+const int REMOVE_BY_INDEX_OPTION = 1;
+const int REMOVE_BY_VALUE_OPTION = 2;
+const int INSERT_AT_BEGINNING_OPTION = 3;
+const int INSERT_AT_END_OPTION = 4;
+const int INSERT_AFTER_ELEMENT_OPTION = 5;
+const int SORT_ARRAY_OPTION = 6;
+const int LINEAR_SEARCH_OPTION = 7;
+const int BINARY_SEARCH_OPTION = 8;
+const int PRINT_ARRAY_OPTION = 9;
+
+/// <summary>
+/// Выводит содержимое динамического массива в консоль.
+/// Форматирует вывод с разделителями-запятыми между элементами.
+/// </summary>
+/// <param name="array">Ссылка на объект DynamicArray для вывода</param>
+void PrintArray(DynamicArray& array)
+{
+    if (array.GetSize() == 0) {
+        std::cout << "Array is empty" << std::endl;
+        return;
+    }
+
+    for (int i = 0; i < array.GetSize(); i++) {
+        std::cout << array.GetElement(i);
+        if (i < array.GetSize() - 1) {
+            std::cout << ", ";
+        }
+    }
+    std::cout << std::endl;
+}
+
+/// <summary>
+/// Отображает главное меню приложения с текущим состоянием массива.
+/// Показывает все доступные операции с динамическим массивом.
+/// </summary>
+/// <param name="array">Ссылка на объект DynamicArray для отображения текущего состояния</param>
 void DisplayMenu(DynamicArray& array)
 {
     std::cout << "Laboratory Work #1 - Dynamic Array" << std::endl;
     std::cout << "Current array: ";
-    array.PrintArray();
+    PrintArray(array);
     std::cout << std::endl;
 
     std::cout << "Select the action you want to do:" << std::endl;
@@ -23,6 +61,12 @@ void DisplayMenu(DynamicArray& array)
     std::cout << "Your input: ";
 }
 
+/// <summary>
+/// Получает и проверяет ввод пользователя на корректность.
+/// Защищает от некорректного ввода и очищает буфер ввода.
+/// </summary>
+/// <param name="prompt">Текст приглашения для ввода</param>
+/// <returns>Корректное целочисленное значение, введенное пользователем</returns>
 int GetValidatedInput(const std::string& prompt)
 {
     int value;
@@ -42,75 +86,81 @@ int GetValidatedInput(const std::string& prompt)
     }
 }
 
+/// <summary>
+/// Главная функция приложения.
+/// Реализует интерактивное меню для работы с динамическим массивом.
+/// Обрабатывает пользовательский ввод и выполняет соответствующие операции.
+/// </summary>
+/// <returns>Код завершения программы</returns>
 int main()
 {
-    // TODO: использовать указатель
-    DynamicArray array;
+    // TODO: использовать указатель *
+    std::unique_ptr<DynamicArray> array = std::make_unique<DynamicArray>();
     bool running = true;
 
-    array.InsertAtEnd(12);
-    array.InsertAtEnd(3);
-    array.InsertAtEnd(8);
-    array.InsertAtEnd(25);
+    // Инициализация массива тестовыми данными
+    array->InsertAtEnd(12);
+    array->InsertAtEnd(3);
+    array->InsertAtEnd(8);
+    array->InsertAtEnd(25);
 
-    // TODO: RSDN
+    // Главный цикл приложения
     while (running) {
-        DisplayMenu(array);
+        DisplayMenu(*array);
 
         int choice = GetValidatedInput("");
 
         try {
             switch (choice) {
-                // TODO: единообразно
-            case 0:
+            case EXIT_OPTION:
                 running = false;
                 std::cout << "Goodbye!" << std::endl;
                 break;
 
-            case 1: {
+            case REMOVE_BY_INDEX_OPTION: {
                 int index = GetValidatedInput("Enter index to remove: ");
-                array.RemoveByIndex(index);
+                array->RemoveByIndex(index);
                 std::cout << "Element removed successfully." << std::endl;
                 break;
             }
 
-            case 2: {
+            case REMOVE_BY_VALUE_OPTION: {
                 int value = GetValidatedInput("Enter value to remove: ");
-                array.RemoveByValue(value);
+                array->RemoveByValue(value);
                 std::cout << "Element removed successfully." << std::endl;
                 break;
             }
 
-            case 3: {
+            case INSERT_AT_BEGINNING_OPTION: {
                 int value = GetValidatedInput("Enter value to insert at beginning: ");
-                array.InsertAtBeginning(value);
+                array->InsertAtBeginning(value);
                 std::cout << "Element inserted successfully." << std::endl;
                 break;
             }
 
-            case 4: {
+            case INSERT_AT_END_OPTION: {
                 int value = GetValidatedInput("Enter value to insert at end: ");
-                array.InsertAtEnd(value);
+                array->InsertAtEnd(value);
                 std::cout << "Element inserted successfully." << std::endl;
                 break;
             }
 
-            case 5: {
+            case INSERT_AFTER_ELEMENT_OPTION: {
                 int afterValue = GetValidatedInput("Enter value after which to insert: ");
                 int value = GetValidatedInput("Enter value to insert: ");
-                array.InsertAfterElement(afterValue, value);
+                array->InsertAfterElement(afterValue, value);
                 std::cout << "Element inserted successfully." << std::endl;
                 break;
             }
 
-            case 6:
-                array.SortArray();
+            case SORT_ARRAY_OPTION:
+                array->SortArray();
                 std::cout << "Array sorted successfully." << std::endl;
                 break;
 
-            case 7: {
+            case LINEAR_SEARCH_OPTION: {
                 int value = GetValidatedInput("Enter value to search: ");
-                int index = array.LinearSearch(value);
+                int index = array->LinearSearch(value);
                 if (index != -1) {
                     std::cout << "Element found at index: " << index << std::endl;
                 }
@@ -120,9 +170,9 @@ int main()
                 break;
             }
 
-            case 8: {
+            case BINARY_SEARCH_OPTION: {
                 int value = GetValidatedInput("Enter value to search: ");
-                int index = array.BinarySearch(value);
+                int index = array->BinarySearch(value);
                 if (index != -1) {
                     std::cout << "Element found at index: " << index << std::endl;
                 }
@@ -132,9 +182,9 @@ int main()
                 break;
             }
 
-            case 9:
+            case PRINT_ARRAY_OPTION:
                 std::cout << "Current array: ";
-                array.PrintArray();
+                PrintArray(*array);
                 break;
 
             default:
