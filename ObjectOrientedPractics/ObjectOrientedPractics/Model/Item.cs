@@ -37,6 +37,7 @@ namespace ObjectOrientedPractics.Model
         /// </summary>
         public int Id => _id;
 
+
         /// <summary>
         /// Название товара (не более 200 символов)
         /// </summary>
@@ -84,17 +85,24 @@ namespace ObjectOrientedPractics.Model
         }
 
         /// <summary>
+        /// Категория товара.
+        /// </summary>
+        public Category Category { get; set; }
+
+        /// <summary>
         /// Инициализирует новый экземпляр класса Item
         /// </summary>
         /// <param name="name">Название товара</param>
         /// <param name="info">Описание товара</param>
         /// <param name="cost">Стоимость товара</param>
-        public Item(string name, string info, double cost)
+        /// <param name="category">Категория товара</param>
+        public Item(string name, string info, double cost, Category category)
         {
             _id = IdGenerator.GetNextId();
             Name = name;
             Info = info;
             Cost = cost;
+            Category = category;
         }
 
         /// <summary>

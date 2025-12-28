@@ -1,92 +1,80 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ObjectOrientedPractics.Services;
+﻿using ObjectOrientedPractics.Services;
+using System;
 
 namespace ObjectOrientedPractics.Model
 {
     /// <summary>
-    /// Представляет покупателя в системе
+    /// Представляет покупателя с уникальным идентификатором, полным именем и адресом.
     /// </summary>
     public class Customer
     {
-        /// <summary>
-        /// Уникальный идентификатор покупателя
-        /// </summary>
         private readonly int _id;
+        private string _fullName;
+        private Address _address;
 
         /// <summary>
-        /// Полное имя покупателя
-        /// </summary>
-        private string _fullname;
-
-        /// <summary>
-        /// Адрес доставки покупателя
-        /// </summary>
-        private string _address;
-
-        /// <summary>
-        /// Уникальный идентификатор покупателя
+        /// Уникальный идентификатор покупателя.
         /// </summary>
         public int Id => _id;
 
         /// <summary>
-        /// Полное имя покупателя (не более 200 символов)
+        /// Полное имя покупателя (до 200 символов).
         /// </summary>
-        /// <exception cref="ArgumentException">Выбрасывается когда имя пустое или превышает 200 символов</exception>
-        public string Fullname
+        public string FullName
         {
-            get => _fullname;
+            get => _fullName;
             private set
             {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Полное имя не может быть пустым");
-
-                ValueValidator.AssertStringOnLength(value, 200, nameof(Fullname));
-                _fullname = value;
+                ValueValidator.AssertStringOnLength(value, 200, nameof(FullName));
+                _fullName = value;
             }
         }
 
         /// <summary>
-        /// Адрес доставки покупателя (не более 500 символов)
+        /// Адрес доставки.
         /// </summary>
-        /// <exception cref="ArgumentException">Выбрасывается когда адрес пустой или превышает 500 символов</exception>
-        public string Address
+        public Address Address
         {
             get => _address;
             private set
             {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Адрес не может быть пустым");
-
-                ValueValidator.AssertStringOnLength(value, 500, nameof(Address));
-                _address = value;
+                _address = value ?? throw new ArgumentNullException(nameof(Address));
             }
         }
 
         /// <summary>
-        /// Инициализирует новый экземпляр класса Customer
+        /// Создает новый экземпляр класса Customer.
         /// </summary>
-        /// <param name="fullname">Полное имя покупателя</param>
-        /// <param name="address">Адрес доставки покупателя</param>
-        public Customer(string fullname, string address)
+        /// <param name="fullName">Полное имя покупателя.</param>
+        /// <param name="address">Адрес доставки.</param>
+        public Customer(string fullName, Address address)
         {
             _id = IdGenerator.GetNextId();
-            Fullname = fullname;
+            FullName = fullName;
             Address = address;
         }
 
         /// <summary>
-        /// Обновляет информацию о покупателе
+        /// Обновляет информацию о покупателе.
         /// </summary>
-        /// <param name="fullname">Новое полное имя покупателя</param>
-        /// <param name="address">Новый адрес доставки покупателя</param>
-        public void Update(string fullname, string address)
+        /// <param name="fullName">Новое полное имя.</param>
+        /// <param name="address">Новый адрес.</param>
+        public void Update(string fullName, Address address)
         {
-            Fullname = fullname;
-            Address = address;
+            FullName = fullName;
+
+            // ВАЖНО: вместо присваивания нового объекта, обновляем поля существующего
+            Address.Index = address.Index;
+            Address.Country = address.Country;
+            Address.City = address.City;
+            Address.Street = address.Street;
+            Address.Building = address.Building;
+            Address.Apartment = address.Apartment;
+        }
+
+        public override string ToString()
+        {
+            return FullName;
         }
     }
 }

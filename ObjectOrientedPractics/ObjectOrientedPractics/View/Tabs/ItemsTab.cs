@@ -28,12 +28,32 @@ namespace ObjectOrientedPractics.View.Tabs
         private Item _selectedItem;
 
         /// <summary>
+        /// Список товаров для отображения и редактирования.
+        /// </summary>
+        public List<Item> Items
+        {
+            get => _items;
+            set
+            {
+                _items = value ?? new List<Item>();
+                RefreshListBox();
+            }
+        }
+
+        /// <summary>
         /// Инициализирует новый экземпляр класса ItemsTab.
         /// </summary>
         public ItemsTab()
         {
             InitializeComponent();
             InitializeListBox();
+            InitializeCategoryComboBox();
+        }
+
+        private void InitializeCategoryComboBox()
+        {
+            // Заполняем ComboBox значениями перечисления
+            selectedItemCategoryComboBox.DataSource = Enum.GetValues(typeof(Category));
         }
 
         /// <summary>
@@ -89,6 +109,7 @@ namespace ObjectOrientedPractics.View.Tabs
                 selectedItemNameTextBox.Text = _selectedItem.Name;
                 selectedItemDescriptionTextBox.Text = _selectedItem.Info;
                 selectedItemCostTextBox.Text = _selectedItem.Cost.ToString();
+                selectedItemCategoryComboBox.SelectedItem = _selectedItem.Category;
             }
             else
             {
@@ -105,6 +126,15 @@ namespace ObjectOrientedPractics.View.Tabs
             selectedItemNameTextBox.Text = string.Empty;
             selectedItemDescriptionTextBox.Text = string.Empty;
             selectedItemCostTextBox.Text = string.Empty;
+            selectedItemCategoryComboBox.SelectedIndex = -1;
+        }
+
+        private void selectedItemCategoryComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_selectedItem != null && selectedItemCategoryComboBox.SelectedItem != null)
+            {
+                _selectedItem.Category = (Category)selectedItemCategoryComboBox.SelectedItem;
+            }
         }
 
         /// <summary>
@@ -112,7 +142,7 @@ namespace ObjectOrientedPractics.View.Tabs
         /// </summary>
         private void itemsAddButton_Click(object sender, EventArgs e)
         {
-            var newItem = new Item("New Name", "New Description", 0.0);
+            var newItem = new Item("New Name", "New Description", 0.0, Category.Electronics);
             _items.Add(newItem);
             RefreshListBox();
 

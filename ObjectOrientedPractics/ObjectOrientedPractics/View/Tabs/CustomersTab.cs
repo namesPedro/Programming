@@ -8,37 +8,73 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ObjectOrientedPractics.Model;
+using ObjectOrientedPractics.View.Controls;
 
 namespace ObjectOrientedPractics.View.Tabs
 {
-    /// <summary>
-    /// Представляет вкладку для управления списком покупателей.
-    /// Обеспечивает функциональность добавления, удаления и редактирования покупателей.
-    /// </summary>
     public partial class CustomersTab : UserControl
     {
-        /// <summary>
-        /// Список покупателей.
-        /// </summary>
         private List<Customer> _customers = new List<Customer>();
-
-        /// <summary>
-        /// Текущий выбранный покупатель.
-        /// </summary>
         private Customer _selectedCustomer;
+        private bool _updatingFields = false;
 
-        /// <summary>
-        /// Инициализирует новый экземпляр класса CustomersTab.
-        /// </summary>
+        public List<Customer> Customers
+        {
+            get => _customers;
+            set
+            {
+                _customers = value ?? new List<Customer>();
+                RefreshListBox();
+            }
+        }
+
         public CustomersTab()
         {
             InitializeComponent();
             InitializeListBox();
+
+            // ПОДПИСЫВАЕМСЯ НА СОБЫТИЕ ИЗМЕНЕНИЯ АДРЕСА
+            addressControl1.AddressChanged += AddressControl1_AddressChanged;
         }
 
         /// <summary>
-        /// Инициализирует ListBox для отображения покупателей.
+        /// Обрабатывает изменение адреса в AddressControl.
         /// </summary>
+        private void AddressControl1_AddressChanged(object sender, EventArgs e)
+        {
+            UpdateCustomerAddress();
+        }
+
+        /// <summary>
+        /// Обновляет адрес покупателя.
+        /// </summary>
+        private void UpdateCustomerAddress()
+        {
+            if (_selectedCustomer != null && !_updatingFields)
+            {
+                try
+                {
+                    Console.WriteLine("=== SAVING ADDRESS CHANGES ===");
+
+                    // Просто вызываем Update - теперь он обновляет поля существующего объекта
+                    _selectedCustomer.Update(
+                        _selectedCustomer.FullName,
+                        addressControl1.Address
+                    );
+
+                    Console.WriteLine($"Address after update: {_selectedCustomer.Address}");
+                    Console.WriteLine("=== ADDRESS SAVED ===");
+
+                    RefreshListBox();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка адреса: {ex.Message}", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
+
         private void InitializeListBox()
         {
             customersListBox.DisplayMember = "FullName";
@@ -46,10 +82,6 @@ namespace ObjectOrientedPractics.View.Tabs
             RefreshListBox();
         }
 
-        /// <summary>
-        /// Обновляет данные в ListBox.
-        /// Сохраняет выбранный элемент после обновления.
-        /// </summary>
         private void RefreshListBox()
         {
             int selectedIndex = customersListBox.SelectedIndex;
@@ -65,61 +97,46 @@ namespace ObjectOrientedPractics.View.Tabs
                 return;
             }
 
-            if (selectedIndex >= _customers.Count)
+            if (selectedIndex >= 0 && selectedIndex < _customers.Count)
             {
-                selectedIndex = _customers.Count - 1;
+                customersListBox.SelectedIndex = selectedIndex;
             }
-
-            if (selectedIndex < 0)
-            {
-                selectedIndex = 0;
-            }
-
-            customersListBox.SelectedIndex = selectedIndex;
         }
 
-        /// <summary>
-        /// Обновляет поля ввода данными выбранного покупателя.
-        /// </summary>
         private void UpdateSelectedCustomerFields()
         {
+            _updatingFields = true;
+
             if (_selectedCustomer != null)
             {
                 selectedCustomerIdTextBox.Text = _selectedCustomer.Id.ToString();
-                selectedCustomerFullNameTextBox.Text = _selectedCustomer.Fullname;
-                selectedCustomerAddressTextBox.Text = _selectedCustomer.Address;
+                selectedCustomerFullNameTextBox.Text = _selectedCustomer.FullName;
+                addressControl1.Address = _selectedCustomer.Address;
             }
             else
             {
                 ClearInputFields();
             }
+
+            _updatingFields = false;
         }
 
-        /// <summary>
-        /// Очищает поля ввода.
-        /// </summary>
         private void ClearInputFields()
         {
             selectedCustomerIdTextBox.Text = string.Empty;
             selectedCustomerFullNameTextBox.Text = string.Empty;
-            selectedCustomerAddressTextBox.Text = string.Empty;
+            addressControl1.Address = new Address();
         }
 
-        /// <summary>
-        /// Обрабатывает событие нажатия кнопки добавления покупателя.
-        /// </summary>
         private void customersAddButton_Click(object sender, EventArgs e)
         {
-            var newCustomer = new Customer("New Customer", "New Address");
+            var address = new Address();
+            var newCustomer = new Customer("New Customer", address);
             _customers.Add(newCustomer);
             RefreshListBox();
-
             customersListBox.SelectedItem = newCustomer;
         }
 
-        /// <summary>
-        /// Обрабатывает событие нажатия кнопки удаления покупателя.
-        /// </summary>
         private void customersRemoveButton_Click(object sender, EventArgs e)
         {
             if (_selectedCustomer != null)
@@ -131,28 +148,26 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        /// <summary>
-        /// Обрабатывает событие изменения выбранного элемента в ListBox.
-        /// </summary>
         private void customersListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedCustomer = customersListBox.SelectedItem as Customer;
             UpdateSelectedCustomerFields();
         }
 
-        /// <summary>
-        /// Обрабатывает событие изменения текста в поле полного имени покупателя.
-        /// Обновляет данные покупателя и валидирует ввод.
-        /// </summary>
         private void selectedCustomerFullNameTextBox_Leave(object sender, EventArgs e)
+        {
+            UpdateCustomerName();
+        }
+
+        private void UpdateCustomerName()
         {
             if (_selectedCustomer == null) return;
 
             try
             {
                 _selectedCustomer.Update(
-                selectedCustomerFullNameTextBox.Text,
-                _selectedCustomer.Address
+                    selectedCustomerFullNameTextBox.Text,
+                    _selectedCustomer.Address
                 );
 
                 RefreshListBox();
@@ -161,28 +176,6 @@ namespace ObjectOrientedPractics.View.Tabs
             catch
             {
                 selectedCustomerFullNameTextBox.BackColor = Color.LightPink;
-            }
-        }
-
-        /// <summary>
-        /// Обрабатывает событие изменения текста в поле адреса покупателя.
-        /// Обновляет данные покупателя и валидирует ввод.
-        /// </summary>
-        private void selectedCustomerAddressTextBox_Leave(object sender, EventArgs e)
-        {
-            if (_selectedCustomer == null) return;
-
-            try
-            {
-                _selectedCustomer.Update(
-                    _selectedCustomer.Fullname,
-                    selectedCustomerAddressTextBox.Text
-                );
-                selectedCustomerAddressTextBox.BackColor = SystemColors.Window;
-            }
-            catch
-            {
-                selectedCustomerAddressTextBox.BackColor = Color.LightPink;
             }
         }
     }

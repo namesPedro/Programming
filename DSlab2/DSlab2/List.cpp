@@ -1,7 +1,6 @@
 #include "List.h"
 #include <iostream>
 
-// Константы для лучшей читаемости
 const int InvalidIndex = -1;
 const int EmptyListSize = 0;
 
@@ -35,7 +34,7 @@ void List::AddToFront(Node* node) {
     }
     _head = node;
 
-    if (_tail == nullptr) { // Если список был пуст
+    if (_tail == nullptr) {
         _tail = node;
     }
     _size++;
@@ -56,7 +55,7 @@ void List::AddToEnd(Node* node) {
     }
     _tail = node;
 
-    if (_head == nullptr) { // Если список был пуст
+    if (_head == nullptr) {
         _head = node;
     }
     _size++;
@@ -103,10 +102,10 @@ bool List::AddNode(Node* node, int index) {
 /// <param name="node">Указатель на узел для вставки</param>
 /// <param name="value">Значение узла, после которого нужно вставить</param>
 /// <returns>true если узел успешно вставлен, false если целевой узел не найден</returns>
-bool List::InsertAfter(Node* node, int value) {
-    if (node == nullptr) return false; // Добавляем проверку
+bool List::InsertAfter(int index, Node* node) {
+    if (node == nullptr) return false;
 
-    Node* target = GetNodeByIndex(value);
+    Node* target = GetNodeByIndex(index);
     if (target == nullptr) return false;
 
     Node* nextNode = target->GetNextNode();
@@ -119,7 +118,6 @@ bool List::InsertAfter(Node* node, int value) {
         nextNode->SetPreviousNode(node);
     }
     else {
-        // Если вставляем после хвоста, обновляем хвост
         _tail = node;
     }
     _size++;
@@ -132,19 +130,17 @@ bool List::InsertAfter(Node* node, int value) {
 /// <param name="node">Указатель на узел для вставки</param>
 /// <param name="value">Значение узла, перед которым нужно вставить</param>
 /// <returns>true если узел успешно вставлен, false если целевой узел не найден</returns>
-bool List::InsertBefore(Node* node, int value) {
+bool List::InsertBefore(int index, Node* node) {
     if (node == nullptr) return false;
 
-    Node* target = GetNodeByIndex(value);
+    Node* target = GetNodeByIndex(index);
     if (target == nullptr) return false;
 
-    // Если целевой узел - голова списка
     if (target == _head) {
         AddToFront(node);
         return true;
     }
 
-    // Вставка перед целевым узлом
     Node* prevNode = target->GetPreviousNode();
 
     node->SetNextNode(target);
@@ -177,14 +173,14 @@ bool List::RemoveNodeByIndex(int index) {
         prevNode->SetNextNode(nextNode);
     }
     else {
-        _head = nextNode; // Удаляем голову
+        _head = nextNode;
     }
 
     if (nextNode != nullptr) {
         nextNode->SetPreviousNode(prevNode);
     }
     else {
-        _tail = prevNode; // Удаляем хвост
+        _tail = prevNode;
     }
 
     delete nodeToDelete;
@@ -201,8 +197,6 @@ bool List::RemoveNodeByValue(int value) {
     Node* nodeToDelete = FindNodeByValue(value);
     if (nodeToDelete == nullptr) return false;
 
-    // Найдем его индекс для использования существующей логики удаления
-    // (Это не оптимально O(n) повторно, но переиспользует код. Можно оптимизировать.)
     int index = 0;
     Node* current = _head;
     while (current != nullptr && current != nodeToDelete) {
@@ -210,10 +204,7 @@ bool List::RemoveNodeByValue(int value) {
         index++;
     }
 
-    if (current == nodeToDelete) {
-        return RemoveNodeByIndex(index);
-    }
-    return false;
+    return RemoveNodeByIndex(index);
 }
 
 /// <summary>
@@ -272,7 +263,7 @@ void List::Print() const {
 /// Сортирует список по возрастанию методом пузырька.
 /// </summary>
 void List::Sort() {
-    if (_size <= 1) return; // Нечего сортировать
+    if (_size <= 1) return;
 
     bool swapped;
     do {

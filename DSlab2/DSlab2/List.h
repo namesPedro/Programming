@@ -65,13 +65,13 @@ public:
     //! \param node Указатель на новый узел.
     //! \param value Значение, после которого нужно вставить.
     //! \return Возвращает true, если узел с значением найден и вставка произведена.
-    bool InsertAfter(Node* node, int value);
+    bool InsertAfter(int index, Node* node);
 
     //! \brief Вставляет новый узел ПЕРЕД узлом с указанным значением.
     //! \param node Указатель на новый узел.
     //! \param value Значение, перед которым нужно вставить.
     //! \return Возвращает true, если узел с значением найден и вставка произведена.
-    bool InsertBefore(Node* node, int value);
+    bool InsertBefore(int index, Node* node);
 
     //! \brief Удаляет узел по индексу.
     //! \param index Индекс узла.

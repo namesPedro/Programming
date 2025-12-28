@@ -1,7 +1,86 @@
 #include <iostream>
 #include <limits>
-#include "List.h"
+#include <vector>
+#include <fstream>
+#include <chrono>
+#include <filesystem>
 
+#include "Node.h"
+#include "List.h" 
+#include "DynamicArray.h"
+#include "PerformanceTester.h"
+
+/// <summary>
+/// Сохраняет результаты измерений в текстовый файл в подкаталоге Measures.
+/// </summary>
+/// <param name="results">Вектор результатов измерений</param>
+/// <param name="filename">Имя выходного TXT файла</param>
+void SaveToTXT(MeasureResult* results, int count, const std::string& filename) {
+    std::ofstream file("Measures/" + filename);
+    if (!file.is_open()) {
+        std::cout << "Error: Could not open file " << filename << std::endl;
+        return;
+    }
+
+    for (int i = 0; i < count; i++) {
+        file << results[i].size << " "
+            << results[i].listTime << " "
+            << results[i].arrayTime << "\n";
+    }
+
+    file.close();
+    std::cout << "Saved to Measures/" << filename << std::endl;
+}
+
+
+/// <summary>
+/// Запускает сравнительное тестирование производительности для двух структур данных.
+/// Тестируются только основные операции вставки и удаления из разных позиций.
+/// Результаты сохраняются в TXT файлы в подкаталоге Measures для последующего построения графиков.
+/// </summary>
+void RunPerformanceTests() {
+    std::cout << "=== PERFORMANCE TESTING STARTED ===" << std::endl;
+
+    // Статический массив размеров (как теперь требуется)
+    const int sizes[] = { 100, 500, 1000, 2000, 5000, 10000 };
+    const int sizeCount = sizeof(sizes) / sizeof(sizes[0]);
+
+    // Временный буфер для результатов
+    MeasureResult results[16];
+
+    // ---- Insert At Beginning ----
+    std::cout << "\n=== Testing Insert At Beginning ===" << std::endl;
+    int n1 = PerformanceTester::MeasureInsertAtBeginning(sizes, sizeCount, results);
+    SaveToTXT(results, n1, "InsertAtBeginning.txt");
+
+    // ---- Insert At End ----
+    std::cout << "\n=== Testing Insert At End ===" << std::endl;
+    int n2 = PerformanceTester::MeasureInsertAtEnd(sizes, sizeCount, results);
+    SaveToTXT(results, n2, "InsertAtEnd.txt");
+
+    // ---- Insert At Middle ----
+    std::cout << "\n=== Testing Insert At Middle ===" << std::endl;
+    int n3 = PerformanceTester::MeasureInsertAtMiddle(sizes, sizeCount, results);
+    SaveToTXT(results, n3, "InsertAtMiddle.txt");
+
+    // ---- Remove From Beginning ----
+    std::cout << "\n=== Testing Remove From Beginning ===" << std::endl;
+    int n4 = PerformanceTester::MeasureRemoveFromBeginning(sizes, sizeCount, results);
+    SaveToTXT(results, n4, "RemoveFromBeginning.txt");
+
+    // ---- Remove From End ----
+    std::cout << "\n=== Testing Remove From End ===" << std::endl;
+    int n5 = PerformanceTester::MeasureRemoveFromEnd(sizes, sizeCount, results);
+    SaveToTXT(results, n5, "RemoveFromEnd.txt");
+
+    // ---- Remove From Middle ----
+    std::cout << "\n=== Testing Remove From Middle ===" << std::endl;
+    int n6 = PerformanceTester::MeasureRemoveFromMiddle(sizes, sizeCount, results);
+    SaveToTXT(results, n6, "RemoveFromMiddle.txt");
+
+    std::cout << "\n=== PERFORMANCE TESTING COMPLETED ===" << std::endl;
+    std::cout << "TXT files created in Measures folder." << std::endl;
+}
 
 
 // Константы для меню
@@ -14,9 +93,10 @@ const int InsertAfterIndexOption = 5;
 const int InsertBeforeIndexOption = 6;
 const int SortListOption = 7;
 const int LinearSearchOption = 8;
+const int RunPerformanceTestsOption = 10;
 
 /// <summary>
-/// Получает валидный числовой ввод от пользователя
+/// Получает валидный числовой ввод от пользователя.
 /// </summary>
 /// <param name="prompt">Сообщение для пользователя</param>
 /// <returns>Введенное число</returns>
@@ -55,6 +135,7 @@ void printMenu(const List& list) {
     std::cout << InsertBeforeIndexOption << ". Insert before a certain index\n";
     std::cout << SortListOption << ". Sort list\n";
     std::cout << LinearSearchOption << ". Linear search for an element in a list\n";
+    std::cout << RunPerformanceTestsOption << ". Run performance tests (for report)\n";
     std::cout << ExitOption << ". Exit\n";
     std::cout << "Your input: ";
 }
@@ -69,7 +150,6 @@ int main() {
     List list;
     int choice = 0;
 
-    // Начальное заполнение списка для примера
     list.AddToEnd(new Node(55));
     list.AddToEnd(new Node(7));
     list.AddToEnd(new Node(1));
@@ -82,7 +162,6 @@ int main() {
         printMenu(list);
         choice = GetValidatedInput("");
 
-        // Обработка выбора пользователя
         switch (choice) {
         case RemoveByIndexOption: {
             int index = GetValidatedInput("Enter index to remove: ");
@@ -119,22 +198,22 @@ int main() {
         case InsertAfterIndexOption: {
             int newValue = GetValidatedInput("Enter value to insert: ");
             int targetIndex = GetValidatedInput("Enter index after which to insert: ");
-            if (list.InsertAfter(new Node(newValue), targetIndex)) {
+            if (list.InsertAfter(targetIndex, new Node(newValue))) {
                 std::cout << "Element inserted successfully.\n";
             }
             else {
-                std::cout << "Target value not found.\n";
+                std::cout << "Invalid index.\n";
             }
             break;
         }
         case InsertBeforeIndexOption: {
             int newValue = GetValidatedInput("Enter value to insert: ");
             int targetIndex = GetValidatedInput("Enter index before which to insert: ");
-            if (list.InsertBefore(new Node(newValue), targetIndex)) {
+            if (list.InsertBefore(targetIndex, new Node(newValue))) {
                 std::cout << "Element inserted successfully.\n";
             }
             else {
-                std::cout << "Target value not found.\n";
+                std::cout << "Invalid index.\n";
             }
             break;
         }
@@ -152,6 +231,11 @@ int main() {
             else {
                 std::cout << "Value " << value << " not found.\n";
             }
+            break;
+        }
+        case RunPerformanceTestsOption:
+        {
+            RunPerformanceTests();
             break;
         }
         case ExitOption: {
