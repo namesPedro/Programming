@@ -56,11 +56,14 @@ namespace ObjectOrientedPractics.View.Tabs
                 {
                     Console.WriteLine("=== SAVING ADDRESS CHANGES ===");
 
-                    // Просто вызываем Update - теперь он обновляет поля существующего объекта
+                    // Вариант 1: Используем метод Update (рекомендуется)
                     _selectedCustomer.Update(
-                        _selectedCustomer.FullName,
-                        addressControl1.Address
+                        _selectedCustomer.FullName,  // Имя не меняем
+                        addressControl1.Address      // Новый адрес
                     );
+
+                    // ИЛИ Вариант 2: Просто присваиваем свойство (еще проще)
+                    // _selectedCustomer.Address = addressControl1.Address;
 
                     Console.WriteLine($"Address after update: {_selectedCustomer.Address}");
                     Console.WriteLine("=== ADDRESS SAVED ===");
@@ -159,16 +162,17 @@ namespace ObjectOrientedPractics.View.Tabs
             UpdateCustomerName();
         }
 
+        /// <summary>
+        /// Обновляет имя покупателя.
+        /// </summary>
         private void UpdateCustomerName()
         {
             if (_selectedCustomer == null) return;
 
             try
             {
-                _selectedCustomer.Update(
-                    selectedCustomerFullNameTextBox.Text,
-                    _selectedCustomer.Address
-                );
+                // Просто присваиваем свойство - валидация произойдет в сеттере
+                _selectedCustomer.FullName = selectedCustomerFullNameTextBox.Text;
 
                 RefreshListBox();
                 selectedCustomerFullNameTextBox.BackColor = SystemColors.Window;

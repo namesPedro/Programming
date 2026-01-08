@@ -1,16 +1,20 @@
 ﻿using ObjectOrientedPractics.Services;
 using System;
+using System.Collections.Generic;
 
 namespace ObjectOrientedPractics.Model
 {
     /// <summary>
     /// Представляет покупателя с уникальным идентификатором, полным именем и адресом.
     /// </summary>
+    [Serializable]
     public class Customer
     {
         private readonly int _id;
         private string _fullName;
         private Address _address;
+        private Cart _cart;
+        private List<Order> _orders;
 
         /// <summary>
         /// Уникальный идентификатор покупателя.
@@ -23,7 +27,7 @@ namespace ObjectOrientedPractics.Model
         public string FullName
         {
             get => _fullName;
-            private set
+            set
             {
                 ValueValidator.AssertStringOnLength(value, 200, nameof(FullName));
                 _fullName = value;
@@ -36,10 +40,28 @@ namespace ObjectOrientedPractics.Model
         public Address Address
         {
             get => _address;
-            private set
+            set
             {
                 _address = value ?? throw new ArgumentNullException(nameof(Address));
             }
+        }
+
+        /// <summary>
+        /// Корзина покупателя.
+        /// </summary>
+        public Cart Cart
+        {
+            get => _cart;
+            set => _cart = value;
+        }
+
+        /// <summary>
+        /// Список заказов покупателя.
+        /// </summary>
+        public List<Order> Orders
+        {
+            get => _orders;
+            set => _orders = value ?? new List<Order>();
         }
 
         /// <summary>
@@ -52,6 +74,8 @@ namespace ObjectOrientedPractics.Model
             _id = IdGenerator.GetNextId();
             FullName = fullName;
             Address = address;
+            Cart = new Cart();
+            Orders = new List<Order>();
         }
 
         /// <summary>
@@ -62,14 +86,7 @@ namespace ObjectOrientedPractics.Model
         public void Update(string fullName, Address address)
         {
             FullName = fullName;
-
-            // ВАЖНО: вместо присваивания нового объекта, обновляем поля существующего
-            Address.Index = address.Index;
-            Address.Country = address.Country;
-            Address.City = address.City;
-            Address.Street = address.Street;
-            Address.Building = address.Building;
-            Address.Apartment = address.Apartment;
+            Address = address;
         }
 
         public override string ToString()

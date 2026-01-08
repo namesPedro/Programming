@@ -10,6 +10,7 @@ namespace ObjectOrientedPractics.Model
     /// <summary>
     /// Представляет товар в системе
     /// </summary>
+    [Serializable]
     public class Item
     {
         /// <summary>

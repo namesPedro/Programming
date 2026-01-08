@@ -32,24 +32,18 @@ namespace ObjectOrientedPractics.View.Controls
             InitializeComponent();
             _address = new Address();
 
-            // ПОДПИСЫВАЕМСЯ НА СОБЫТИЯ ПОТЕРИ ФОКУСА ДЛЯ КАЖДОГО ПОЛЯ
-            postIndexTextBox.Leave += TextBox_Leave;
-            countryTextBox.Leave += TextBox_Leave;
-            cityTextBox.Leave += TextBox_Leave;
-            streetTextBox.Leave += TextBox_Leave;
-            buildingTextBox.Leave += TextBox_Leave;
-            apartmentTextBox.Leave += TextBox_Leave;
+            // Подписываемся на события потери фокуса для КАЖДОГО поля отдельно
+            postIndexTextBox.Leave += PostIndexTextBox_Leave;
+            countryTextBox.Leave += CountryTextBox_Leave;
+            cityTextBox.Leave += CityTextBox_Leave;
+            streetTextBox.Leave += StreetTextBox_Leave;
+            buildingTextBox.Leave += BuildingTextBox_Leave;
+            apartmentTextBox.Leave += ApartmentTextBox_Leave;
         }
 
         /// <summary>
-        /// Обрабатывает потерю фокуса любым TextBox.
+        /// Обновляет поля из объекта адреса.
         /// </summary>
-        private void TextBox_Leave(object sender, EventArgs e)
-        {
-            // Вызываем событие при потере фокуса любым полем адреса
-            AddressChanged?.Invoke(this, EventArgs.Empty);
-        }
-
         private void UpdateFields()
         {
             if (_address != null)
@@ -63,10 +57,14 @@ namespace ObjectOrientedPractics.View.Controls
             }
         }
 
+        /// <summary>
+        /// Обновляет объект адреса из полей ввода.
+        /// </summary>
         private void UpdateAddress()
         {
             if (_address != null)
             {
+                // Обновляем индекс
                 try
                 {
                     _address.Index = postIndexTextBox.Text;
@@ -77,6 +75,7 @@ namespace ObjectOrientedPractics.View.Controls
                     postIndexTextBox.BackColor = Color.LightPink;
                 }
 
+                // Обновляем страну
                 try
                 {
                     _address.Country = countryTextBox.Text;
@@ -87,6 +86,7 @@ namespace ObjectOrientedPractics.View.Controls
                     countryTextBox.BackColor = Color.LightPink;
                 }
 
+                // Обновляем город
                 try
                 {
                     _address.City = cityTextBox.Text;
@@ -97,6 +97,7 @@ namespace ObjectOrientedPractics.View.Controls
                     cityTextBox.BackColor = Color.LightPink;
                 }
 
+                // Обновляем улицу
                 try
                 {
                     _address.Street = streetTextBox.Text;
@@ -107,6 +108,7 @@ namespace ObjectOrientedPractics.View.Controls
                     streetTextBox.BackColor = Color.LightPink;
                 }
 
+                // Обновляем здание
                 try
                 {
                     _address.Building = buildingTextBox.Text;
@@ -117,6 +119,7 @@ namespace ObjectOrientedPractics.View.Controls
                     buildingTextBox.BackColor = Color.LightPink;
                 }
 
+                // Обновляем квартиру
                 try
                 {
                     _address.Apartment = apartmentTextBox.Text;
@@ -126,36 +129,56 @@ namespace ObjectOrientedPractics.View.Controls
                 {
                     apartmentTextBox.BackColor = Color.LightPink;
                 }
+
+                // Оповещаем об изменении адреса
+                AddressChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        // Обработчики изменений текста
-        private void postIndexTextBox_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Обработчик выхода из поля индекса.
+        /// </summary>
+        private void PostIndexTextBox_Leave(object sender, EventArgs e)
         {
             UpdateAddress();
         }
 
-        private void countryTextBox_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Обработчик выхода из поля страны.
+        /// </summary>
+        private void CountryTextBox_Leave(object sender, EventArgs e)
         {
             UpdateAddress();
         }
 
-        private void cityTextBox_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Обработчик выхода из поля города.
+        /// </summary>
+        private void CityTextBox_Leave(object sender, EventArgs e)
         {
             UpdateAddress();
         }
 
-        private void streetTextBox_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Обработчик выхода из поля улицы.
+        /// </summary>
+        private void StreetTextBox_Leave(object sender, EventArgs e)
         {
             UpdateAddress();
         }
 
-        private void buildingTextBox_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Обработчик выхода из поля здания.
+        /// </summary>
+        private void BuildingTextBox_Leave(object sender, EventArgs e)
         {
             UpdateAddress();
         }
 
-        private void apartmentTextBox_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Обработчик выхода из поля квартиры.
+        /// </summary>
+        private void ApartmentTextBox_Leave(object sender, EventArgs e)
         {
             UpdateAddress();
         }

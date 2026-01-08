@@ -6,6 +6,7 @@ namespace ObjectOrientedPractics.Model
     /// <summary>
     /// Представляет адрес доставки.
     /// </summary>
+    [Serializable]
     public class Address
     {
         private string _index;

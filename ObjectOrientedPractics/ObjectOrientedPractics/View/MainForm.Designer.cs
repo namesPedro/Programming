@@ -64,6 +64,7 @@
             // itemsTab1
             // 
             this.itemsTab1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.itemsTab1.Items = ((System.Collections.Generic.List<ObjectOrientedPractics.Model.Item>)(resources.GetObject("itemsTab1.Items")));
             this.itemsTab1.Location = new System.Drawing.Point(3, 3);
             this.itemsTab1.MinimumSize = new System.Drawing.Size(900, 630);
             this.itemsTab1.Name = "itemsTab1";
@@ -83,6 +84,7 @@
             // 
             // customersTab1
             // 
+            this.customersTab1.Customers = ((System.Collections.Generic.List<ObjectOrientedPractics.Model.Customer>)(resources.GetObject("customersTab1.Customers")));
             this.customersTab1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.customersTab1.Location = new System.Drawing.Point(3, 3);
             this.customersTab1.MinimumSize = new System.Drawing.Size(950, 630);
