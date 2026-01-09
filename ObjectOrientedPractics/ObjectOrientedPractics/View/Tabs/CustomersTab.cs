@@ -115,10 +115,14 @@ namespace ObjectOrientedPractics.View.Tabs
                 selectedCustomerIdTextBox.Text = _selectedCustomer.Id.ToString();
                 selectedCustomerFullNameTextBox.Text = _selectedCustomer.FullName;
                 addressControl1.Address = _selectedCustomer.Address;
+
+                // ⬇️ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: синхронизация флажка с данными
+                isPriorityCheckBox.Checked = _selectedCustomer.IsPriority;
             }
             else
             {
                 ClearInputFields();
+                isPriorityCheckBox.Checked = false; // на всякий случай
             }
 
             _updatingFields = false;
@@ -180,6 +184,14 @@ namespace ObjectOrientedPractics.View.Tabs
             catch
             {
                 selectedCustomerFullNameTextBox.BackColor = Color.LightPink;
+            }
+        }
+
+        private void isPriorityCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_selectedCustomer != null)
+            {
+                _selectedCustomer.IsPriority = isPriorityCheckBox.Checked;
             }
         }
     }

@@ -11,7 +11,11 @@ namespace ObjectOrientedPractics.View.Tabs
     {
         private List<Customer> _customers = new List<Customer>();
         private Order _selectedOrder;
+        private PriorityOrder _selectedPriorityOrder;
 
+        /// <summary>
+        /// Список покупателей.
+        /// </summary>
         public List<Customer> Customers
         {
             get => _customers;
@@ -32,10 +36,25 @@ namespace ObjectOrientedPractics.View.Tabs
             // Заполнение ComboBox статусами
             statusComboBox.DataSource = Enum.GetValues(typeof(OrderStatus));
 
-            // Отключение редактирования адреса и других полей
+            // Отключение редактирования
             addressControl1.Enabled = false;
             createdTextBox.ReadOnly = true;
             idTextBox.ReadOnly = true;
+
+            orderItemsListBox.DataSource = null;
+            orderItemsListBox.DisplayMember = "Name";
+
+            var timeSlots = new[]
+            {
+                "9:00 – 11:00",
+                "11:00 – 13:00",
+                "13:00 – 15:00",
+                "15:00 – 17:00",
+                "17:00 – 19:00",
+                "19:00 – 21:00"
+            };
+
+            deliveryTimeComboBox.Items.AddRange(timeSlots);
         }
 
         private void ConfigureDataGridView()
@@ -64,21 +83,27 @@ namespace ObjectOrientedPractics.View.Tabs
             // ID - фиксированная ширина
             idColumn.Width = 60;
             idColumn.ReadOnly = true;
+            idColumn.DataPropertyName = "Id";
 
             // Дата создания - фиксированная ширина
             createdColumn.Width = 120;
             createdColumn.ReadOnly = true;
+            createdColumn.DataPropertyName = "Created";
 
             // Статус - средняя ширина
             orderStatusColumn.Width = 120;
             orderStatusColumn.ReadOnly = true;
+            orderStatusColumn.DataPropertyName = "OrderStatus";
 
             // ФИО покупателя - занимает всё оставшееся место
             customerFullNameColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             customerFullNameColumn.ReadOnly = true;
+            customerFullNameColumn.DataPropertyName = "CustomerFullName";
         }
 
-        // 1. Обновление списка заказов в DataGridView
+        /// <summary>
+        /// Обновление списка заказов в DataGridView
+        /// </summary>
         private void UpdateOrdersList()
         {
             // Очищаем текущий источник данных
@@ -117,42 +142,53 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        // 2. Получение покупателя по заказу
-        private Customer GetCustomerByOrder(Order order)
-        {
-            return _customers.FirstOrDefault(c =>
-                c.Orders != null && c.Orders.Contains(order));
-        }
-
-        // 3. Обновление деталей выбранного заказа
+        /// <summary>
+        /// Обновление деталей выбранного заказа
+        /// </summary>
         private void UpdateOrderDetails()
         {
             if (_selectedOrder != null)
             {
-                // Основная информация
                 idTextBox.Text = _selectedOrder.Id.ToString();
                 createdTextBox.Text = _selectedOrder.Date.ToString("dd.MM.yyyy HH:mm");
 
-                // Статус
+                statusComboBox.SelectedIndexChanged -= statusComboBox_SelectedIndexChanged;
                 statusComboBox.SelectedItem = _selectedOrder.Status;
+                statusComboBox.SelectedIndexChanged += statusComboBox_SelectedIndexChanged;
 
-                // Адрес
-                addressControl1.Address = _selectedOrder.Address;
-
-                // Сумма заказа
+                addressControl1.Address = _selectedOrder.Address ?? new Address();
                 amountLabel.Text = _selectedOrder.Amount.ToString("F2");
 
-                // Товары в заказе
                 orderItemsListBox.DataSource = null;
-                if (_selectedOrder.Items != null && _selectedOrder.Items.Count > 0)
+                orderItemsListBox.DisplayMember = "Name";
+                orderItemsListBox.DataSource = _selectedOrder.Items?.ToList() ?? new List<Item>();
+
+                // === НОВОЕ: обработка PriorityOrder ===
+                if (_selectedOrder is PriorityOrder priorityOrder)
                 {
-                    orderItemsListBox.DataSource = _selectedOrder.Items;
-                    orderItemsListBox.DisplayMember = "Name";
+                    Console.WriteLine("Это PriorityOrder!");
+                    _selectedPriorityOrder = priorityOrder;
+                    priorityPanel.Visible = true;
+
+                    deliveryDatePicker.Value = priorityOrder.DeliveryDate.Date;
+                    deliveryTimeComboBox.SelectedItem = priorityOrder.DeliveryTimeSlot;
                 }
+                else
+                {
+                    Console.WriteLine("Обычный Order");
+                    _selectedPriorityOrder = null;
+                    priorityPanel.Visible = false;
+                }
+            }
+            else
+            {
+                ClearOrderDetails();
             }
         }
 
-        // 4. Очистка деталей заказа
+        /// <summary>
+        /// Очистка деталей заказа
+        /// </summary>
         private void ClearOrderDetails()
         {
             idTextBox.Text = string.Empty;
@@ -161,9 +197,15 @@ namespace ObjectOrientedPractics.View.Tabs
             addressControl1.Address = new Address();
             amountLabel.Text = "0.00";
             orderItemsListBox.DataSource = null;
+
+            // Скрыть панель приоритета
+            _selectedPriorityOrder = null;
+            priorityPanel.Visible = false;
         }
 
-        // 5. Обработчик выбора строки в DataGridView
+        /// <summary>
+        /// Обработчик выбора строки в DataGridView
+        /// </summary>
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count > 0)
@@ -184,7 +226,9 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        // 6. Обработчик изменения статуса заказа
+        /// <summary>
+        /// Обработчик изменения статуса заказа
+        /// </summary>
         private void statusComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (_selectedOrder != null && statusComboBox.SelectedItem != null)
@@ -200,7 +244,9 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        // 7. Выделение заказа в DataGridView по ID
+        /// <summary>
+        /// Выделение заказа в DataGridView по ID
+        /// </summary>
         private void SelectOrderInGridView(int orderId)
         {
             for (int i = 0; i < dataGridView1.Rows.Count; i++)
@@ -217,13 +263,17 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        // 8. Публичный метод для обновления данных
+        /// <summary>
+        /// Публичный метод для обновления данных
+        /// </summary>
         public void RefreshData()
         {
             UpdateOrdersList();
         }
 
-        // 9. Вспомогательный класс для отображения в DataGridView
+        /// <summary>
+        /// Вспомогательный класс для отображения в DataGridView
+        /// </summary>
         private class OrderDisplayItem
         {
             public Order Order { get; set; }
@@ -232,6 +282,22 @@ namespace ObjectOrientedPractics.View.Tabs
             public string Created { get; set; }
             public string OrderStatus { get; set; }
             public string CustomerFullName { get; set; }
+        }
+
+        private void DeliveryDatePicker_ValueChanged(object sender, EventArgs e)
+        {
+            if (_selectedPriorityOrder != null)
+            {
+                _selectedPriorityOrder.DeliveryDate = deliveryDatePicker.Value.Date;
+            }
+        }
+
+        private void DeliveryTimeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_selectedPriorityOrder != null && deliveryTimeComboBox.SelectedItem != null)
+            {
+                _selectedPriorityOrder.DeliveryTimeSlot = deliveryTimeComboBox.SelectedItem.ToString();
+            }
         }
     }
 }

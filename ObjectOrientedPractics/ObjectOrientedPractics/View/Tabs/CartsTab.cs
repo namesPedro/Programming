@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ObjectOrientedPractics.Model;
 
@@ -16,6 +11,8 @@ namespace ObjectOrientedPractics.View.Tabs
         private List<Item> _items = new List<Item>();
         private List<Customer> _customers = new List<Customer>();
         private Customer _currentCustomer;
+
+        public OrdersTab OrdersTabRef { get; set; }
 
         /// <summary>
         /// Список товаров для отображения.
@@ -43,42 +40,14 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        /// <summary>
-        /// Общая стоимость корзины.
-        /// </summary>
-        private double CartAmount
-        {
-            get
-            {
-                if (_currentCustomer == null || _currentCustomer.Cart == null)
-                    return 0.0;
-                return _currentCustomer.Cart.Amount;
-            }
-        }
-
         public CartsTab()
         {
             InitializeComponent();
-            InitializeComponentData();
-        }
 
-        private void InitializeComponentData()
-        {
-            // Настройка ListBox для товаров
+            // Настройка привязки данных
             itemsListBox.DisplayMember = "Name";
-            itemsListBox.ValueMember = "Id";
-
-            // Настройка ComboBox для покупателей
-            customersComboBox.DisplayMember = "FullName";
-            customersComboBox.ValueMember = "Id";
-            customersComboBox.SelectedIndexChanged += CustomersComboBox_SelectedIndexChanged;
-
-            // Настройка ListBox для корзины
             cartListBox.DisplayMember = "Name";
-            cartListBox.ValueMember = "Id";
-
-            // Обновление отображения суммы
-            UpdateAmountLabel();
+            customersComboBox.DisplayMember = "FullName";
         }
 
         /// <summary>
@@ -86,8 +55,17 @@ namespace ObjectOrientedPractics.View.Tabs
         /// </summary>
         private void RefreshItemsListBox()
         {
-            itemsListBox.DataSource = null;
-            itemsListBox.DataSource = _items;
+            Action refresh = () =>
+            {
+                itemsListBox.DataSource = null;
+                itemsListBox.DisplayMember = "Name"; // ← Убедитесь, что DisplayMember установлен!
+                itemsListBox.DataSource = _items;
+            };
+
+            if (itemsListBox.InvokeRequired)
+                itemsListBox.Invoke(refresh);
+            else
+                refresh();
         }
 
         /// <summary>
@@ -95,11 +73,25 @@ namespace ObjectOrientedPractics.View.Tabs
         /// </summary>
         private void RefreshCustomersComboBox()
         {
-            customersComboBox.DataSource = null;
-            customersComboBox.DataSource = _customers;
+            if (customersComboBox.InvokeRequired)
+            {
+                customersComboBox.Invoke(new Action(() =>
+                {
+                    customersComboBox.DataSource = null;
+                    customersComboBox.DataSource = _customers;
 
-            if (_customers.Count > 0)
-                customersComboBox.SelectedIndex = 0;
+                    if (_customers.Count > 0)
+                        customersComboBox.SelectedIndex = 0;
+                }));
+            }
+            else
+            {
+                customersComboBox.DataSource = null;
+                customersComboBox.DataSource = _customers;
+
+                if (_customers.Count > 0)
+                    customersComboBox.SelectedIndex = 0;
+            }
         }
 
         /// <summary>
@@ -107,14 +99,26 @@ namespace ObjectOrientedPractics.View.Tabs
         /// </summary>
         private void RefreshCartListBox()
         {
-            cartListBox.DataSource = null;
-
-            if (_currentCustomer != null && _currentCustomer.Cart != null)
+            Action refresh = () =>
             {
-                cartListBox.DataSource = _currentCustomer.Cart.Items.ToList();
-            }
+                cartListBox.DataSource = null;
+                cartListBox.DisplayMember = "Name"; // ← Ключевая строка!
+                if (_currentCustomer?.Cart != null)
+                {
+                    cartListBox.DataSource = _currentCustomer.Cart.Items.ToList();
+                }
+                else
+                {
+                    cartListBox.DataSource = new List<Item>();
+                }
 
-            UpdateAmountLabel();
+                UpdateAmountLabel();
+            };
+
+            if (cartListBox.InvokeRequired)
+                cartListBox.Invoke(refresh);
+            else
+                refresh();
         }
 
         /// <summary>
@@ -122,20 +126,36 @@ namespace ObjectOrientedPractics.View.Tabs
         /// </summary>
         private void UpdateAmountLabel()
         {
-            amountLabel.Text = CartAmount.ToString("F2");
+            double amount = 0.0;
+            if (_currentCustomer != null && _currentCustomer.Cart != null)
+            {
+                amount = _currentCustomer.Cart.Amount;
+            }
+
+            if (amountLabel.InvokeRequired)
+            {
+                amountLabel.Invoke(new Action(() =>
+                {
+                    amountLabel.Text = amount.ToString("F2");
+                }));
+            }
+            else
+            {
+                amountLabel.Text = amount.ToString("F2");
+            }
         }
 
         /// <summary>
         /// Обработчик изменения выбранного покупателя.
         /// </summary>
-        private void CustomersComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void customersComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             _currentCustomer = customersComboBox.SelectedItem as Customer;
             RefreshCartListBox();
         }
 
         /// <summary>
-        /// Добавляет выбранный товар в корзину.
+        /// Добавляет товар в корзину.
         /// </summary>
         private void addToCartButton_Click(object sender, EventArgs e)
         {
@@ -151,7 +171,7 @@ namespace ObjectOrientedPractics.View.Tabs
         }
 
         /// <summary>
-        /// Удаляет выбранный товар из корзины.
+        /// Удаляет товар из корзины.
         /// </summary>
         private void removeItemButton_Click(object sender, EventArgs e)
         {
@@ -183,39 +203,50 @@ namespace ObjectOrientedPractics.View.Tabs
         /// </summary>
         private void createOrderButton_Click(object sender, EventArgs e)
         {
-            if (_currentCustomer == null || _currentCustomer.Cart == null || _currentCustomer.Cart.Items.Count == 0)
+            if (_currentCustomer == null ||
+                _currentCustomer.Cart == null ||
+                _currentCustomer.Cart.Items.Count == 0)
             {
-                MessageBox.Show("Корзина пуста или покупатель не выбран", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Корзина пуста или покупатель не выбран",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
-                // Создаем новый заказ
-                var order = new Order(_currentCustomer.Address, _currentCustomer.Cart);
+                Order order;
 
-                // Добавляем заказ в список заказов покупателя
+                if (_currentCustomer.IsPriority)
+                {
+                    // Создаём PriorityOrder
+                    var deliveryDate = DateTime.Today.AddDays(1); // завтра
+                    var timeSlot = "9:00 – 11:00"; // по умолчанию
+                    order = new PriorityOrder(_currentCustomer.Address, _currentCustomer.Cart, deliveryDate, timeSlot);
+                }
+                else
+                {
+                    // Обычный Order
+                    order = new Order(_currentCustomer.Address, _currentCustomer.Cart);
+                }
+
                 _currentCustomer.Orders.Add(order);
-
-                // Очищаем корзину
                 _currentCustomer.Cart.Clear();
-
-                // Обновляем отображение
                 RefreshCartListBox();
 
-                MessageBox.Show($"Заказ #{order.Id} успешно создан!", "Успех",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                OrdersTabRef?.RefreshData();
+
+                MessageBox.Show($"Заказ #{order.Id} успешно создан!",
+                    "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при создании заказа: {ex.Message}", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Ошибка при создании заказа: {ex.Message}",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         /// <summary>
-        /// Обновляет данные на вкладке.
+        /// Публичный метод для обновления данных
         /// </summary>
         public void RefreshData()
         {

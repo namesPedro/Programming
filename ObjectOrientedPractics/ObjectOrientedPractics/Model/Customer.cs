@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace ObjectOrientedPractics.Model
 {
     /// <summary>
-    /// Представляет покупателя с уникальным идентификатором, полным именем и адресом.
+    /// Представляет покупателя с уникальным идентификатором, полным именем, адресом и признаком приоритетности.
     /// </summary>
     [Serializable]
     public class Customer
@@ -15,6 +15,7 @@ namespace ObjectOrientedPractics.Model
         private Address _address;
         private Cart _cart;
         private List<Order> _orders;
+        private bool _isPriority = false; // ← Добавлено: по умолчанию false
 
         /// <summary>
         /// Уникальный идентификатор покупателя.
@@ -65,6 +66,17 @@ namespace ObjectOrientedPractics.Model
         }
 
         /// <summary>
+        /// Указывает, является ли покупатель приоритетным.
+        /// Приоритетные покупатели создают заказы типа <see cref="PriorityOrder"/>.
+        /// Значение по умолчанию — <c>false</c>.
+        /// </summary>
+        public bool IsPriority
+        {
+            get => _isPriority;
+            set => _isPriority = value;
+        }
+
+        /// <summary>
         /// Создает новый экземпляр класса Customer.
         /// </summary>
         /// <param name="fullName">Полное имя покупателя.</param>
@@ -76,6 +88,7 @@ namespace ObjectOrientedPractics.Model
             Address = address;
             Cart = new Cart();
             Orders = new List<Order>();
+            // _isPriority остаётся false по умолчанию
         }
 
         /// <summary>

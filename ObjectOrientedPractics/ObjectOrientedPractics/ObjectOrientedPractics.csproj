@@ -53,6 +53,7 @@
     <Compile Include="Model\Item.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderStatus.cs" />
+    <Compile Include="Model\PriorityOrder.cs" />
     <Compile Include="Model\Store.cs" />
     <Compile Include="Services\IdGenerator.cs" />
     <Compile Include="Services\ValueValidator.cs" />
@@ -108,18 +109,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Tabs\CartsTab.resx">
       <DependentUpon>CartsTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Tabs\CustomersTab.resx">
       <DependentUpon>CustomersTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Tabs\ItemsTab.resx">
       <DependentUpon>ItemsTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Tabs\OrdersTab.resx">
       <DependentUpon>OrdersTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
