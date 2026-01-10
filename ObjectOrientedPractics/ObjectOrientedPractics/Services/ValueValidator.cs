@@ -1,29 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ObjectOrientedPractics.Services
 {
     /// <summary>
-    /// Сервисный класс для валидации значений
+    /// Предоставляет методы для валидации значений.
     /// </summary>
     public static class ValueValidator
     {
         /// <summary>
-        /// Проверяет длину строки и выбрасывает исключение, если длина превышает максимальную
+        /// Проверяет, что длина строки не превышает заданного максимума.
+        /// Строка может быть <see langword="null"/> или пустой — это допустимо.
         /// </summary>
-        /// <param name="value">Проверяемая строка</param>
-        /// <param name="maxLength">Максимально допустимая длина строки</param>
-        /// <param name="propertyName">Наименование свойства для текста исключения</param>
-        /// <exception cref="ArgumentException">Выбрасывается когда длина строки превышает maxLength</exception>
+        /// <param name="value">Проверяемая строка.</param>
+        /// <param name="maxLength">Максимально допустимая длина строки (включительно).</param>
+        /// <param name="propertyName">Имя свойства для отображения в сообщении об ошибке.</param>
+        /// <exception cref="ArgumentException">
+        /// Выбрасывается, если длина строки больше <paramref name="maxLength"/>.
+        /// </exception>
         public static void AssertStringOnLength(string value, int maxLength, string propertyName)
         {
-            if (value?.Length > maxLength)
+            if (value != null && value.Length > maxLength)
             {
                 throw new ArgumentException(
-                    $"{propertyName} должен быть меньше {maxLength} символов");
+                    $"{propertyName} не должен превышать {maxLength} символов.");
             }
         }
     }

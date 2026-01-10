@@ -5,9 +5,8 @@ using System.Linq;
 namespace ObjectOrientedPractics.Model
 {
     /// <summary>
-    /// Корзина товаров покупателя.
+    /// Представляет корзину товаров покупателя.
     /// </summary>
-    [Serializable]
     public class Cart : ICloneable
     {
         private List<Item> _items;
@@ -22,12 +21,12 @@ namespace ObjectOrientedPractics.Model
         }
 
         /// <summary>
-        /// Общая стоимость товаров в корзине.
+        /// Общая стоимость всех товаров в корзине.
         /// </summary>
         public double Amount => Items?.Sum(item => item.Cost) ?? 0.0;
 
         /// <summary>
-        /// Создает новый экземпляр корзины.
+        /// Инициализирует новый экземпляр класса <see cref="Cart"/> с пустым списком товаров.
         /// </summary>
         public Cart()
         {
@@ -38,6 +37,7 @@ namespace ObjectOrientedPractics.Model
         /// Добавляет товар в корзину.
         /// </summary>
         /// <param name="item">Товар для добавления.</param>
+        /// <exception cref="ArgumentNullException">Выбрасывается, если <paramref name="item"/> равен <see langword="null"/>.</exception>
         public void AddItem(Item item)
         {
             if (item == null)
@@ -46,17 +46,17 @@ namespace ObjectOrientedPractics.Model
         }
 
         /// <summary>
-        /// Удаляет товар из корзины.
+        /// Удаляет первый найденный экземпляр товара из корзины.
         /// </summary>
         /// <param name="item">Товар для удаления.</param>
-        /// <returns>True если товар был удален, иначе false.</returns>
+        /// <returns><see langword="true"/>, если товар был найден и удалён; иначе <see langword="false"/>.</returns>
         public bool RemoveItem(Item item)
         {
             return Items.Remove(item);
         }
 
         /// <summary>
-        /// Очищает корзину.
+        /// Очищает корзину от всех товаров.
         /// </summary>
         public void Clear()
         {
@@ -66,7 +66,6 @@ namespace ObjectOrientedPractics.Model
         /// <inheritdoc/>
         public object Clone()
         {
-            // Поверхностное копирование: товары (Item) неизменяемы, поэтому достаточно скопировать ссылки
             var newCart = new Cart();
             newCart.Items = new List<Item>(Items);
             return newCart;

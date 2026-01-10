@@ -49,7 +49,7 @@
             this.apartmentTextBox.Name = "apartmentTextBox";
             this.apartmentTextBox.Size = new System.Drawing.Size(56, 20);
             this.apartmentTextBox.TabIndex = 25;
-            this.apartmentTextBox.Leave += new System.EventHandler(this.ApartmentTextBox_Leave);
+            this.apartmentTextBox.Leave += new System.EventHandler(this.OnFieldLeave);
             // 
             // cityTextBox
             // 
@@ -57,7 +57,7 @@
             this.cityTextBox.Name = "cityTextBox";
             this.cityTextBox.Size = new System.Drawing.Size(130, 20);
             this.cityTextBox.TabIndex = 24;
-            this.cityTextBox.Leave += new System.EventHandler(this.CityTextBox_Leave);
+            this.cityTextBox.Leave += new System.EventHandler(this.OnFieldLeave);
             // 
             // buildingTextBox
             // 
@@ -65,7 +65,7 @@
             this.buildingTextBox.Name = "buildingTextBox";
             this.buildingTextBox.Size = new System.Drawing.Size(56, 20);
             this.buildingTextBox.TabIndex = 23;
-            this.buildingTextBox.Leave += new System.EventHandler(this.BuildingTextBox_Leave);
+            this.buildingTextBox.Leave += new System.EventHandler(this.OnFieldLeave);
             // 
             // streetTextBox
             // 
@@ -73,7 +73,7 @@
             this.streetTextBox.Name = "streetTextBox";
             this.streetTextBox.Size = new System.Drawing.Size(299, 20);
             this.streetTextBox.TabIndex = 22;
-            this.streetTextBox.Leave += new System.EventHandler(this.StreetTextBox_Leave);
+            this.streetTextBox.Leave += new System.EventHandler(this.OnFieldLeave);
             // 
             // countryTextBox
             // 
@@ -81,7 +81,7 @@
             this.countryTextBox.Name = "countryTextBox";
             this.countryTextBox.Size = new System.Drawing.Size(130, 20);
             this.countryTextBox.TabIndex = 21;
-            this.countryTextBox.Leave += new System.EventHandler(this.CountryTextBox_Leave);
+            this.countryTextBox.Leave += new System.EventHandler(this.OnFieldLeave);
             // 
             // postIndexTextBox
             // 
@@ -89,7 +89,7 @@
             this.postIndexTextBox.Name = "postIndexTextBox";
             this.postIndexTextBox.Size = new System.Drawing.Size(100, 20);
             this.postIndexTextBox.TabIndex = 20;
-            this.postIndexTextBox.Leave += new System.EventHandler(this.PostIndexTextBox_Leave);
+            this.postIndexTextBox.Leave += new System.EventHandler(this.OnFieldLeave);
             // 
             // apartmentLabel
             // 

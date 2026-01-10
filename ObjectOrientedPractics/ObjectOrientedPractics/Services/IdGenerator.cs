@@ -1,32 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ObjectOrientedPractics.Services
+﻿namespace ObjectOrientedPractics.Services
 {
     /// <summary>
-    /// Генератор уникальных идентификаторов
+    /// Предоставляет функциональность для генерации уникальных целочисленных идентификаторов.
+    /// Идентификаторы генерируются последовательно, начиная с 0.
     /// </summary>
     public static class IdGenerator
     {
-        /// <summary>
-        /// Текущее значение идентификатора
-        /// </summary>
         private static int _currentId = 0;
 
         /// <summary>
-        /// Возвращает следующий уникальный идентификатор
+        /// Возвращает следующий уникальный идентификатор и увеличивает внутренний счётчик.
+        /// Первый вызов вернёт <c>0</c>, второй — <c>1</c> и так далее.
         /// </summary>
-        /// <returns>Уникальный целочисленный идентификатор</returns>
+        /// <returns>Уникальный целочисленный идентификатор.</returns>
         public static int GetNextId()
         {
             return _currentId++;
         }
 
         /// <summary>
-        /// Сбрасывает счетчик идентификаторов до начального значения
+        /// Сбрасывает внутренний счётчик идентификаторов до нуля.
+        /// Следующий вызов <see cref="GetNextId"/> вернёт <c>0</c>.
         /// </summary>
         public static void Reset()
         {
@@ -34,9 +28,10 @@ namespace ObjectOrientedPractics.Services
         }
 
         /// <summary>
-        /// Возвращает текущее значение идентификатора без его увеличения
+        /// Возвращает текущее значение внутреннего счётчика без его изменения.
+        /// Это значение будет присвоено следующему идентификатору при вызове <see cref="GetNextId"/>.
         /// </summary>
-        /// <returns>Текущее значение идентификатора</returns>
+        /// <returns>Текущее значение счётчика идентификаторов.</returns>
         public static int GetCurrentId()
         {
             return _currentId;

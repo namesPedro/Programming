@@ -5,45 +5,43 @@ using ObjectOrientedPractics.Model;
 
 namespace ObjectOrientedPractics.View.Controls
 {
+    /// <summary>
+    /// Пользовательский элемент управления для редактирования адреса.
+    /// Поддерживает валидацию полей и генерирует событие при любом изменении.
+    /// </summary>
     public partial class AddressControl : UserControl
     {
         private Address _address;
 
         /// <summary>
-        /// Событие, возникающее при изменении адреса.
+        /// Возникает при изменении любого поля адреса.
         /// </summary>
         public event EventHandler AddressChanged;
 
         /// <summary>
-        /// Текущий адрес.
+        /// Получает или задаёт текущий адрес.
+        /// При установке поля управления автоматически обновляются.
         /// </summary>
         public Address Address
         {
             get => _address;
             set
             {
-                _address = value;
+                _address = value ?? new Address();
                 UpdateFields();
             }
         }
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="AddressControl"/>.
+        /// Настраивает привязку событий потери фокуса для всех текстовых полей.
+        /// </summary>
         public AddressControl()
         {
             InitializeComponent();
             _address = new Address();
-
-            // Подписываемся на события потери фокуса для КАЖДОГО поля отдельно
-            postIndexTextBox.Leave += PostIndexTextBox_Leave;
-            countryTextBox.Leave += CountryTextBox_Leave;
-            cityTextBox.Leave += CityTextBox_Leave;
-            streetTextBox.Leave += StreetTextBox_Leave;
-            buildingTextBox.Leave += BuildingTextBox_Leave;
-            apartmentTextBox.Leave += ApartmentTextBox_Leave;
         }
 
-        /// <summary>
-        /// Обновляет поля из объекта адреса.
-        /// </summary>
         private void UpdateFields()
         {
             if (_address != null)
@@ -57,130 +55,53 @@ namespace ObjectOrientedPractics.View.Controls
             }
         }
 
-        /// <summary>
-        /// Обновляет объект адреса из полей ввода.
-        /// </summary>
-        private void UpdateAddress()
+        private void OnFieldLeave(object sender, EventArgs e)
         {
-            if (_address != null)
+            var textBox = (TextBox)sender;
+            string propertyName = GetPropertyName(textBox);
+
+            try
             {
-                // Обновляем индекс
-                try
+                switch (propertyName)
                 {
-                    _address.Index = postIndexTextBox.Text;
-                    postIndexTextBox.BackColor = Color.White;
-                }
-                catch (ArgumentException)
-                {
-                    postIndexTextBox.BackColor = Color.LightPink;
-                }
-
-                // Обновляем страну
-                try
-                {
-                    _address.Country = countryTextBox.Text;
-                    countryTextBox.BackColor = Color.White;
-                }
-                catch (ArgumentException)
-                {
-                    countryTextBox.BackColor = Color.LightPink;
-                }
-
-                // Обновляем город
-                try
-                {
-                    _address.City = cityTextBox.Text;
-                    cityTextBox.BackColor = Color.White;
-                }
-                catch (ArgumentException)
-                {
-                    cityTextBox.BackColor = Color.LightPink;
+                    case nameof(Address.Index):
+                        _address.Index = textBox.Text;
+                        break;
+                    case nameof(Address.Country):
+                        _address.Country = textBox.Text;
+                        break;
+                    case nameof(Address.City):
+                        _address.City = textBox.Text;
+                        break;
+                    case nameof(Address.Street):
+                        _address.Street = textBox.Text;
+                        break;
+                    case nameof(Address.Building):
+                        _address.Building = textBox.Text;
+                        break;
+                    case nameof(Address.Apartment):
+                        _address.Apartment = textBox.Text;
+                        break;
                 }
 
-                // Обновляем улицу
-                try
-                {
-                    _address.Street = streetTextBox.Text;
-                    streetTextBox.BackColor = Color.White;
-                }
-                catch (ArgumentException)
-                {
-                    streetTextBox.BackColor = Color.LightPink;
-                }
-
-                // Обновляем здание
-                try
-                {
-                    _address.Building = buildingTextBox.Text;
-                    buildingTextBox.BackColor = Color.White;
-                }
-                catch (ArgumentException)
-                {
-                    buildingTextBox.BackColor = Color.LightPink;
-                }
-
-                // Обновляем квартиру
-                try
-                {
-                    _address.Apartment = apartmentTextBox.Text;
-                    apartmentTextBox.BackColor = Color.White;
-                }
-                catch (ArgumentException)
-                {
-                    apartmentTextBox.BackColor = Color.LightPink;
-                }
-
-                // Оповещаем об изменении адреса
+                textBox.BackColor = Color.White;
                 AddressChanged?.Invoke(this, EventArgs.Empty);
+            }
+            catch (ArgumentException)
+            {
+                textBox.BackColor = Color.LightPink;
             }
         }
 
-        /// <summary>
-        /// Обработчик выхода из поля индекса.
-        /// </summary>
-        private void PostIndexTextBox_Leave(object sender, EventArgs e)
+        private string GetPropertyName(TextBox textBox)
         {
-            UpdateAddress();
-        }
-
-        /// <summary>
-        /// Обработчик выхода из поля страны.
-        /// </summary>
-        private void CountryTextBox_Leave(object sender, EventArgs e)
-        {
-            UpdateAddress();
-        }
-
-        /// <summary>
-        /// Обработчик выхода из поля города.
-        /// </summary>
-        private void CityTextBox_Leave(object sender, EventArgs e)
-        {
-            UpdateAddress();
-        }
-
-        /// <summary>
-        /// Обработчик выхода из поля улицы.
-        /// </summary>
-        private void StreetTextBox_Leave(object sender, EventArgs e)
-        {
-            UpdateAddress();
-        }
-
-        /// <summary>
-        /// Обработчик выхода из поля здания.
-        /// </summary>
-        private void BuildingTextBox_Leave(object sender, EventArgs e)
-        {
-            UpdateAddress();
-        }
-
-        /// <summary>
-        /// Обработчик выхода из поля квартиры.
-        /// </summary>
-        private void ApartmentTextBox_Leave(object sender, EventArgs e)
-        {
-            UpdateAddress();
+            if (textBox == postIndexTextBox) return nameof(Address.Index);
+            if (textBox == countryTextBox) return nameof(Address.Country);
+            if (textBox == cityTextBox) return nameof(Address.City);
+            if (textBox == streetTextBox) return nameof(Address.Street);
+            if (textBox == buildingTextBox) return nameof(Address.Building);
+            if (textBox == apartmentTextBox) return nameof(Address.Apartment);
+            throw new InvalidOperationException("Неизвестное текстовое поле.");
         }
     }
 }

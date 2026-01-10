@@ -1,14 +1,13 @@
-﻿using ObjectOrientedPractics.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ObjectOrientedPractics.Services;
 
 namespace ObjectOrientedPractics.Model
 {
     /// <summary>
-    /// Заказ покупателя.
+    /// Представляет заказ покупателя.
     /// </summary>
-    [Serializable]
     public class Order : IEquatable<Order>
     {
         private readonly int _id;
@@ -23,7 +22,7 @@ namespace ObjectOrientedPractics.Model
         public int Id => _id;
 
         /// <summary>
-        /// Дата создания заказа.
+        /// Дата и время создания заказа.
         /// </summary>
         public DateTime Date => _date;
 
@@ -33,32 +32,35 @@ namespace ObjectOrientedPractics.Model
         public Address Address
         {
             get => _address;
-            set => _address = value;
+            set => _address = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         /// <summary>
-        /// Список товаров в заказе.
+        /// Список товаров в заказе (копия на момент оформления).
         /// </summary>
         public List<Item> Items
         {
             get => _items;
-            set => _items = value ?? new List<Item>();
+            private set => _items = value ?? new List<Item>();
         }
 
         /// <summary>
-        /// Общая стоимость заказа.
+        /// Общая стоимость товаров в заказе (до применения скидок).
         /// </summary>
-        public double Amount
-        {
-            get
-            {
-                if (Items == null || Items.Count == 0) return 0.0;
-                return Items.Sum(i => i.Cost);
-            }
-        }
+        public double Amount => Items?.Sum(item => item.Cost) ?? 0.0;
 
         /// <summary>
-        /// Статус заказа.
+        /// Размер применённой скидки в рублях.
+        /// </summary>
+        public double DiscountAmount { get; set; }
+
+        /// <summary>
+        /// Итоговая стоимость заказа с учётом скидки.
+        /// </summary>
+        public double Total => Math.Max(0, Amount - DiscountAmount);
+
+        /// <summary>
+        /// Текущий статус заказа.
         /// </summary>
         public OrderStatus Status
         {
@@ -66,54 +68,37 @@ namespace ObjectOrientedPractics.Model
             set => _status = value;
         }
 
-        public double DiscountAmount { get; set; }
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="Order"/> на основе корзины покупателя.
+        /// Товары клонируются, чтобы избежать влияния последующих изменений в корзине.
+        /// </summary>
+        /// <param name="address">Адрес доставки.</param>
+        /// <param name="cart">Корзина с товарами.</param>
+        /// <exception cref="ArgumentNullException">Выбрасывается, если <paramref name="address"/> или <paramref name="cart"/> равны <see langword="null"/>.</exception>
+        public Order(Address address, Cart cart)
+        {
+            if (address == null) throw new ArgumentNullException(nameof(address));
+            if (cart == null) throw new ArgumentNullException(nameof(cart));
 
-        public double Total => Amount - DiscountAmount;
+            _id = IdGenerator.GetNextId();
+            _date = DateTime.Now;
+            _status = OrderStatus.New;
+            _address = address;
+
+            Items = cart.Items?.Select(item => (Item)item.Clone()).ToList() ?? new List<Item>();
+        }
 
         public bool Equals(Order other)
         {
-            if (other == null) return false;
+            if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
             return Id == other.Id;
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Order);
-        }
+        public override bool Equals(object obj) => Equals(obj as Order);
 
+        public override int GetHashCode() => Id.GetHashCode();
 
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
-
-        /// <summary>
-        /// Создает новый заказ на основе корзины.
-        /// </summary>
-        /// <param name="address">Адрес доставки.</param>
-        /// <param name="cart">Корзина с товарами.</param>
-        public Order(Address address, Cart cart)
-        {
-            _id = IdGenerator.GetNextId();
-            _date = DateTime.Now;
-            _status = OrderStatus.New;
-            Address = address;
-
-            // Копируем список товаров, чтобы изменения в корзине не влияли на оформленный заказ
-            Items = new List<Item>(cart.Items);
-        }
-
-        /// <summary>
-        /// Конструктор по умолчанию (для сериализации или пустых заказов).
-        /// </summary>
-        public Order()
-        {
-            _id = IdGenerator.GetNextId();
-            _date = DateTime.Now;
-            _status = OrderStatus.New;
-            Items = new List<Item>();
-            Address = new Address();
-        }
+        public override string ToString() => $"Заказ #{Id} от {Date:dd.MM.yyyy HH:mm}";
     }
 }

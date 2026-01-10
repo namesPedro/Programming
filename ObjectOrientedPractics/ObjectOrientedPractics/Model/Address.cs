@@ -6,7 +6,6 @@ namespace ObjectOrientedPractics.Model
     /// <summary>
     /// Представляет адрес доставки.
     /// </summary>
-    [Serializable]
     public class Address : ICloneable, IEquatable<Address>
     {
         private string _index;
@@ -17,21 +16,36 @@ namespace ObjectOrientedPractics.Model
         private string _apartment;
 
         /// <summary>
-        /// Почтовый индекс (6 цифр).
+        /// Возникает при изменении любого поля адреса.
         /// </summary>
+        public event EventHandler AddressChanged;
+
+        protected virtual void OnAddressChanged()
+        {
+            AddressChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Почтовый индекс (ровно 6 цифр).
+        /// </summary>
+        /// <exception cref="ArgumentException">Выбрасывается, если индекс не состоит из 6 цифр.</exception>
         public string Index
         {
             get => _index;
             set
             {
-                if (value.Length != 6 || !int.TryParse(value, out _))
-                    throw new ArgumentException("Индекс должен состоять из 6 цифр");
-                _index = value;
+                if (string.IsNullOrEmpty(value) || value.Length != 6 || !IsDigitsOnly(value))
+                    throw new ArgumentException("Индекс должен состоять из 6 цифр.");
+                if (_index != value)
+                {
+                    _index = value;
+                    OnAddressChanged();
+                }
             }
         }
 
         /// <summary>
-        /// Страна/регион (не более 50 символов).
+        /// Страна или регион (не более 50 символов).
         /// </summary>
         public string Country
         {
@@ -39,7 +53,11 @@ namespace ObjectOrientedPractics.Model
             set
             {
                 ValueValidator.AssertStringOnLength(value, 50, nameof(Country));
-                _country = value;
+                if (_country != value)
+                {
+                    _country = value;
+                    OnAddressChanged();
+                }
             }
         }
 
@@ -52,7 +70,11 @@ namespace ObjectOrientedPractics.Model
             set
             {
                 ValueValidator.AssertStringOnLength(value, 50, nameof(City));
-                _city = value;
+                if (_city != value)
+                {
+                    _city = value;
+                    OnAddressChanged();
+                }
             }
         }
 
@@ -65,7 +87,11 @@ namespace ObjectOrientedPractics.Model
             set
             {
                 ValueValidator.AssertStringOnLength(value, 100, nameof(Street));
-                _street = value;
+                if (_street != value)
+                {
+                    _street = value;
+                    OnAddressChanged();
+                }
             }
         }
 
@@ -78,12 +104,16 @@ namespace ObjectOrientedPractics.Model
             set
             {
                 ValueValidator.AssertStringOnLength(value, 10, nameof(Building));
-                _building = value;
+                if (_building != value)
+                {
+                    _building = value;
+                    OnAddressChanged();
+                }
             }
         }
 
         /// <summary>
-        /// Номер квартиры/помещения (не более 10 символов).
+        /// Номер квартиры или офиса (не более 10 символов).
         /// </summary>
         public string Apartment
         {
@@ -91,25 +121,30 @@ namespace ObjectOrientedPractics.Model
             set
             {
                 ValueValidator.AssertStringOnLength(value, 10, nameof(Apartment));
-                _apartment = value;
+                if (_apartment != value)
+                {
+                    _apartment = value;
+                    OnAddressChanged();
+                }
             }
         }
 
         /// <summary>
-        /// Создает пустой адрес.
+        /// Инициализирует новый экземпляр класса <see cref="Address"/> с пустыми значениями.
+        /// Индекс устанавливается в "000000".
         /// </summary>
         public Address()
         {
-            Index = "000000";
-            Country = "";
-            City = "";
-            Street = "";
-            Building = "";
-            Apartment = "";
+            _index = "000000";
+            _country = string.Empty;
+            _city = string.Empty;
+            _street = string.Empty;
+            _building = string.Empty;
+            _apartment = string.Empty;
         }
 
         /// <summary>
-        /// Создает адрес с указанными значениями.
+        /// Инициализирует новый экземпляр класса <see cref="Address"/> с указанными значениями.
         /// </summary>
         public Address(string index, string country, string city, string street, string building, string apartment)
         {
@@ -119,6 +154,16 @@ namespace ObjectOrientedPractics.Model
             Street = street;
             Building = building;
             Apartment = apartment;
+        }
+
+        private static bool IsDigitsOnly(string str)
+        {
+            foreach (char c in str)
+            {
+                if (c < '0' || c > '9')
+                    return false;
+            }
+            return true;
         }
 
         /// <inheritdoc/>
@@ -149,9 +194,17 @@ namespace ObjectOrientedPractics.Model
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return (Index, Country, City, Street, Building, Apartment).GetHashCode();
+            int hash = 17;
+            hash = hash * 23 + (Index?.GetHashCode() ?? 0);
+            hash = hash * 23 + (Country?.GetHashCode() ?? 0);
+            hash = hash * 23 + (City?.GetHashCode() ?? 0);
+            hash = hash * 23 + (Street?.GetHashCode() ?? 0);
+            hash = hash * 23 + (Building?.GetHashCode() ?? 0);
+            hash = hash * 23 + (Apartment?.GetHashCode() ?? 0);
+            return hash;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"{Index}, {Country}, {City}, {Street}, {Building}, {Apartment}";

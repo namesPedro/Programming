@@ -1,36 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ObjectOrientedPractics.Model
 {
     /// <summary>
-    /// Представляет магазин с товарами и покупателями.
+    /// Представляет магазин, содержащий товары и покупателей.
     /// </summary>
     public class Store
     {
-        private List<Item> _items;
-        private List<Customer> _customers;
-
         /// <summary>
-        /// Список товаров магазина.
+        /// Список товаров в магазине.
         /// </summary>
-        public List<Item> Items
-        {
-            get => _items;
-            set => _items = value;
-        }
+        public List<Item> Items { get; set; }
 
         /// <summary>
-        /// Список покупателей магазина.
+        /// Список зарегистрированных покупателей.
         /// </summary>
-        public List<Customer> Customers
-        {
-            get => _customers;
-            set => _customers = value;
-        }
+        public List<Customer> Customers { get; set; }
 
         /// <summary>
-        /// Создает новый экземпляр класса Store с пустыми списками.
+        /// Инициализирует новый экземпляр класса <see cref="Store"/> с пустыми списками товаров и покупателей.
         /// </summary>
         public Store()
         {

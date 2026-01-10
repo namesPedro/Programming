@@ -3,11 +3,20 @@
 namespace ObjectOrientedPractics.Model
 {
     /// <summary>
-    /// Представляет приоритетный заказ с возможностью выбора времени доставки.
+    /// Представляет приоритетный заказ с возможностью выбора даты и времени доставки.
     /// </summary>
-    [Serializable]
     public class PriorityOrder : Order
     {
+        private static readonly string[] ValidTimeSlots =
+        {
+            "9:00 – 11:00",
+            "11:00 – 13:00",
+            "13:00 – 15:00",
+            "15:00 – 17:00",
+            "17:00 – 19:00",
+            "19:00 – 21:00"
+        };
+
         private DateTime _deliveryDate;
         private string _deliveryTimeSlot;
 
@@ -17,51 +26,39 @@ namespace ObjectOrientedPractics.Model
         public DateTime DeliveryDate
         {
             get => _deliveryDate;
-            set => _deliveryDate = value;
+            set => _deliveryDate = value.Date; // сохраняем только дату, без времени
         }
 
         /// <summary>
         /// Желаемый временной слот доставки.
-        /// Допустимые значения: "9:00 – 11:00", "11:00 – 13:00", ..., "19:00 – 21:00"
         /// </summary>
+        /// <exception cref="ArgumentException">Выбрасывается, если указан недопустимый слот.</exception>
         public string DeliveryTimeSlot
         {
             get => _deliveryTimeSlot;
             set
             {
-                // Валидация (опционально, можно усилить позже)
-                var validSlots = new[]
-                {
-                    "9:00 – 11:00",
-                    "11:00 – 13:00",
-                    "13:00 – 15:00",
-                    "15:00 – 17:00",
-                    "17:00 – 19:00",
-                    "19:00 – 21:00"
-                };
+                if (string.IsNullOrEmpty(value))
+                    throw new ArgumentException("Временной слот не может быть пустым.");
 
-                bool isValid = false;
-                foreach (var slot in validSlots)
+                foreach (var slot in ValidTimeSlots)
                 {
                     if (slot == value)
                     {
-                        isValid = true;
-                        break;
+                        _deliveryTimeSlot = value;
+                        return;
                     }
                 }
 
-                if (!isValid)
-                    throw new ArgumentException("Недопустимый временной слот доставки.");
-
-                _deliveryTimeSlot = value;
+                throw new ArgumentException("Недопустимый временной слот доставки.");
             }
         }
 
         /// <summary>
-        /// Создаёт приоритетный заказ на основе корзины.
+        /// Инициализирует новый экземпляр класса <see cref="PriorityOrder"/>.
         /// </summary>
         /// <param name="address">Адрес доставки.</param>
-        /// <param name="cart">Корзина покупателя.</param>
+        /// <param name="cart">Корзина с товарами.</param>
         /// <param name="deliveryDate">Желаемая дата доставки.</param>
         /// <param name="deliveryTimeSlot">Временной слот доставки.</param>
         public PriorityOrder(Address address, Cart cart, DateTime deliveryDate, string deliveryTimeSlot)
@@ -71,13 +68,9 @@ namespace ObjectOrientedPractics.Model
             DeliveryTimeSlot = deliveryTimeSlot;
         }
 
-        /// <summary>
-        /// Конструктор по умолчанию (для сериализации).
-        /// </summary>
-        public PriorityOrder() : base()
+        public override string ToString()
         {
-            DeliveryDate = DateTime.Today.AddDays(1); // завтра по умолчанию
-            DeliveryTimeSlot = "9:00 – 11:00";
+            return $"{base.ToString()}, доставка: {DeliveryDate:dd.MM.yyyy} {DeliveryTimeSlot}";
         }
     }
 }

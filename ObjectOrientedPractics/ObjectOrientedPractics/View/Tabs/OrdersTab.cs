@@ -7,12 +7,30 @@ using ObjectOrientedPractics.View.Controls;
 
 namespace ObjectOrientedPractics.View.Tabs
 {
+    /// <summary>
+    /// Вкладка для просмотра и управления заказами покупателей.
+    /// Отображает список всех заказов, их статусы, детали и поддерживает редактирование для приоритетных заказов.
+    /// </summary>
     public partial class OrdersTab : UserControl
     {
         private List<Customer> _customers = new List<Customer>();
         private Order _selectedOrder;
         private PriorityOrder _selectedPriorityOrder;
 
+        private static readonly string[] DeliveryTimeSlots =
+        {
+            "9:00 – 11:00",
+            "11:00 – 13:00",
+            "13:00 – 15:00",
+            "15:00 – 17:00",
+            "17:00 – 19:00",
+            "19:00 – 21:00"
+        };
+
+        /// <summary>
+        /// Получает или задаёт список покупателей, чьи заказы отображаются во вкладке.
+        /// При установке автоматически обновляется список заказов.
+        /// </summary>
         public List<Customer> Customers
         {
             get => _customers;
@@ -23,33 +41,24 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="OrdersTab"/>.
+        /// Настраивает элементы управления и привязку данных.
+        /// </summary>
         public OrdersTab()
         {
             InitializeComponent();
 
             statusComboBox.DataSource = Enum.GetValues(typeof(OrderStatus));
+            deliveryTimeComboBox.Items.AddRange(DeliveryTimeSlots);
 
             addressControl1.Enabled = false;
             createdTextBox.ReadOnly = true;
             idTextBox.ReadOnly = true;
 
-            orderItemsListBox.DataSource = null;
             orderItemsListBox.DisplayMember = "Name";
 
-            var timeSlots = new[]
-            {
-                "9:00 – 11:00",
-                "11:00 – 13:00",
-                "13:00 – 15:00",
-                "15:00 – 17:00",
-                "17:00 – 19:00",
-                "19:00 – 21:00"
-            };
-
-            deliveryTimeComboBox.Items.AddRange(timeSlots);
-
             dataGridView1.AutoGenerateColumns = false;
-
             idColumn.DataPropertyName = "Id";
             createdColumn.DataPropertyName = "Created";
             orderStatusColumn.DataPropertyName = "OrderStatus";
@@ -57,30 +66,37 @@ namespace ObjectOrientedPractics.View.Tabs
             totalColumn.DataPropertyName = "Total";
         }
 
+        /// <summary>
+        /// Обновляет отображаемые данные на основе текущего списка покупателей.
+        /// </summary>
+        public void RefreshData()
+        {
+            UpdateOrdersList();
+        }
+
         private void UpdateOrdersList()
         {
-            // ❗ НЕ МЕНЯЕМ СТРУКТУРУ DATAGRIDVIEW — оставляем как есть
-            dataGridView1.DataSource = null;
-
             var allOrders = new List<OrderDisplayItem>();
 
             foreach (var customer in _customers)
             {
-                if (customer?.Orders != null)
+                if (customer != null && customer.Orders != null)
                 {
                     foreach (var order in customer.Orders)
                     {
-                        // Отображаем Amount в таблице (как раньше), НЕ Total
-                        allOrders.Add(new OrderDisplayItem
+                        if (order != null)
                         {
-                            Order = order,
-                            Customer = customer,
-                            Id = order.Id,
-                            Created = order.Date.ToString("dd.MM.yyyy HH:mm"),
-                            OrderStatus = order.Status.ToString(),
-                            CustomerFullName = customer.FullName,
-                            Total = order.Total.ToString("F2") // ← ДОБАВЬ ЭТО
-                        });
+                            allOrders.Add(new OrderDisplayItem
+                            {
+                                Order = order,
+                                Customer = customer,
+                                Id = order.Id,
+                                Created = order.Date.ToString("dd.MM.yyyy HH:mm"),
+                                OrderStatus = order.Status.ToString(),
+                                CustomerFullName = customer.FullName,
+                                Total = order.Total.ToString("F2")
+                            });
+                        }
                     }
                 }
             }
@@ -105,14 +121,11 @@ namespace ObjectOrientedPractics.View.Tabs
             statusComboBox.SelectedIndexChanged += statusComboBox_SelectedIndexChanged;
 
             addressControl1.Address = _selectedOrder.Address ?? new Address();
+            totalAmountLabel.Text = _selectedOrder.Total.ToString("F2");
 
-            // ✅ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ:
-            // Вместо Amount показываем Total (итоговую сумму с учётом скидки)
-            totalAmountLabel.Text = _selectedOrder.Total.ToString("F2"); // ← было Amount, стало Total
-
-            orderItemsListBox.DataSource = null;
+            var items = _selectedOrder.Items?.ToList() ?? new List<Item>();
             orderItemsListBox.DisplayMember = "Name";
-            orderItemsListBox.DataSource = _selectedOrder.Items?.ToList() ?? new List<Item>();
+            orderItemsListBox.DataSource = items;
 
             if (_selectedOrder is PriorityOrder priorityOrder)
             {
@@ -134,18 +147,37 @@ namespace ObjectOrientedPractics.View.Tabs
             createdTextBox.Clear();
             statusComboBox.SelectedIndex = -1;
             addressControl1.Address = new Address();
-            totalAmountLabel.Text = "0.00"; // ← достаточно одного сброса
+            totalAmountLabel.Text = "0.00";
             orderItemsListBox.DataSource = null;
             _selectedPriorityOrder = null;
             priorityPanel.Visible = false;
         }
+
+        private void SelectOrderInGridView(int orderId)
+        {
+            for (int i = 0; i < dataGridView1.Rows.Count; i++)
+            {
+                var row = dataGridView1.Rows[i];
+                var item = row.DataBoundItem as OrderDisplayItem;
+                if (item != null && item.Order != null && item.Order.Id == orderId)
+                {
+                    dataGridView1.ClearSelection();
+                    row.Selected = true;
+                    break;
+                }
+            }
+        }
+
+        // ======================
+        // Обработчики событий
+        // ======================
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 var displayItem = dataGridView1.SelectedRows[0].DataBoundItem as OrderDisplayItem;
-                _selectedOrder = displayItem?.Order;
+                _selectedOrder = displayItem != null ? displayItem.Order : null;
                 UpdateOrderDetails();
             }
             else
@@ -165,38 +197,6 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        private void SelectOrderInGridView(int orderId)
-        {
-            for (int i = 0; i < dataGridView1.Rows.Count; i++)
-            {
-                var row = dataGridView1.Rows[i];
-                var item = row.DataBoundItem as OrderDisplayItem;
-                if (item?.Order.Id == orderId)
-                {
-                    dataGridView1.ClearSelection();
-                    row.Selected = true;
-                    break;
-                }
-            }
-        }
-
-        public void RefreshData()
-        {
-            UpdateOrdersList();
-        }
-
-        // 👇 ВСПОМОГАТЕЛЬНЫЙ КЛАСС — БЕЗ TOTAL
-        private class OrderDisplayItem
-        {
-            public Order Order { get; set; }
-            public Customer Customer { get; set; }
-            public int Id { get; set; }
-            public string Created { get; set; }
-            public string OrderStatus { get; set; }
-            public string CustomerFullName { get; set; }
-            public string Total { get; set; } // ← ДОБАВЬ ЭТО
-        }
-
         private void DeliveryDatePicker_ValueChanged(object sender, EventArgs e)
         {
             if (_selectedPriorityOrder != null)
@@ -211,6 +211,21 @@ namespace ObjectOrientedPractics.View.Tabs
             {
                 _selectedPriorityOrder.DeliveryTimeSlot = deliveryTimeComboBox.SelectedItem.ToString();
             }
+        }
+
+        // ======================
+        // Вспомогательные типы
+        // ======================
+
+        private class OrderDisplayItem
+        {
+            public Order Order { get; set; }
+            public Customer Customer { get; set; }
+            public int Id { get; set; }
+            public string Created { get; set; }
+            public string OrderStatus { get; set; }
+            public string CustomerFullName { get; set; }
+            public string Total { get; set; }
         }
     }
 }

@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ObjectOrientedPractics.Model;
 using ObjectOrientedPractics.Model.Discounts;
@@ -13,12 +8,21 @@ using ObjectOrientedPractics.View.Controls;
 
 namespace ObjectOrientedPractics.View.Tabs
 {
+    /// <summary>
+    /// Вкладка для управления списком покупателей.
+    /// Поддерживает добавление, удаление, редактирование данных покупателя,
+    /// включая адрес, приоритетный статус и управление скидками.
+    /// </summary>
     public partial class CustomersTab : UserControl
     {
         private List<Customer> _customers = new List<Customer>();
         private Customer _selectedCustomer;
         private bool _updatingFields = false;
 
+        /// <summary>
+        /// Получает или задаёт список покупателей.
+        /// При установке автоматически обновляется отображение.
+        /// </summary>
         public List<Customer> Customers
         {
             get => _customers;
@@ -29,53 +33,27 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
+        /// <summary>
+        /// Инициализирует новый экземпляр класса <see cref="CustomersTab"/>.
+        /// Настраивает элементы управления и подписывается на события.
+        /// </summary>
         public CustomersTab()
         {
             InitializeComponent();
             InitializeListBox();
-
-            // ПОДПИСЫВАЕМСЯ НА СОБЫТИЕ ИЗМЕНЕНИЯ АДРЕСА
             addressControl1.AddressChanged += AddressControl1_AddressChanged;
         }
 
         /// <summary>
-        /// Обрабатывает изменение адреса в AddressControl.
+        /// Принудительно обновляет отображаемые данные на основе текущего списка покупателей.
         /// </summary>
-        private void AddressControl1_AddressChanged(object sender, EventArgs e)
+        public void RefreshData()
         {
-            UpdateCustomerAddress();
-        }
-
-        /// <summary>
-        /// Обновляет адрес покупателя.
-        /// </summary>
-        private void UpdateCustomerAddress()
-        {
-            if (_selectedCustomer != null && !_updatingFields)
+            RefreshListBox();
+            if (_selectedCustomer != null)
             {
-                try
-                {
-                    Console.WriteLine("=== SAVING ADDRESS CHANGES ===");
-
-                    // Вариант 1: Используем метод Update (рекомендуется)
-                    _selectedCustomer.Update(
-                        _selectedCustomer.FullName,  // Имя не меняем
-                        addressControl1.Address      // Новый адрес
-                    );
-
-                    // ИЛИ Вариант 2: Просто присваиваем свойство (еще проще)
-                    // _selectedCustomer.Address = addressControl1.Address;
-
-                    Console.WriteLine($"Address after update: {_selectedCustomer.Address}");
-                    Console.WriteLine("=== ADDRESS SAVED ===");
-
-                    RefreshListBox();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка адреса: {ex.Message}", "Ошибка",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
+                UpdateSelectedCustomerFields();
+                RefreshDiscountsList();
             }
         }
 
@@ -116,14 +94,12 @@ namespace ObjectOrientedPractics.View.Tabs
                 selectedCustomerIdTextBox.Text = _selectedCustomer.Id.ToString();
                 selectedCustomerFullNameTextBox.Text = _selectedCustomer.FullName;
                 addressControl1.Address = _selectedCustomer.Address;
-
-                // ⬇️ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: синхронизация флажка с данными
                 isPriorityCheckBox.Checked = _selectedCustomer.IsPriority;
             }
             else
             {
                 ClearInputFields();
-                isPriorityCheckBox.Checked = false; // на всякий случай
+                isPriorityCheckBox.Checked = false;
             }
 
             _updatingFields = false;
@@ -134,6 +110,84 @@ namespace ObjectOrientedPractics.View.Tabs
             selectedCustomerIdTextBox.Text = string.Empty;
             selectedCustomerFullNameTextBox.Text = string.Empty;
             addressControl1.Address = new Address();
+        }
+
+        private void RefreshDiscountsList()
+        {
+            if (_selectedCustomer == null)
+            {
+                discountsListBox.DataSource = null;
+                return;
+            }
+
+            discountsListBox.DataSource = null;
+            discountsListBox.DataSource = _selectedCustomer.Discounts;
+            discountsListBox.DisplayMember = "Info";
+        }
+
+        // ======================
+        // Обработчики событий
+        // ======================
+
+        private void AddressControl1_AddressChanged(object sender, EventArgs e)
+        {
+            UpdateCustomerAddress();
+        }
+
+        private void UpdateCustomerAddress()
+        {
+            if (_selectedCustomer != null && !_updatingFields)
+            {
+                try
+                {
+                    _selectedCustomer.Update(_selectedCustomer.FullName, addressControl1.Address);
+                    RefreshListBox();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"Ошибка при обновлении адреса: {ex.Message}",
+                        "Ошибка",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        private void customersListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _selectedCustomer = customersListBox.SelectedItem as Customer;
+            UpdateSelectedCustomerFields();
+            RefreshDiscountsList();
+        }
+
+        private void selectedCustomerFullNameTextBox_Leave(object sender, EventArgs e)
+        {
+            UpdateCustomerName();
+        }
+
+        private void UpdateCustomerName()
+        {
+            if (_selectedCustomer == null) return;
+
+            try
+            {
+                _selectedCustomer.FullName = selectedCustomerFullNameTextBox.Text;
+                RefreshListBox();
+                selectedCustomerFullNameTextBox.BackColor = SystemColors.Window;
+            }
+            catch
+            {
+                selectedCustomerFullNameTextBox.BackColor = Color.LightPink;
+            }
+        }
+
+        private void isPriorityCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_selectedCustomer != null)
+            {
+                _selectedCustomer.IsPriority = isPriorityCheckBox.Checked;
+            }
         }
 
         private void customersAddButton_Click(object sender, EventArgs e)
@@ -156,60 +210,6 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        private void customersListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            _selectedCustomer = customersListBox.SelectedItem as Customer;
-            UpdateSelectedCustomerFields();
-            RefreshDiscountsList();
-        }
-
-        private void selectedCustomerFullNameTextBox_Leave(object sender, EventArgs e)
-        {
-            UpdateCustomerName();
-        }
-
-        /// <summary>
-        /// Обновляет имя покупателя.
-        /// </summary>
-        private void UpdateCustomerName()
-        {
-            if (_selectedCustomer == null) return;
-
-            try
-            {
-                // Просто присваиваем свойство - валидация произойдет в сеттере
-                _selectedCustomer.FullName = selectedCustomerFullNameTextBox.Text;
-
-                RefreshListBox();
-                selectedCustomerFullNameTextBox.BackColor = SystemColors.Window;
-            }
-            catch
-            {
-                selectedCustomerFullNameTextBox.BackColor = Color.LightPink;
-            }
-        }
-
-        private void isPriorityCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (_selectedCustomer != null)
-            {
-                _selectedCustomer.IsPriority = isPriorityCheckBox.Checked;
-            }
-        }
-
-        private void RefreshDiscountsList()
-        {
-            if (_selectedCustomer == null)
-            {
-                discountsListBox.DataSource = null;
-                return;
-            }
-
-            discountsListBox.DataSource = null;
-            discountsListBox.DataSource = _selectedCustomer.Discounts;
-            discountsListBox.DisplayMember = "Info";
-        }
-
         private void addDiscountButton_Click(object sender, EventArgs e)
         {
             if (_selectedCustomer == null) return;
@@ -230,7 +230,7 @@ namespace ObjectOrientedPractics.View.Tabs
             var selected = discountsListBox.SelectedItem as IDiscount;
             if (selected == null) return;
 
-            // Нельзя удалить первую скидку (PointsDiscount)
+            // Первая скидка — накопительная (PointsDiscount), её нельзя удалить
             if (_selectedCustomer.Discounts.IndexOf(selected) == 0)
             {
                 MessageBox.Show("Нельзя удалить накопительную скидку.");

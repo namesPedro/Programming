@@ -5,7 +5,7 @@ using ObjectOrientedPractics.Model;
 namespace ObjectOrientedPractics.Services
 {
     /// <summary>
-    /// Содержит универсальные методы для обработки данных.
+    /// Предоставляет универсальные методы для фильтрации и сортировки данных.
     /// </summary>
     public static class DataTools
     {
@@ -14,13 +14,17 @@ namespace ObjectOrientedPractics.Services
         /// </summary>
         /// <param name="items">Исходный список товаров.</param>
         /// <param name="predicate">Критерий фильтрации.</param>
-        /// <returns>Новый список, содержащий только подходящие товары.</returns>
+        /// <returns>Новый список, содержащий только элементы, удовлетворяющие условию.</returns>
+        /// <exception cref="ArgumentNullException">Выбрасывается, если <paramref name="predicate"/> равен <see langword="null"/>.</exception>
         public static List<Item> Filter(List<Item> items, Func<Item, bool> predicate)
         {
-            if (items == null || predicate == null)
-                return new List<Item>();
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
 
             var result = new List<Item>();
+            if (items == null)
+                return result;
+
             foreach (var item in items)
             {
                 if (predicate(item))
@@ -30,29 +34,43 @@ namespace ObjectOrientedPractics.Services
         }
 
         /// <summary>
-        /// Сортирует список товаров по заданному компаратору.
+        /// Сортирует список товаров с использованием алгоритма пузырьковой сортировки.
         /// </summary>
         /// <param name="items">Исходный список товаров.</param>
-        /// <param name="comparer">Функция сравнения двух товаров.</param>
+        /// <param name="comparer">Функция сравнения двух товаров. 
+        /// Должна возвращать отрицательное число, если первый элемент меньше второго,
+        /// ноль — если равны, положительное — если больше.</param>
         /// <returns>Новый отсортированный список.</returns>
+        /// <exception cref="ArgumentNullException">Выбрасывается, если <paramref name="comparer"/> равен <see langword="null"/>.</exception>
         public static List<Item> Sort(List<Item> items, Func<Item, Item, int> comparer)
         {
-            if (items == null || comparer == null)
-                return new List<Item>(items ?? new List<Item>());
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
 
-            // Создаём копию списка, чтобы не менять оригинал
+            if (items == null || items.Count <= 1)
+                return items == null ? new List<Item>() : new List<Item>(items);
+
             var sorted = new List<Item>(items);
-            // Простая пузырьковая сортировка (как в задании)
-            for (int i = 0; i < sorted.Count; i++)
+            int n = sorted.Count;
+
+            for (int i = 0; i < n - 1; i++)
             {
-                for (int j = 1; j < sorted.Count; j++)
+                bool swapped = false;
+                for (int j = 0; j < n - i - 1; j++)
                 {
-                    if (comparer(sorted[j], sorted[j - 1]) < 0)
+                    if (comparer(sorted[j], sorted[j + 1]) > 0)
                     {
-                        (sorted[j], sorted[j - 1]) = (sorted[j - 1], sorted[j]);
+                        var temp = sorted[j];
+                        sorted[j] = sorted[j + 1];
+                        sorted[j + 1] = temp;
+                        swapped = true;
                     }
                 }
+
+                if (!swapped)
+                    break;
             }
+
             return sorted;
         }
     }

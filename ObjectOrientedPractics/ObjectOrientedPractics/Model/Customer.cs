@@ -1,14 +1,13 @@
-﻿using ObjectOrientedPractics.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ObjectOrientedPractics.Model.Discounts;
+using ObjectOrientedPractics.Services;
 
 namespace ObjectOrientedPractics.Model
 {
     /// <summary>
-    /// Представляет покупателя с уникальным идентификатором, полным именем, адресом и признаком приоритетности.
+    /// Представляет покупателя с уникальным идентификатором, именем, адресом, корзиной и заказами.
     /// </summary>
-    [Serializable]
     public class Customer
     {
         private readonly int _id;
@@ -16,7 +15,7 @@ namespace ObjectOrientedPractics.Model
         private Address _address;
         private Cart _cart;
         private List<Order> _orders;
-        private bool _isPriority = false; // ← Добавлено: по умолчанию false
+        private bool _isPriority;
         private List<IDiscount> _discounts;
 
         /// <summary>
@@ -27,6 +26,7 @@ namespace ObjectOrientedPractics.Model
         /// <summary>
         /// Полное имя покупателя (до 200 символов).
         /// </summary>
+        /// <exception cref="ArgumentException">Выбрасывается, если имя превышает 200 символов.</exception>
         public string FullName
         {
             get => _fullName;
@@ -40,13 +40,11 @@ namespace ObjectOrientedPractics.Model
         /// <summary>
         /// Адрес доставки.
         /// </summary>
+        /// <exception cref="ArgumentNullException">Выбрасывается, если адрес равен <see langword="null"/>.</exception>
         public Address Address
         {
             get => _address;
-            set
-            {
-                _address = value ?? throw new ArgumentNullException(nameof(Address));
-            }
+            set => _address = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         /// <summary>
@@ -55,7 +53,7 @@ namespace ObjectOrientedPractics.Model
         public Cart Cart
         {
             get => _cart;
-            set => _cart = value;
+            set => _cart = value ?? new Cart();
         }
 
         /// <summary>
@@ -69,7 +67,6 @@ namespace ObjectOrientedPractics.Model
 
         /// <summary>
         /// Указывает, является ли покупатель приоритетным.
-        /// Приоритетные покупатели создают заказы типа <see cref="PriorityOrder"/>.
         /// Значение по умолчанию — <c>false</c>.
         /// </summary>
         public bool IsPriority
@@ -78,14 +75,14 @@ namespace ObjectOrientedPractics.Model
             set => _isPriority = value;
         }
 
-        public List<IDiscount> Discounts
-        {
-            get => _discounts;
-            private set => _discounts = value ?? new List<IDiscount>();
-        }
+        /// <summary>
+        /// Список скидок, доступных покупателю.
+        /// Всегда содержит как минимум одну накопительную скидку.
+        /// </summary>
+        public List<IDiscount> Discounts => _discounts;
 
         /// <summary>
-        /// Создает новый экземпляр класса Customer.
+        /// Инициализирует новый экземпляр класса <see cref="Customer"/>.
         /// </summary>
         /// <param name="fullName">Полное имя покупателя.</param>
         /// <param name="address">Адрес доставки.</param>
@@ -94,18 +91,14 @@ namespace ObjectOrientedPractics.Model
             _id = IdGenerator.GetNextId();
             FullName = fullName;
             Address = address;
-            Cart = new Cart();
-            Orders = new List<Order>();
-            // _isPriority остаётся false по умолчанию
-
-            _discounts = new List<IDiscount>
-            {
-                new PointsDiscount() // обязательная накопительная скидка
-            };
+            _cart = new Cart();
+            _orders = new List<Order>();
+            _isPriority = false;
+            _discounts = new List<IDiscount> { new PointsDiscount() };
         }
 
         /// <summary>
-        /// Обновляет информацию о покупателе.
+        /// Обновляет имя и адрес покупателя.
         /// </summary>
         /// <param name="fullName">Новое полное имя.</param>
         /// <param name="address">Новый адрес.</param>
@@ -115,6 +108,7 @@ namespace ObjectOrientedPractics.Model
             Address = address;
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return FullName;

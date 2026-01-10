@@ -6,7 +6,6 @@ namespace ObjectOrientedPractics.Model
     /// <summary>
     /// Представляет товар в системе.
     /// </summary>
-    [Serializable]
     public class Item : ICloneable, IEquatable<Item>, IComparable<Item>
     {
         private readonly int _id;
@@ -20,47 +19,63 @@ namespace ObjectOrientedPractics.Model
         public int Id => _id;
 
         /// <summary>
-        /// Название товара (не более 200 символов).
+        /// Название товара (не более 200 символов, не может быть пустым).
         /// </summary>
-        /// <exception cref="ArgumentException">Выбрасывается когда название пустое или превышает 200 символов.</exception>
+        /// <exception cref="ArgumentException">Выбрасывается, если название пустое или превышает 200 символов.</exception>
         public string Name
         {
             get => _name;
             private set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Название товара не может быть пустым");
+                    throw new ArgumentException("Название товара не может быть пустым.", nameof(value));
                 ValueValidator.AssertStringOnLength(value, 200, nameof(Name));
-                _name = value;
+                if (_name != value)
+                {
+                    _name = value;
+                    OnNameChanged();
+                }
             }
         }
 
         /// <summary>
         /// Описание товара (не более 1000 символов).
         /// </summary>
-        /// <exception cref="ArgumentException">Выбрасывается когда описание превышает 1000 символов.</exception>
+        /// <exception cref="ArgumentException">Выбрасывается, если описание превышает 1000 символов.</exception>
         public string Info
         {
             get => _info;
             private set
             {
                 ValueValidator.AssertStringOnLength(value, 1000, nameof(Info));
-                _info = value ?? string.Empty;
+                string newValue = value ?? string.Empty;
+                if (_info != newValue)
+                {
+                    _info = newValue;
+                    OnInfoChanged();
+                }
             }
         }
 
         /// <summary>
-        /// Стоимость товара (от 0 до 100 000).
+        /// Стоимость товара (от 0 до 100 000 включительно).
         /// </summary>
-        /// <exception cref="ArgumentException">Выбрасывается когда стоимость выходит за допустимые пределы.</exception>
+        /// <exception cref="ArgumentException">Выбрасывается, если стоимость выходит за допустимые пределы.</exception>
         public double Cost
         {
             get => _cost;
             private set
             {
-                if (value < 0 || value > 100000)
-                    throw new ArgumentException("Стоимость товара должна быть в диапазоне от 0 до 100 000");
-                _cost = value;
+                const double MinCost = 0;
+                const double MaxCost = 100_000;
+                if (value < MinCost || value > MaxCost)
+                    throw new ArgumentException($"Стоимость товара должна быть в диапазоне от {MinCost} до {MaxCost}.");
+
+                if (Math.Abs(_cost - value) > 0.01)
+                {
+                    _cost = value;
+                    OnCostChanged();
+                }
             }
         }
 
@@ -68,6 +83,11 @@ namespace ObjectOrientedPractics.Model
         /// Категория товара.
         /// </summary>
         public Category Category { get; set; }
+
+        // Если понадобятся
+        public event EventHandler NameChanged;
+        public event EventHandler InfoChanged;
+        public event EventHandler CostChanged;
 
         /// <summary>
         /// Инициализирует новый экземпляр класса <see cref="Item"/>.
@@ -86,11 +106,11 @@ namespace ObjectOrientedPractics.Model
         }
 
         /// <summary>
-        /// Обновляет информацию о товаре.
+        /// Обновляет название, описание и стоимость товара.
         /// </summary>
-        /// <param name="name">Новое название товара.</param>
-        /// <param name="info">Новое описание товара.</param>
-        /// <param name="cost">Новая стоимость товара.</param>
+        /// <param name="name">Новое название.</param>
+        /// <param name="info">Новое описание.</param>
+        /// <param name="cost">Новая стоимость.</param>
         public void Update(string name, string info, double cost)
         {
             Name = name;
@@ -98,13 +118,12 @@ namespace ObjectOrientedPractics.Model
             Cost = cost;
         }
 
-        /// <inheritdoc/>
-        public object Clone()
-        {
-            return new Item(Name, Info, Cost, Category);
-        }
+        protected virtual void OnNameChanged() => NameChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnInfoChanged() => InfoChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnCostChanged() => CostChanged?.Invoke(this, EventArgs.Empty);
 
-        /// <inheritdoc/>
+        public object Clone() => new Item(Name, Info, Cost, Category);
+
         public bool Equals(Item other)
         {
             if (other is null) return false;
@@ -112,19 +131,10 @@ namespace ObjectOrientedPractics.Model
             return Id == other.Id;
         }
 
-        /// <inheritdoc/>
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Item);
-        }
+        public override bool Equals(object obj) => Equals(obj as Item);
 
-        /// <inheritdoc/>
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+        public override int GetHashCode() => Id.GetHashCode();
 
-        /// <inheritdoc/>
         public int CompareTo(Item other)
         {
             if (other is null) return 1;
