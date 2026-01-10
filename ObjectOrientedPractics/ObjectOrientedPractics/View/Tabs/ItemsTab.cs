@@ -1,106 +1,105 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ObjectOrientedPractics.Model;
+using ObjectOrientedPractics.Services;
 
 namespace ObjectOrientedPractics.View.Tabs
 {
     /// <summary>
     /// Представляет вкладку для управления списком товаров.
-    /// Обеспечивает функциональность добавления, удаления и редактирования товаров.
+    /// Обеспечивает функциональность добавления, удаления, редактирования,
+    /// поиска и сортировки товаров с использованием делегатов.
     /// </summary>
     public partial class ItemsTab : UserControl
     {
-        /// <summary>
-        /// Список товаров.
-        /// </summary>
-        private List<Item> _items = new List<Item>();
-
-        /// <summary>
-        /// Текущий выбранный товар.
-        /// </summary>
+        private List<Item> _allItems = new List<Item>();
+        private List<Item> _displayedItems = new List<Item>();
         private Item _selectedItem;
 
-        /// <summary>
-        /// Список товаров для отображения и редактирования.
-        /// </summary>
         public List<Item> Items
         {
-            get => _items;
+            get => _allItems;
             set
             {
-                _items = value ?? new List<Item>();
-                RefreshListBox();
+                _allItems = value ?? new List<Item>();
+                ApplyFilterAndSort();
             }
         }
 
-        /// <summary>
-        /// Инициализирует новый экземпляр класса ItemsTab.
-        /// </summary>
         public ItemsTab()
         {
             InitializeComponent();
-            InitializeListBox();
-            InitializeCategoryComboBox();
-        }
 
-        private void InitializeCategoryComboBox()
-        {
-            // Заполняем ComboBox значениями перечисления
+            // Настройка ComboBox категорий
             selectedItemCategoryComboBox.DataSource = Enum.GetValues(typeof(Category));
-        }
 
-        /// <summary>
-        /// Инициализирует ListBox для отображения товаров.
-        /// </summary>
-        private void InitializeListBox()
-        {
+            // Настройка сортировки
+            sortComboBox.Items.AddRange(new[]
+            {
+                "По имени",
+                "По возрастанию стоимости",
+                "По убыванию стоимости"
+            });
+            sortComboBox.SelectedIndex = 0; // По умолчанию — по имени
+
+            // Инициализация отображения
             itemsListBox.DisplayMember = "Name";
-            itemsListBox.ValueMember = "Id";
-            RefreshListBox();
+            ApplyFilterAndSort();
         }
 
         /// <summary>
-        /// Обновляет данные в ListBox.
-        /// Сохраняет выбранный элемент после обновления.
+        /// Применяет фильтрацию и сортировку к списку товаров.
         /// </summary>
-        private void RefreshListBox()
+        private void ApplyFilterAndSort()
         {
+            // 1. Фильтрация по поиску
+            string searchTerm = searchTextBox.Text.Trim().ToLower();
+            var filtered = DataTools.Filter(_allItems, item =>
+                string.IsNullOrEmpty(searchTerm) ||
+                item.Name.ToLower().Contains(searchTerm));
+
+            // 2. Сортировка
+            var sorted = SortItems(filtered);
+
+            // 3. Обновление отображаемого списка
+            _displayedItems = sorted;
+
+            // Сохраняем текущий выбранный индекс
             int selectedIndex = itemsListBox.SelectedIndex;
 
+            // Обновляем ListBox
             itemsListBox.DataSource = null;
-            itemsListBox.DataSource = _items;
             itemsListBox.DisplayMember = "Name";
+            itemsListBox.DataSource = _displayedItems;
 
-            if (_items.Count == 0)
+            // Восстанавливаем выделение
+            if (_selectedItem != null)
             {
-                _selectedItem = null;
-                ClearInputFields();
-                return;
+                int newIndex = _displayedItems.IndexOf(_selectedItem);
+                if (newIndex >= 0)
+                    itemsListBox.SelectedIndex = newIndex;
+                else
+                    _selectedItem = null; // элемент больше не виден
             }
-
-            if (selectedIndex >= _items.Count)
-            {
-                selectedIndex = _items.Count - 1;
-            }
-
-            if (selectedIndex < 0)
-            {
-                selectedIndex = 0;
-            }
-
-            itemsListBox.SelectedIndex = selectedIndex;
         }
 
-        /// <summary>
-        /// Обновляет поля ввода данными выбранного товара.
-        /// </summary>
+        private List<Item> SortItems(List<Item> items)
+        {
+            switch (sortComboBox.SelectedIndex)
+            {
+                case 0:
+                    return DataTools.Sort(items, (a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
+                case 1:
+                    return DataTools.Sort(items, (a, b) => a.Cost.CompareTo(b.Cost));
+                case 2:
+                    return DataTools.Sort(items, (a, b) => b.Cost.CompareTo(a.Cost));
+                default:
+                    return items;
+            }
+        }
+
         private void UpdateSelectedItemFields()
         {
             if (_selectedItem != null)
@@ -117,78 +116,26 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        /// <summary>
-        /// Очищает поля ввода.
-        /// </summary>
         private void ClearInputFields()
         {
-            selectedItemIdTextBox.Text = string.Empty;
-            selectedItemNameTextBox.Text = string.Empty;
-            selectedItemDescriptionTextBox.Text = string.Empty;
-            selectedItemCostTextBox.Text = string.Empty;
+            selectedItemIdTextBox.Clear();
+            selectedItemNameTextBox.Clear();
+            selectedItemDescriptionTextBox.Clear();
+            selectedItemCostTextBox.Clear();
             selectedItemCategoryComboBox.SelectedIndex = -1;
         }
 
-        private void selectedItemCategoryComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_selectedItem != null && selectedItemCategoryComboBox.SelectedItem != null)
-            {
-                _selectedItem.Category = (Category)selectedItemCategoryComboBox.SelectedItem;
-            }
-        }
+        // === Обработчики редактирования (БЕЗ пересборки списка!) ===
 
-        /// <summary>
-        /// Обрабатывает нажатие кнопки добавления товара.
-        /// </summary>
-        private void itemsAddButton_Click(object sender, EventArgs e)
-        {
-            var newItem = new Item("New Name", "New Description", 0.0, Category.Electronics);
-            _items.Add(newItem);
-            RefreshListBox();
-
-            itemsListBox.SelectedItem = newItem;
-        }
-
-        /// <summary>
-        /// Обрабатывает нажатие кнопки удаления товара.
-        /// </summary>
-        private void itemsRemoveButton_Click(object sender, EventArgs e)
-        {
-            if (_selectedItem != null)
-            {
-                _items.Remove(_selectedItem);
-                _selectedItem = null;
-                RefreshListBox();
-                ClearInputFields();
-            }
-        }
-
-        /// <summary>
-        /// Обрабатывает изменение выбранного элемента в ListBox.
-        /// </summary>
-        private void itemsListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            _selectedItem = itemsListBox.SelectedItem as Item;
-            UpdateSelectedItemFields();
-        }
-
-        /// <summary>
-        /// Обрабатывает изменение текста в поле названия товара.
-        /// Обновляет данные товара и валидирует ввод.
-        /// </summary>
         private void selectedItemNameTextBox_Leave(object sender, EventArgs e)
         {
             if (_selectedItem == null) return;
 
             try
             {
-                _selectedItem.Update(
-                selectedItemNameTextBox.Text,
-                _selectedItem.Info,
-                _selectedItem.Cost
-                );
-
-                RefreshListBox();
+                _selectedItem.Update(selectedItemNameTextBox.Text, _selectedItem.Info, _selectedItem.Cost);
+                // Обновляем только отображение, не трогая фильтрацию
+                RefreshListBoxDisplay();
                 selectedItemNameTextBox.BackColor = SystemColors.Window;
             }
             catch
@@ -197,35 +144,21 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        /// <summary>
-        /// Обрабатывает изменение текста в поле описания товара.
-        /// Обновляет данные товара и валидирует ввод.
-        /// </summary>
         private void selectedItemDescriptionTextBox_Leave(object sender, EventArgs e)
         {
             if (_selectedItem == null) return;
 
             try
             {
-                _selectedItem.Update(
-                    _selectedItem.Name,
-                    selectedItemDescriptionTextBox.Text,
-                    _selectedItem.Cost
-                );
-
+                _selectedItem.Update(_selectedItem.Name, selectedItemDescriptionTextBox.Text, _selectedItem.Cost);
                 selectedItemDescriptionTextBox.BackColor = SystemColors.Window;
             }
             catch
             {
                 selectedItemDescriptionTextBox.BackColor = Color.LightPink;
             }
-
         }
 
-        /// <summary>
-        /// Обрабатывает изменение текста в поле стоимости товара.
-        /// Обновляет данные товара и валидирует ввод.
-        /// </summary>
         private void selectedItemCostTextBox_Leave(object sender, EventArgs e)
         {
             if (_selectedItem == null) return;
@@ -234,10 +167,8 @@ namespace ObjectOrientedPractics.View.Tabs
             {
                 if (double.TryParse(selectedItemCostTextBox.Text, out double cost))
                 {
-                    if (Math.Abs(_selectedItem.Cost - cost) > 0.01)
-                    {
-                        _selectedItem.Update(_selectedItem.Name, _selectedItem.Info, cost);
-                    }
+                    _selectedItem.Update(_selectedItem.Name, _selectedItem.Info, cost);
+                    RefreshListBoxDisplay();
                     selectedItemCostTextBox.BackColor = SystemColors.Window;
                 }
                 else
@@ -249,6 +180,81 @@ namespace ObjectOrientedPractics.View.Tabs
             {
                 selectedItemCostTextBox.BackColor = Color.LightPink;
             }
+        }
+
+        private void selectedItemCategoryComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_selectedItem != null && selectedItemCategoryComboBox.SelectedItem != null)
+            {
+                _selectedItem.Category = (Category)selectedItemCategoryComboBox.SelectedItem;
+            }
+        }
+
+        // === Управление списком ===
+
+        private void itemsAddButton_Click(object sender, EventArgs e)
+        {
+            var newItem = new Item("New Name", "New Description", 0.0, Category.Electronics);
+            _allItems.Add(newItem);
+            ApplyFilterAndSort();
+            itemsListBox.SelectedItem = newItem;
+        }
+
+        private void itemsRemoveButton_Click(object sender, EventArgs e)
+        {
+            if (_selectedItem != null)
+            {
+                _allItems.Remove(_selectedItem);
+                _selectedItem = null;
+                ApplyFilterAndSort();
+                ClearInputFields();
+            }
+        }
+
+        // === Обработка выбора в ListBox ===
+
+        private void itemsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _selectedItem = itemsListBox.SelectedItem as Item;
+            UpdateSelectedItemFields();
+        }
+
+        // === Обработка UI-элементов ===
+
+        private void SearchTextBox_TextChanged(object sender, EventArgs e)
+        {
+            ApplyFilterAndSort();
+        }
+
+        private void SortComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ApplyFilterAndSort();
+        }
+
+        // === Вспомогательные методы ===
+
+        /// <summary>
+        /// Обновляет отображение ListBox без изменения фильтрации/сортировки.
+        /// </summary>
+        private void RefreshListBoxDisplay()
+        {
+            // Просто перепривязываем тот же список — обновляется отображение Name
+            itemsListBox.DataSource = null;
+            itemsListBox.DisplayMember = "Name";
+            itemsListBox.DataSource = _displayedItems;
+
+            // Восстанавливаем выделение
+            if (_selectedItem != null)
+            {
+                int index = _displayedItems.IndexOf(_selectedItem);
+                if (index >= 0)
+                    itemsListBox.SelectedIndex = index;
+            }
+        }
+
+        public void RefreshData()
+        {
+            ApplyFilterAndSort();
         }
     }
 }

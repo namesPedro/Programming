@@ -46,11 +46,15 @@
             this.panel8 = new System.Windows.Forms.Panel();
             this.panel7 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.sortComboBox = new System.Windows.Forms.ComboBox();
+            this.orderByLabel = new System.Windows.Forms.Label();
+            this.searchTextBox = new System.Windows.Forms.TextBox();
+            this.findLabel = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel4 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.selectedItemCategoryComboBox = new System.Windows.Forms.ComboBox();
             this.selectedItemCategoryLabel = new System.Windows.Forms.Label();
+            this.selectedItemCategoryComboBox = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel8.SuspendLayout();
@@ -163,10 +167,9 @@
             // itemsListBox
             // 
             this.itemsListBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.itemsListBox.FormattingEnabled = true;
-            this.itemsListBox.Location = new System.Drawing.Point(0, 30);
+            this.itemsListBox.Location = new System.Drawing.Point(0, 43);
             this.itemsListBox.Name = "itemsListBox";
-            this.itemsListBox.Size = new System.Drawing.Size(399, 550);
+            this.itemsListBox.Size = new System.Drawing.Size(399, 511);
             this.itemsListBox.TabIndex = 1;
             this.itemsListBox.SelectedIndexChanged += new System.EventHandler(this.itemsListBox_SelectedIndexChanged);
             // 
@@ -232,6 +235,10 @@
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.sortComboBox);
+            this.panel5.Controls.Add(this.orderByLabel);
+            this.panel5.Controls.Add(this.searchTextBox);
+            this.panel5.Controls.Add(this.findLabel);
             this.panel5.Controls.Add(this.itemsLabel);
             this.panel5.Controls.Add(this.itemsListBox);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
@@ -239,6 +246,43 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(399, 580);
             this.panel5.TabIndex = 0;
+            // 
+            // sortComboBox
+            // 
+            this.sortComboBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.sortComboBox.FormattingEnabled = true;
+            this.sortComboBox.Location = new System.Drawing.Point(69, 557);
+            this.sortComboBox.Name = "sortComboBox";
+            this.sortComboBox.Size = new System.Drawing.Size(330, 21);
+            this.sortComboBox.TabIndex = 5;
+            this.sortComboBox.SelectedIndexChanged += new System.EventHandler(this.SortComboBox_SelectedIndexChanged);
+            // 
+            // orderByLabel
+            // 
+            this.orderByLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.orderByLabel.AutoSize = true;
+            this.orderByLabel.Location = new System.Drawing.Point(3, 560);
+            this.orderByLabel.Name = "orderByLabel";
+            this.orderByLabel.Size = new System.Drawing.Size(51, 13);
+            this.orderByLabel.TabIndex = 4;
+            this.orderByLabel.Text = "Order By:";
+            // 
+            // searchTextBox
+            // 
+            this.searchTextBox.Location = new System.Drawing.Point(39, 19);
+            this.searchTextBox.Name = "searchTextBox";
+            this.searchTextBox.Size = new System.Drawing.Size(360, 20);
+            this.searchTextBox.TabIndex = 3;
+            this.searchTextBox.TextChanged += new System.EventHandler(this.SearchTextBox_TextChanged);
+            // 
+            // findLabel
+            // 
+            this.findLabel.AutoSize = true;
+            this.findLabel.Location = new System.Drawing.Point(3, 22);
+            this.findLabel.Name = "findLabel";
+            this.findLabel.Size = new System.Drawing.Size(30, 13);
+            this.findLabel.TabIndex = 2;
+            this.findLabel.Text = "Find:";
             // 
             // panel2
             // 
@@ -277,16 +321,6 @@
             this.panel3.Size = new System.Drawing.Size(497, 469);
             this.panel3.TabIndex = 0;
             // 
-            // selectedItemCategoryComboBox
-            // 
-            this.selectedItemCategoryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.selectedItemCategoryComboBox.FormattingEnabled = true;
-            this.selectedItemCategoryComboBox.Location = new System.Drawing.Point(67, 79);
-            this.selectedItemCategoryComboBox.Name = "selectedItemCategoryComboBox";
-            this.selectedItemCategoryComboBox.Size = new System.Drawing.Size(161, 21);
-            this.selectedItemCategoryComboBox.TabIndex = 13;
-            this.selectedItemCategoryComboBox.SelectedIndexChanged += new System.EventHandler(this.selectedItemCategoryComboBox_SelectedIndexChanged);
-            // 
             // selectedItemCategoryLabel
             // 
             this.selectedItemCategoryLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -296,6 +330,16 @@
             this.selectedItemCategoryLabel.Size = new System.Drawing.Size(52, 13);
             this.selectedItemCategoryLabel.TabIndex = 14;
             this.selectedItemCategoryLabel.Text = "Category:";
+            // 
+            // selectedItemCategoryComboBox
+            // 
+            this.selectedItemCategoryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.selectedItemCategoryComboBox.FormattingEnabled = true;
+            this.selectedItemCategoryComboBox.Location = new System.Drawing.Point(67, 79);
+            this.selectedItemCategoryComboBox.Name = "selectedItemCategoryComboBox";
+            this.selectedItemCategoryComboBox.Size = new System.Drawing.Size(161, 21);
+            this.selectedItemCategoryComboBox.TabIndex = 13;
+            this.selectedItemCategoryComboBox.SelectedIndexChanged += new System.EventHandler(this.selectedItemCategoryComboBox_SelectedIndexChanged);
             // 
             // ItemsTab
             // 
@@ -343,5 +387,9 @@
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Label selectedItemCategoryLabel;
         private System.Windows.Forms.ComboBox selectedItemCategoryComboBox;
+        private System.Windows.Forms.ComboBox sortComboBox;
+        private System.Windows.Forms.Label orderByLabel;
+        private System.Windows.Forms.TextBox searchTextBox;
+        private System.Windows.Forms.Label findLabel;
     }
 }
