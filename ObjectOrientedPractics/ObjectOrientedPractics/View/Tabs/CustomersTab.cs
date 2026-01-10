@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ObjectOrientedPractics.Model;
+using ObjectOrientedPractics.Model.Discounts;
 using ObjectOrientedPractics.View.Controls;
 
 namespace ObjectOrientedPractics.View.Tabs
@@ -159,6 +160,7 @@ namespace ObjectOrientedPractics.View.Tabs
         {
             _selectedCustomer = customersListBox.SelectedItem as Customer;
             UpdateSelectedCustomerFields();
+            RefreshDiscountsList();
         }
 
         private void selectedCustomerFullNameTextBox_Leave(object sender, EventArgs e)
@@ -193,6 +195,50 @@ namespace ObjectOrientedPractics.View.Tabs
             {
                 _selectedCustomer.IsPriority = isPriorityCheckBox.Checked;
             }
+        }
+
+        private void RefreshDiscountsList()
+        {
+            if (_selectedCustomer == null)
+            {
+                discountsListBox.DataSource = null;
+                return;
+            }
+
+            discountsListBox.DataSource = null;
+            discountsListBox.DataSource = _selectedCustomer.Discounts;
+            discountsListBox.DisplayMember = "Info";
+        }
+
+        private void addDiscountButton_Click(object sender, EventArgs e)
+        {
+            if (_selectedCustomer == null) return;
+
+            var form = new AddDiscountForm();
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                var category = form.SelectedCategory;
+                _selectedCustomer.Discounts.Add(new PercentDiscount(category));
+                RefreshDiscountsList();
+            }
+        }
+
+        private void removeDiscountButton_Click(object sender, EventArgs e)
+        {
+            if (_selectedCustomer == null) return;
+
+            var selected = discountsListBox.SelectedItem as IDiscount;
+            if (selected == null) return;
+
+            // Нельзя удалить первую скидку (PointsDiscount)
+            if (_selectedCustomer.Discounts.IndexOf(selected) == 0)
+            {
+                MessageBox.Show("Нельзя удалить накопительную скидку.");
+                return;
+            }
+
+            _selectedCustomer.Discounts.Remove(selected);
+            RefreshDiscountsList();
         }
     }
 }

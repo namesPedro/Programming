@@ -118,6 +118,7 @@
             this.cartsTab1.Items = ((System.Collections.Generic.List<ObjectOrientedPractics.Model.Item>)(resources.GetObject("cartsTab1.Items")));
             this.cartsTab1.Location = new System.Drawing.Point(3, 3);
             this.cartsTab1.Name = "cartsTab1";
+            this.cartsTab1.OrdersTabRef = null;
             this.cartsTab1.Size = new System.Drawing.Size(970, 629);
             this.cartsTab1.TabIndex = 0;
             // 

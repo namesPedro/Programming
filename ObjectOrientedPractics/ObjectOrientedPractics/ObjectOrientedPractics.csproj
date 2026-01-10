@@ -48,15 +48,24 @@
   <ItemGroup>
     <Compile Include="Model\Address.cs" />
     <Compile Include="Model\Cart.cs" />
-    <Compile Include="Model\Category.cs" />
+    <Compile Include="Model\Discounts\PercentDiscount.cs" />
+    <Compile Include="Model\Discounts\PointDiscount.cs" />
+    <Compile Include="Model\Enums\Category.cs" />
     <Compile Include="Model\Customer.cs" />
+    <Compile Include="Model\IDiscount.cs" />
     <Compile Include="Model\Item.cs" />
-    <Compile Include="Model\Order.cs" />
-    <Compile Include="Model\OrderStatus.cs" />
-    <Compile Include="Model\PriorityOrder.cs" />
+    <Compile Include="Model\Orders\Order.cs" />
+    <Compile Include="Model\Enums\OrderStatus.cs" />
+    <Compile Include="Model\Orders\PriorityOrder.cs" />
     <Compile Include="Model\Store.cs" />
     <Compile Include="Services\IdGenerator.cs" />
     <Compile Include="Services\ValueValidator.cs" />
+    <Compile Include="View\AddDiscountForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\AddDiscountForm.Designer.cs">
+      <DependentUpon>AddDiscountForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Controls\AddressControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -104,6 +113,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="View\AddDiscountForm.resx">
+      <DependentUpon>AddDiscountForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\Controls\AddressControl.resx">
       <DependentUpon>AddressControl.cs</DependentUpon>
     </EmbeddedResource>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using ObjectOrientedPractics.Model;
+using ObjectOrientedPractics.Model.Discounts;
 
 namespace ObjectOrientedPractics.View.Tabs
 {
@@ -14,9 +15,6 @@ namespace ObjectOrientedPractics.View.Tabs
 
         public OrdersTab OrdersTabRef { get; set; }
 
-        /// <summary>
-        /// Список товаров для отображения.
-        /// </summary>
         public List<Item> Items
         {
             get => _items;
@@ -27,9 +25,6 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        /// <summary>
-        /// Список покупателей.
-        /// </summary>
         public List<Customer> Customers
         {
             get => _customers;
@@ -44,21 +39,17 @@ namespace ObjectOrientedPractics.View.Tabs
         {
             InitializeComponent();
 
-            // Настройка привязки данных
             itemsListBox.DisplayMember = "Name";
             cartListBox.DisplayMember = "Name";
             customersComboBox.DisplayMember = "FullName";
         }
 
-        /// <summary>
-        /// Обновляет список товаров.
-        /// </summary>
         private void RefreshItemsListBox()
         {
             Action refresh = () =>
             {
                 itemsListBox.DataSource = null;
-                itemsListBox.DisplayMember = "Name"; // ← Убедитесь, что DisplayMember установлен!
+                itemsListBox.DisplayMember = "Name";
                 itemsListBox.DataSource = _items;
             };
 
@@ -68,9 +59,6 @@ namespace ObjectOrientedPractics.View.Tabs
                 refresh();
         }
 
-        /// <summary>
-        /// Обновляет список покупателей.
-        /// </summary>
         private void RefreshCustomersComboBox()
         {
             if (customersComboBox.InvokeRequired)
@@ -79,7 +67,6 @@ namespace ObjectOrientedPractics.View.Tabs
                 {
                     customersComboBox.DataSource = null;
                     customersComboBox.DataSource = _customers;
-
                     if (_customers.Count > 0)
                         customersComboBox.SelectedIndex = 0;
                 }));
@@ -88,21 +75,17 @@ namespace ObjectOrientedPractics.View.Tabs
             {
                 customersComboBox.DataSource = null;
                 customersComboBox.DataSource = _customers;
-
                 if (_customers.Count > 0)
                     customersComboBox.SelectedIndex = 0;
             }
         }
 
-        /// <summary>
-        /// Обновляет содержимое корзины текущего покупателя.
-        /// </summary>
         private void RefreshCartListBox()
         {
             Action refresh = () =>
             {
                 cartListBox.DataSource = null;
-                cartListBox.DisplayMember = "Name"; // ← Ключевая строка!
+                cartListBox.DisplayMember = "Name";
                 if (_currentCustomer?.Cart != null)
                 {
                     cartListBox.DataSource = _currentCustomer.Cart.Items.ToList();
@@ -111,8 +94,8 @@ namespace ObjectOrientedPractics.View.Tabs
                 {
                     cartListBox.DataSource = new List<Item>();
                 }
-
                 UpdateAmountLabel();
+                RefreshDiscountsCheckedList(); // ← обновляем скидки при смене корзины
             };
 
             if (cartListBox.InvokeRequired)
@@ -121,91 +104,118 @@ namespace ObjectOrientedPractics.View.Tabs
                 refresh();
         }
 
-        /// <summary>
-        /// Обновляет отображение общей стоимости.
-        /// </summary>
         private void UpdateAmountLabel()
         {
-            double amount = 0.0;
-            if (_currentCustomer != null && _currentCustomer.Cart != null)
-            {
-                amount = _currentCustomer.Cart.Amount;
-            }
+            double amount = _currentCustomer?.Cart?.Amount ?? 0.0;
+            SetLabel(amountLabel, amount.ToString("F2"));
+        }
 
-            if (amountLabel.InvokeRequired)
-            {
-                amountLabel.Invoke(new Action(() =>
-                {
-                    amountLabel.Text = amount.ToString("F2");
-                }));
-            }
+        private void SetLabel(Label label, string text)
+        {
+            if (label.InvokeRequired)
+                label.Invoke(new Action(() => label.Text = text));
             else
-            {
-                amountLabel.Text = amount.ToString("F2");
-            }
+                label.Text = text;
         }
 
         /// <summary>
-        /// Обработчик изменения выбранного покупателя.
+        /// Обновляет список скидок в CheckedListBox и пересчитывает Discount/Total.
         /// </summary>
+        private void RefreshDiscountsCheckedList()
+        {
+            Action refresh = () =>
+            {
+                discountsCheckedListBox.Items.Clear();
+                if (_currentCustomer == null || _currentCustomer.Discounts == null)
+                {
+                    discountAmountLabel.Text = "0.00";
+                    totalLabel.Text = "0.00";
+                    return;
+                }
+
+                // 👇 УСТАНАВЛИВАЕМ DisplayMember ПЕРЕД ДОБАВЛЕНИЕМ ЭЛЕМЕНТОВ
+                discountsCheckedListBox.DisplayMember = "Info";
+
+                foreach (var discount in _currentCustomer.Discounts)
+                {
+                    discountsCheckedListBox.Items.Add(discount, true); // все галочки включены
+                }
+
+                RecalculateDiscountAndTotal();
+            };
+
+            if (discountsCheckedListBox.InvokeRequired)
+                discountsCheckedListBox.Invoke(refresh);
+            else
+                refresh();
+        }
+
+        private void RecalculateDiscountAndTotal()
+        {
+            if (_currentCustomer?.Cart == null)
+            {
+                discountAmountLabel.Text = "0.00";
+                totalLabel.Text = "0.00";
+                return;
+            }
+
+            double totalDiscount = 0;
+            var items = _currentCustomer.Cart.Items.ToList();
+
+            for (int i = 0; i < discountsCheckedListBox.Items.Count; i++)
+            {
+                if (discountsCheckedListBox.GetItemChecked(i))
+                {
+                    var discount = (IDiscount)discountsCheckedListBox.Items[i];
+                    totalDiscount += discount.Calculate(items);
+                }
+            }
+
+            double amount = _currentCustomer.Cart.Amount;
+            double total = Math.Max(0, amount - totalDiscount);
+
+            discountAmountLabel.Text = totalDiscount.ToString("F2");
+            totalLabel.Text = total.ToString("F2");
+        }
+
         private void customersComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             _currentCustomer = customersComboBox.SelectedItem as Customer;
             RefreshCartListBox();
         }
 
-        /// <summary>
-        /// Добавляет товар в корзину.
-        /// </summary>
         private void addToCartButton_Click(object sender, EventArgs e)
         {
-            if (_currentCustomer == null || itemsListBox.SelectedItem == null)
-                return;
-
-            var selectedItem = itemsListBox.SelectedItem as Item;
-            if (selectedItem != null)
+            if (_currentCustomer == null || itemsListBox.SelectedItem == null) return;
+            var item = itemsListBox.SelectedItem as Item;
+            if (item != null)
             {
-                _currentCustomer.Cart.AddItem(selectedItem);
+                _currentCustomer.Cart.AddItem(item);
                 RefreshCartListBox();
             }
         }
 
-        /// <summary>
-        /// Удаляет товар из корзины.
-        /// </summary>
         private void removeItemButton_Click(object sender, EventArgs e)
         {
-            if (_currentCustomer == null || cartListBox.SelectedItem == null)
-                return;
-
-            var selectedItem = cartListBox.SelectedItem as Item;
-            if (selectedItem != null)
+            if (_currentCustomer == null || cartListBox.SelectedItem == null) return;
+            var item = cartListBox.SelectedItem as Item;
+            if (item != null)
             {
-                _currentCustomer.Cart.RemoveItem(selectedItem);
+                _currentCustomer.Cart.RemoveItem(item);
                 RefreshCartListBox();
             }
         }
 
-        /// <summary>
-        /// Очищает корзину.
-        /// </summary>
         private void clearCartButton_Click(object sender, EventArgs e)
         {
-            if (_currentCustomer != null)
-            {
-                _currentCustomer.Cart.Clear();
-                RefreshCartListBox();
-            }
+            _currentCustomer?.Cart.Clear();
+            RefreshCartListBox();
         }
 
-        /// <summary>
-        /// Создает заказ из текущей корзины.
-        /// </summary>
         private void createOrderButton_Click(object sender, EventArgs e)
         {
             if (_currentCustomer == null ||
-                _currentCustomer.Cart == null ||
-                _currentCustomer.Cart.Items.Count == 0)
+                _currentCustomer.Cart?.Items?.Count == 0)
             {
                 MessageBox.Show("Корзина пуста или покупатель не выбран",
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -214,28 +224,46 @@ namespace ObjectOrientedPractics.View.Tabs
 
             try
             {
-                Order order;
+                var cartItems = _currentCustomer.Cart.Items.ToList();
+                double appliedDiscount = 0;
 
+                // Применяем выбранные скидки
+                for (int i = 0; i < discountsCheckedListBox.Items.Count; i++)
+                {
+                    var discount = (IDiscount)discountsCheckedListBox.Items[i];
+                    if (discountsCheckedListBox.GetItemChecked(i))
+                    {
+                        appliedDiscount += discount.Apply(cartItems);
+                    }
+                }
+
+                // Обновляем ВСЕ скидки (начисление баллов/процентов)
+                foreach (var discount in _currentCustomer.Discounts)
+                {
+                    discount.Update(cartItems);
+                }
+
+                Order order;
                 if (_currentCustomer.IsPriority)
                 {
-                    // Создаём PriorityOrder
-                    var deliveryDate = DateTime.Today.AddDays(1); // завтра
-                    var timeSlot = "9:00 – 11:00"; // по умолчанию
+                    var deliveryDate = DateTime.Today.AddDays(1);
+                    var timeSlot = "9:00 – 11:00";
                     order = new PriorityOrder(_currentCustomer.Address, _currentCustomer.Cart, deliveryDate, timeSlot);
                 }
                 else
                 {
-                    // Обычный Order
                     order = new Order(_currentCustomer.Address, _currentCustomer.Cart);
                 }
 
+                order.DiscountAmount = appliedDiscount;
+
                 _currentCustomer.Orders.Add(order);
                 _currentCustomer.Cart.Clear();
-                RefreshCartListBox();
 
+                RefreshCartListBox(); // обновит и корзину, и скидки (Info изменится!)
                 OrdersTabRef?.RefreshData();
 
-                MessageBox.Show($"Заказ #{order.Id} успешно создан!",
+                MessageBox.Show($"Заказ #{order.Id} создан!\nСкидка: {appliedDiscount:F2} руб.\nИтого: {order.Total:F2} руб.",
                     "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -245,9 +273,21 @@ namespace ObjectOrientedPractics.View.Tabs
             }
         }
 
-        /// <summary>
-        /// Публичный метод для обновления данных
-        /// </summary>
+        private void discountsCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            // Проверяем, что дескриптор создан
+            if (IsHandleCreated && !IsDisposed)
+            {
+                BeginInvoke(new Action(RecalculateDiscountAndTotal));
+            }
+            else
+            {
+                // Если дескриптор ещё не создан — отложим вызов на чуть позже,
+                // например, через таймер или просто игнорируем (обычно это безопасно при инициализации)
+                // В большинстве случаев пересчёт не нужен при первоначальной загрузке.
+            }
+        }
+
         public void RefreshData()
         {
             RefreshItemsListBox();

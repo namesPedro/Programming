@@ -35,6 +35,7 @@
             this.createdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.orderStatusColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.customerFullNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.totalColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel5 = new System.Windows.Forms.Panel();
             this.ordersLabel = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -44,8 +45,8 @@
             this.deliveryDatePicker = new System.Windows.Forms.DateTimePicker();
             this.deliveryTimeLabel = new System.Windows.Forms.Label();
             this.deliveryDateLabel = new System.Windows.Forms.Label();
-            this.amountLabel = new System.Windows.Forms.Label();
-            this.amountTextLabel = new System.Windows.Forms.Label();
+            this.totalAmountLabel = new System.Windows.Forms.Label();
+            this.totalTextLabel = new System.Windows.Forms.Label();
             this.orderItemsListBox = new System.Windows.Forms.ListBox();
             this.orderItemsLabel = new System.Windows.Forms.Label();
             this.addressControl1 = new ObjectOrientedPractics.View.Controls.AddressControl();
@@ -71,7 +72,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(479, 989);
+            this.panel1.Size = new System.Drawing.Size(477, 989);
             this.panel1.TabIndex = 9;
             // 
             // panel6
@@ -80,7 +81,7 @@
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel6.Location = new System.Drawing.Point(0, 16);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(479, 973);
+            this.panel6.Size = new System.Drawing.Size(477, 973);
             this.panel6.TabIndex = 3;
             // 
             // dataGridView1
@@ -94,14 +95,15 @@
             this.idColumn,
             this.createdColumn,
             this.orderStatusColumn,
-            this.customerFullNameColumn});
+            this.customerFullNameColumn,
+            this.totalColumn});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(479, 973);
+            this.dataGridView1.Size = new System.Drawing.Size(477, 973);
             this.dataGridView1.TabIndex = 1;
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
@@ -129,13 +131,19 @@
             this.customerFullNameColumn.Name = "customerFullNameColumn";
             this.customerFullNameColumn.ReadOnly = true;
             // 
+            // totalColumn
+            // 
+            this.totalColumn.HeaderText = "Total";
+            this.totalColumn.Name = "totalColumn";
+            this.totalColumn.ReadOnly = true;
+            // 
             // panel5
             // 
             this.panel5.Controls.Add(this.ordersLabel);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel5.Location = new System.Drawing.Point(0, 0);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(479, 16);
+            this.panel5.Size = new System.Drawing.Size(477, 16);
             this.panel5.TabIndex = 2;
             // 
             // ordersLabel
@@ -151,8 +159,8 @@
             // panel2
             // 
             this.panel2.Controls.Add(this.priorityPanel);
-            this.panel2.Controls.Add(this.amountLabel);
-            this.panel2.Controls.Add(this.amountTextLabel);
+            this.panel2.Controls.Add(this.totalAmountLabel);
+            this.panel2.Controls.Add(this.totalTextLabel);
             this.panel2.Controls.Add(this.orderItemsListBox);
             this.panel2.Controls.Add(this.orderItemsLabel);
             this.panel2.Controls.Add(this.addressControl1);
@@ -228,27 +236,27 @@
             this.deliveryDateLabel.TabIndex = 13;
             this.deliveryDateLabel.Text = "Delivery Date:";
             // 
-            // amountLabel
+            // totalAmountLabel
             // 
-            this.amountLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.amountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 17F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.amountLabel.Location = new System.Drawing.Point(939, 354);
-            this.amountLabel.Name = "amountLabel";
-            this.amountLabel.Size = new System.Drawing.Size(421, 31);
-            this.amountLabel.TabIndex = 11;
-            this.amountLabel.Text = "0,00";
-            this.amountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.totalAmountLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.totalAmountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 17F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.totalAmountLabel.Location = new System.Drawing.Point(939, 354);
+            this.totalAmountLabel.Name = "totalAmountLabel";
+            this.totalAmountLabel.Size = new System.Drawing.Size(421, 31);
+            this.totalAmountLabel.TabIndex = 11;
+            this.totalAmountLabel.Text = "0,00";
+            this.totalAmountLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // amountTextLabel
+            // totalTextLabel
             // 
-            this.amountTextLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.amountTextLabel.AutoSize = true;
-            this.amountTextLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.amountTextLabel.Location = new System.Drawing.Point(1307, 341);
-            this.amountTextLabel.Name = "amountTextLabel";
-            this.amountTextLabel.Size = new System.Drawing.Size(53, 13);
-            this.amountTextLabel.TabIndex = 10;
-            this.amountTextLabel.Text = "Amount:";
+            this.totalTextLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.totalTextLabel.AutoSize = true;
+            this.totalTextLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.totalTextLabel.Location = new System.Drawing.Point(1320, 341);
+            this.totalTextLabel.Name = "totalTextLabel";
+            this.totalTextLabel.Size = new System.Drawing.Size(40, 13);
+            this.totalTextLabel.TabIndex = 10;
+            this.totalTextLabel.Text = "Total:";
             // 
             // orderItemsListBox
             // 
@@ -386,15 +394,16 @@
         private System.Windows.Forms.Label statusLabel;
         private System.Windows.Forms.ComboBox statusComboBox;
         private Controls.AddressControl addressControl1;
-        private System.Windows.Forms.Label amountTextLabel;
+        private System.Windows.Forms.Label totalTextLabel;
         private System.Windows.Forms.ListBox orderItemsListBox;
         private System.Windows.Forms.Label orderItemsLabel;
-        private System.Windows.Forms.Label amountLabel;
+        private System.Windows.Forms.Label totalAmountLabel;
         private System.Windows.Forms.Label priorityOptionsLabel;
         private System.Windows.Forms.ComboBox deliveryTimeComboBox;
         private System.Windows.Forms.Label deliveryTimeLabel;
         private System.Windows.Forms.DateTimePicker deliveryDatePicker;
         private System.Windows.Forms.Label deliveryDateLabel;
         private System.Windows.Forms.Panel priorityPanel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn totalColumn;
     }
 }

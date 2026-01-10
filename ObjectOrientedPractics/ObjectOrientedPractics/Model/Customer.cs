@@ -1,6 +1,7 @@
 ﻿using ObjectOrientedPractics.Services;
 using System;
 using System.Collections.Generic;
+using ObjectOrientedPractics.Model.Discounts;
 
 namespace ObjectOrientedPractics.Model
 {
@@ -16,6 +17,7 @@ namespace ObjectOrientedPractics.Model
         private Cart _cart;
         private List<Order> _orders;
         private bool _isPriority = false; // ← Добавлено: по умолчанию false
+        private List<IDiscount> _discounts;
 
         /// <summary>
         /// Уникальный идентификатор покупателя.
@@ -76,6 +78,12 @@ namespace ObjectOrientedPractics.Model
             set => _isPriority = value;
         }
 
+        public List<IDiscount> Discounts
+        {
+            get => _discounts;
+            private set => _discounts = value ?? new List<IDiscount>();
+        }
+
         /// <summary>
         /// Создает новый экземпляр класса Customer.
         /// </summary>
@@ -89,6 +97,11 @@ namespace ObjectOrientedPractics.Model
             Cart = new Cart();
             Orders = new List<Order>();
             // _isPriority остаётся false по умолчанию
+
+            _discounts = new List<IDiscount>
+            {
+                new PointsDiscount() // обязательная накопительная скидка
+            };
         }
 
         /// <summary>

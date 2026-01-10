@@ -66,6 +66,10 @@ namespace ObjectOrientedPractics.Model
             set => _status = value;
         }
 
+        public double DiscountAmount { get; set; }
+
+        public double Total => Amount - DiscountAmount;
+
         /// <summary>
         /// Создает новый заказ на основе корзины.
         /// </summary>
