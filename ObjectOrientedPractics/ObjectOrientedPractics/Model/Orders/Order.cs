@@ -77,15 +77,14 @@ namespace ObjectOrientedPractics.Model
         /// <exception cref="ArgumentNullException">Выбрасывается, если <paramref name="address"/> или <paramref name="cart"/> равны <see langword="null"/>.</exception>
         public Order(Address address, Cart cart)
         {
-            if (address == null) throw new ArgumentNullException(nameof(address));
-            if (cart == null) throw new ArgumentNullException(nameof(cart));
-
             _id = IdGenerator.GetNextId();
             _date = DateTime.Now;
             _status = OrderStatus.New;
-            _address = address;
+            Address = address;
 
-            Items = cart.Items?.Select(item => (Item)item.Clone()).ToList() ?? new List<Item>();
+            // Реализация клонирования ломает подсчет Id
+            // Items = new List<Item>(cart.Items.Select(item => (Item)item.Clone()));
+            Items = new List<Item>(cart.Items);
         }
 
         public bool Equals(Order other)
