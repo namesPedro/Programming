@@ -49,7 +49,7 @@
     <Compile Include="Model\Address.cs" />
     <Compile Include="Model\Cart.cs" />
     <Compile Include="Model\Discounts\PercentDiscount.cs" />
-    <Compile Include="Model\Discounts\PointDiscount.cs" />
+    <Compile Include="Model\Discounts\PointsDiscount.cs" />
     <Compile Include="Model\Enums\Category.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\IDiscount.cs" />

@@ -8,11 +8,8 @@ namespace ObjectOrientedPractics.Model
     /// Корзина товаров покупателя.
     /// </summary>
     [Serializable]
-    public class Cart
+    public class Cart : ICloneable
     {
-        /// <summary>
-        /// Список товаров в корзине.
-        /// </summary>
         private List<Item> _items;
 
         /// <summary>
@@ -27,16 +24,7 @@ namespace ObjectOrientedPractics.Model
         /// <summary>
         /// Общая стоимость товаров в корзине.
         /// </summary>
-        public double Amount
-        {
-            get
-            {
-                if (_items == null || _items.Count == 0)
-                    return 0.0;
-
-                return _items.Sum(item => item.Cost);
-            }
-        }
+        public double Amount => Items?.Sum(item => item.Cost) ?? 0.0;
 
         /// <summary>
         /// Создает новый экземпляр корзины.
@@ -54,7 +42,6 @@ namespace ObjectOrientedPractics.Model
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
-
             Items.Add(item);
         }
 
@@ -74,6 +61,15 @@ namespace ObjectOrientedPractics.Model
         public void Clear()
         {
             Items.Clear();
+        }
+
+        /// <inheritdoc/>
+        public object Clone()
+        {
+            // Поверхностное копирование: товары (Item) неизменяемы, поэтому достаточно скопировать ссылки
+            var newCart = new Cart();
+            newCart.Items = new List<Item>(Items);
+            return newCart;
         }
     }
 }

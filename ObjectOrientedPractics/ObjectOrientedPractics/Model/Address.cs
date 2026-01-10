@@ -1,5 +1,5 @@
-﻿using ObjectOrientedPractics.Services;
-using System;
+﻿using System;
+using ObjectOrientedPractics.Services;
 
 namespace ObjectOrientedPractics.Model
 {
@@ -7,7 +7,7 @@ namespace ObjectOrientedPractics.Model
     /// Представляет адрес доставки.
     /// </summary>
     [Serializable]
-    public class Address
+    public class Address : ICloneable, IEquatable<Address>
     {
         private string _index;
         private string _country;
@@ -119,6 +119,37 @@ namespace ObjectOrientedPractics.Model
             Street = street;
             Building = building;
             Apartment = apartment;
+        }
+
+        /// <inheritdoc/>
+        public object Clone()
+        {
+            return new Address(Index, Country, City, Street, Building, Apartment);
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(Address other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Index == other.Index &&
+                   Country == other.Country &&
+                   City == other.City &&
+                   Street == other.Street &&
+                   Building == other.Building &&
+                   Apartment == other.Apartment;
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Address);
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return (Index, Country, City, Street, Building, Apartment).GetHashCode();
         }
 
         public override string ToString()

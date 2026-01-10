@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ObjectOrientedPractics.Model.Discounts
 {
-    public class PercentDiscount : IDiscount
+    public class PercentDiscount : IDiscount, IComparable<PercentDiscount>
     {
         public Category TargetCategory { get; private set; }
         public int Percent { get; private set; }
@@ -46,6 +46,12 @@ namespace ObjectOrientedPractics.Model.Discounts
             _accumulatedSpent += spent;
             int newLevel = (int)(_accumulatedSpent / 1000) + 1;
             Percent = Math.Min(10, newLevel);
+        }
+
+        public int CompareTo(PercentDiscount other)
+        {
+            if (other == null) return 1;
+            return Percent.CompareTo(other.Percent);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace ObjectOrientedPractics.Model
     /// Заказ покупателя.
     /// </summary>
     [Serializable]
-    public class Order
+    public class Order : IEquatable<Order>
     {
         private readonly int _id;
         private readonly DateTime _date;
@@ -69,6 +69,24 @@ namespace ObjectOrientedPractics.Model
         public double DiscountAmount { get; set; }
 
         public double Total => Amount - DiscountAmount;
+
+        public bool Equals(Order other)
+        {
+            if (other == null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Id == other.Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Order);
+        }
+
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
 
         /// <summary>
         /// Создает новый заказ на основе корзины.

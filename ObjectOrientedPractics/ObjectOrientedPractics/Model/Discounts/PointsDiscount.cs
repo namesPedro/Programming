@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ObjectOrientedPractics.Model.Discounts
 {
-    public class PointsDiscount : IDiscount
+    public class PointsDiscount : IDiscount, IComparable<PointsDiscount>
     {
         private int _points;
 
@@ -45,6 +45,12 @@ namespace ObjectOrientedPractics.Model.Discounts
             double total = items.Sum(item => item.Cost);
             int earnedPoints = (int)Math.Ceiling(total * 0.1);
             Points += earnedPoints;
+        }
+
+        public int CompareTo(PointsDiscount other)
+        {
+            if (other == null) return 1;
+            return Points.CompareTo(other.Points);
         }
     }
 }
