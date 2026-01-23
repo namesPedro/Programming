@@ -3,10 +3,6 @@
 #include <iostream>
 #include <limits>
 
-/// <summary>
-/// Точка входа программы. Запускает главное меню для работы с бинарным деревом поиска и декартовым деревом (Treap).
-/// </summary>
-/// <returns>Код завершения программы (0 — успешно).</returns>
 int main()
 {
     const int MenuBinaryTree = 1;

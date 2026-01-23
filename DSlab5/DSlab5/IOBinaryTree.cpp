@@ -2,9 +2,6 @@
 #include <iostream>
 #include <limits>
 
-/// <summary>
-/// Выводит меню операций над бинарным деревом поиска.
-/// </summary>
 void IOBinaryTree::ShowMenu()
 {
     std::cout << "\n=== Binary Search Tree Menu ===" << std::endl;
@@ -19,10 +16,6 @@ void IOBinaryTree::ShowMenu()
     std::cout << "Choice: ";
 }
 
-/// <summary>
-/// Обрабатывает пользовательский ввод и выполняет операции над деревом.
-/// </summary>
-/// <param name="tree">Ссылка на экземпляр бинарного дерева.</param>
 void IOBinaryTree::HandleMenu(BinaryTree& tree)
 {
     const int MenuInsert = 1;

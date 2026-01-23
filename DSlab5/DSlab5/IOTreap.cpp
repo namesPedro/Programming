@@ -4,9 +4,6 @@
 #include <cstdlib>
 #include <ctime>
 
-/// <summary>
-/// ¬ыводит меню операций над декартовым деревом (Treap).
-/// </summary>
 void IOTreap::ShowMenu()
 {
     std::cout << "\n=== Treap Menu ===" << std::endl;
@@ -23,10 +20,6 @@ void IOTreap::ShowMenu()
     std::cout << "Choice: ";
 }
 
-/// <summary>
-/// ќбрабатывает пользовательский ввод и выполн€ет операции над декартовым деревом.
-/// </summary>
-/// <param name="tree">—сылка на основное дерево.</param>
 void IOTreap::HandleMenu(Treap& tree)
 {
     const int MenuInsertUnoptimized = 1;

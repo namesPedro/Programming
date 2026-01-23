@@ -4,18 +4,11 @@
 #include <cstdlib>
 #include <ctime>
 
-/// <summary>
-/// Конструктор декартового дерева (Treap). Инициализирует генератор случайных чисел.
-/// </summary>
-Treap::Treap()
+Treap::Treap() : _root(nullptr)
 {
-    _root = nullptr;
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
-/// <summary>
-/// Деструктор декартового дерева. Очищает всю память, занятую узлами.
-/// </summary>
 Treap::~Treap()
 {
     ClearTree();
@@ -59,11 +52,6 @@ TreapNode* Treap::merge(TreapNode* left, TreapNode* right)
     }
 }
 
-/// <summary>
-/// Вставляет элемент в дерево с использованием оптимизированного метода (рекурсивный подход).
-/// </summary>
-/// <param name="key">Ключ для вставки.</param>
-/// <param name="priority">Приоритет узла. Если 0, генерируется случайно (но здесь ожидается явное значение).</param>
 void Treap::InsertOptimized(int key, int priority)
 {
     _root = insertOptimizedRecursive(_root, key, priority);
@@ -97,11 +85,6 @@ TreapNode* Treap::insertOptimizedRecursive(TreapNode* root, int key, int priorit
     return root;
 }
 
-/// <summary>
-/// Вставляет элемент в дерево с использованием неоптимизированного метода (1 split + 2 merge).
-/// </summary>
-/// <param name="key">Ключ для вставки.</param>
-/// <param name="priority">Приоритет узла.</param>
 void Treap::InsertUnoptimized(int key, int priority)
 {
     std::pair<TreapNode*, TreapNode*> splitResult = split(_root, key);
@@ -113,10 +96,6 @@ void Treap::InsertUnoptimized(int key, int priority)
     _root = merge(mergedLeft, right);
 }
 
-/// <summary>
-/// Удаляет элемент из дерева с использованием оптимизированного метода (рекурсивный подход).
-/// </summary>
-/// <param name="key">Ключ для удаления.</param>
 void Treap::RemoveOptimized(int key)
 {
     _root = removeOptimizedRecursive(_root, key);
@@ -147,10 +126,6 @@ TreapNode* Treap::removeOptimizedRecursive(TreapNode* root, int key)
     return root;
 }
 
-/// <summary>
-/// Удаляет элемент из дерева с использованием неоптимизированного метода (2 split + 1 merge).
-/// </summary>
-/// <param name="key">Ключ для удаления.</param>
 void Treap::RemoveUnoptimized(int key)
 {
     std::pair<TreapNode*, TreapNode*> firstSplit = split(_root, key - 1);
@@ -166,11 +141,6 @@ void Treap::RemoveUnoptimized(int key)
     _root = merge(left, right);
 }
 
-/// <summary>
-/// Ищет узел с заданным ключом в дереве.
-/// </summary>
-/// <param name="key">Искомый ключ.</param>
-/// <returns>Указатель на найденный узел или nullptr, если не найден.</returns>
 TreapNode* Treap::SearchElement(int key)
 {
     TreapNode* current = _root;
@@ -192,13 +162,6 @@ TreapNode* Treap::SearchElement(int key)
     return nullptr;
 }
 
-/// <summary>
-/// Разделяет текущее дерево на два поддерева по заданному ключу.
-/// Левое дерево содержит ключи ≤ key, правое — > key.
-/// </summary>
-/// <param name="key">Ключ разделения.</param>
-/// <param name="leftTree">Сюда помещается левое поддерево.</param>
-/// <param name="rightTree">Сюда помещается правое поддерево.</param>
 void Treap::SplitTree(int key, Treap& leftTree, Treap& rightTree)
 {
     leftTree.ClearTree();
@@ -210,11 +173,6 @@ void Treap::SplitTree(int key, Treap& leftTree, Treap& rightTree)
     _root = nullptr;
 }
 
-/// <summary>
-/// Объединяет два дерева в одно. Предполагается, что все ключи в leftTree ≤ всех ключей в rightTree.
-/// </summary>
-/// <param name="leftTree">Левое дерево (передаётся по ссылке).</param>
-/// <param name="rightTree">Правое дерево (передаётся по ссылке).</param>
 void Treap::MergeTrees(Treap& leftTree, Treap& rightTree)
 {
     ClearTree();
@@ -224,10 +182,6 @@ void Treap::MergeTrees(Treap& leftTree, Treap& rightTree)
     rightTree._root = nullptr;
 }
 
-/// <summary>
-/// Выводит дерево в виде повернутого на 90 градусов (правое поддерево сверху, левое — снизу).
-/// Каждый узел отображается как "ключ[приоритет]".
-/// </summary>
 void Treap::DisplayTree()
 {
     displayRecursive(_root, 0);
@@ -251,9 +205,6 @@ void Treap::displayRecursive(TreapNode* root, int level)
     }
 }
 
-/// <summary>
-/// Очищает всё дерево, освобождая память всех узлов.
-/// </summary>
 void Treap::ClearTree()
 {
     clearRecursive(_root);
@@ -270,10 +221,6 @@ void Treap::clearRecursive(TreapNode* root)
     }
 }
 
-/// <summary>
-/// Возвращает указатель на корневой узел дерева.
-/// </summary>
-/// <returns>Указатель на корень или nullptr, если дерево пусто.</returns>
 TreapNode* Treap::GetRoot()
 {
     return _root;
