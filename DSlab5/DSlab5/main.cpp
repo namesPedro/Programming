@@ -3,30 +3,41 @@
 #include <iostream>
 #include <limits>
 
-int main() {
+/// <summary>
+/// Точка входа программы. Запускает главное меню для работы с бинарным деревом поиска и декартовым деревом (Treap).
+/// </summary>
+/// <returns>Код завершения программы (0 — успешно).</returns>
+int main()
+{
+    const int MenuBinaryTree = 1;
+    const int MenuTreap = 2;
+    const int MenuExit = 3;
+
     BinaryTree binaryTree;
     Treap treap;
 
     int mainChoice;
 
-    do {
+    do
+    {
         std::cout << "\n=== Main Menu ===" << std::endl;
-        std::cout << "1. Binary Search Tree" << std::endl;
-        std::cout << "2. Treap (Cartesian Tree)" << std::endl;
-        std::cout << "3. Exit" << std::endl;
+        std::cout << MenuBinaryTree << ". Binary Search Tree" << std::endl;
+        std::cout << MenuTreap << ". Treap (Cartesian Tree)" << std::endl;
+        std::cout << MenuExit << ". Exit" << std::endl;
         std::cout << "Choice: ";
         std::cin >> mainChoice;
 
-        switch (mainChoice) {
-        case 1:
+        switch (mainChoice)
+        {
+        case MenuBinaryTree:
             IOBinaryTree::HandleMenu(binaryTree);
             break;
 
-        case 2:
+        case MenuTreap:
             IOTreap::HandleMenu(treap);
             break;
 
-        case 3:
+        case MenuExit:
             std::cout << "Exiting program..." << std::endl;
             break;
 
@@ -35,11 +46,10 @@ int main() {
             break;
         }
 
-        // Очистка буфера ввода
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    } while (mainChoice != 3);
+    } while (mainChoice != MenuExit);
 
     return 0;
 }

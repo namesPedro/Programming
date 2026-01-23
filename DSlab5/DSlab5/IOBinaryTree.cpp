@@ -2,7 +2,11 @@
 #include <iostream>
 #include <limits>
 
-void IOBinaryTree::ShowMenu() {
+/// <summary>
+/// Выводит меню операций над бинарным деревом поиска.
+/// </summary>
+void IOBinaryTree::ShowMenu()
+{
     std::cout << "\n=== Binary Search Tree Menu ===" << std::endl;
     std::cout << "1. Insert element" << std::endl;
     std::cout << "2. Remove element" << std::endl;
@@ -15,81 +19,107 @@ void IOBinaryTree::ShowMenu() {
     std::cout << "Choice: ";
 }
 
-void IOBinaryTree::HandleMenu(BinaryTree& tree) {
+/// <summary>
+/// Обрабатывает пользовательский ввод и выполняет операции над деревом.
+/// </summary>
+/// <param name="tree">Ссылка на экземпляр бинарного дерева.</param>
+void IOBinaryTree::HandleMenu(BinaryTree& tree)
+{
+    const int MenuInsert = 1;
+    const int MenuRemove = 2;
+    const int MenuSearch = 3;
+    const int MenuMin = 4;
+    const int MenuMax = 5;
+    const int MenuDisplay = 6;
+    const int MenuClear = 7;
+    const int MenuBack = 8;
+
     int choice;
     int value;
-    
-    do {
+
+    do
+    {
         ShowMenu();
         std::cin >> choice;
-        
-        switch (choice) {
-            case 1:
-                std::cout << "Enter value to insert: ";
-                std::cin >> value;
-                tree.AddElement(value);
-                std::cout << "Element " << value << " inserted." << std::endl;
-                break;
-                
-            case 2:
-                std::cout << "Enter value to remove: ";
-                std::cin >> value;
-                tree.RemoveElement(value);
-                std::cout << "Element " << value << " removed." << std::endl;
-                break;
-                
-            case 3:
-                std::cout << "Enter value to search: ";
-                std::cin >> value;
-                if (tree.SearchElement(value)) {
-                    std::cout << "Element " << value << " found." << std::endl;
-                } else {
-                    std::cout << "Element " << value << " not found." << std::endl;
-                }
-                break;
-                
-            case 4: {
-                BinaryTreeNode* minNode = tree.GetMinNode();
-                if (minNode) {
-                    std::cout << "Minimum: " << minNode->GetData() << std::endl;
-                } else {
-                    std::cout << "Tree is empty." << std::endl;
-                }
-                break;
+
+        switch (choice)
+        {
+        case MenuInsert:
+            std::cout << "Enter value to insert: ";
+            std::cin >> value;
+            tree.AddElement(value);
+            std::cout << "Element " << value << " inserted." << std::endl;
+            break;
+
+        case MenuRemove:
+            std::cout << "Enter value to remove: ";
+            std::cin >> value;
+            tree.RemoveElement(value);
+            std::cout << "Element " << value << " removed." << std::endl;
+            break;
+
+        case MenuSearch:
+            std::cout << "Enter value to search: ";
+            std::cin >> value;
+            if (tree.SearchElement(value))
+            {
+                std::cout << "Element " << value << " found." << std::endl;
             }
-                
-            case 5: {
-                BinaryTreeNode* maxNode = tree.GetMaxNode();
-                if (maxNode) {
-                    std::cout << "Maximum: " << maxNode->GetData() << std::endl;
-                } else {
-                    std::cout << "Tree is empty." << std::endl;
-                }
-                break;
+            else
+            {
+                std::cout << "Element " << value << " not found." << std::endl;
             }
-                
-            case 6:
-                std::cout << "\nBinary Search Tree:" << std::endl;
-                tree.DisplayTree();
-                break;
-                
-            case 7:
-                tree.ClearTree();
-                std::cout << "Tree cleared." << std::endl;
-                break;
-                
-            case 8:
-                std::cout << "Returning to main menu..." << std::endl;
-                break;
-                
-            default:
-                std::cout << "Invalid choice. Try again." << std::endl;
-                break;
+            break;
+
+        case MenuMin:
+        {
+            BinaryTreeNode* minNode = tree.GetMinNode();
+            if (minNode)
+            {
+                std::cout << "Minimum: " << minNode->GetData() << std::endl;
+            }
+            else
+            {
+                std::cout << "Tree is empty." << std::endl;
+            }
+            break;
         }
-        
-        // Очистка буфера ввода
+
+        case MenuMax:
+        {
+            BinaryTreeNode* maxNode = tree.GetMaxNode();
+            if (maxNode)
+            {
+                std::cout << "Maximum: " << maxNode->GetData() << std::endl;
+            }
+            else
+            {
+                std::cout << "Tree is empty." << std::endl;
+            }
+            break;
+        }
+
+        case MenuDisplay:
+            std::cout << "\nBinary Search Tree:" << std::endl;
+            tree.DisplayTree();
+            break;
+
+        case MenuClear:
+            tree.ClearTree();
+            std::cout << "Tree cleared." << std::endl;
+            break;
+
+        case MenuBack:
+            std::cout << "Returning to main menu..." << std::endl;
+            break;
+
+        default:
+            std::cout << "Invalid choice. Try again." << std::endl;
+            break;
+        }
+
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        
-    } while (choice != 8);
+
+    } while (choice != MenuBack);
 }

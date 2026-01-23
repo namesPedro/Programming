@@ -4,7 +4,11 @@
 #include <cstdlib>
 #include <ctime>
 
-void IOTreap::ShowMenu() {
+/// <summary>
+/// Выводит меню операций над декартовым деревом (Treap).
+/// </summary>
+void IOTreap::ShowMenu()
+{
     std::cout << "\n=== Treap Menu ===" << std::endl;
     std::cout << "1. Insert (Unoptimized - 1 Split, 2 Merge)" << std::endl;
     std::cout << "2. Insert (Optimized - 1 Split)" << std::endl;
@@ -19,71 +23,92 @@ void IOTreap::ShowMenu() {
     std::cout << "Choice: ";
 }
 
-void IOTreap::HandleMenu(Treap& tree) {
+/// <summary>
+/// Обрабатывает пользовательский ввод и выполняет операции над декартовым деревом.
+/// </summary>
+/// <param name="tree">Ссылка на основное дерево.</param>
+void IOTreap::HandleMenu(Treap& tree)
+{
+    const int MenuInsertUnoptimized = 1;
+    const int MenuInsertOptimized = 2;
+    const int MenuRemoveUnoptimized = 3;
+    const int MenuRemoveOptimized = 4;
+    const int MenuSearch = 5;
+    const int MenuSplit = 6;
+    const int MenuMerge = 7;
+    const int MenuDisplay = 8;
+    const int MenuClear = 9;
+    const int MenuBack = 10;
+
     int choice;
     int key, priority;
     int splitKey;
 
-    // Используем статические переменные для хранения деревьев
     static Treap leftTree;
     static Treap rightTree;
     static bool treesPrepared = false;
 
-    do {
+    do
+    {
         ShowMenu();
         std::cin >> choice;
 
-        switch (choice) {
-        case 1:
+        switch (choice)
+        {
+        case MenuInsertUnoptimized:
             std::cout << "Enter key: ";
             std::cin >> key;
             std::cout << "Enter priority (0 for random): ";
             std::cin >> priority;
-            if (priority == 0) {
+            if (priority == 0)
+            {
                 priority = std::rand() % 100 + 1;
             }
             tree.InsertUnoptimized(key, priority);
             std::cout << "Element " << key << "[" << priority << "] inserted (unoptimized)." << std::endl;
             break;
 
-        case 2:
+        case MenuInsertOptimized:
             std::cout << "Enter key: ";
             std::cin >> key;
             std::cout << "Enter priority (0 for random): ";
             std::cin >> priority;
-            if (priority == 0) {
+            if (priority == 0)
+            {
                 priority = std::rand() % 100 + 1;
             }
             tree.InsertOptimized(key, priority);
             std::cout << "Element " << key << "[" << priority << "] inserted (optimized)." << std::endl;
             break;
 
-        case 3:
+        case MenuRemoveUnoptimized:
             std::cout << "Enter key to remove: ";
             std::cin >> key;
             tree.RemoveUnoptimized(key);
             std::cout << "Element " << key << " removed (unoptimized)." << std::endl;
             break;
 
-        case 4:
+        case MenuRemoveOptimized:
             std::cout << "Enter key to remove: ";
             std::cin >> key;
             tree.RemoveOptimized(key);
             std::cout << "Element " << key << " removed (optimized)." << std::endl;
             break;
 
-        case 5:
+        case MenuSearch:
             std::cout << "Enter key to search: ";
             std::cin >> key;
-            if (tree.SearchElement(key)) {
+            if (tree.SearchElement(key))
+            {
                 std::cout << "Element " << key << " found." << std::endl;
             }
-            else {
+            else
+            {
                 std::cout << "Element " << key << " not found." << std::endl;
             }
             break;
 
-        case 6:
+        case MenuSplit:
             std::cout << "Current tree:" << std::endl;
             tree.DisplayTree();
             std::cout << "Enter split key: ";
@@ -97,25 +122,27 @@ void IOTreap::HandleMenu(Treap& tree) {
             treesPrepared = true;
             break;
 
-        case 7:
-            if (treesPrepared) {
+        case MenuMerge:
+            if (treesPrepared)
+            {
                 tree.MergeTrees(leftTree, rightTree);
                 std::cout << "Trees merged successfully!" << std::endl;
                 std::cout << "Resulting tree:" << std::endl;
                 tree.DisplayTree();
                 treesPrepared = false;
             }
-            else {
+            else
+            {
                 std::cout << "Error: Please split tree first (option 6)." << std::endl;
             }
             break;
 
-        case 8:
+        case MenuDisplay:
             std::cout << "\nTreap (Cartesian Tree):" << std::endl;
             tree.DisplayTree();
             break;
 
-        case 9:
+        case MenuClear:
             tree.ClearTree();
             leftTree.ClearTree();
             rightTree.ClearTree();
@@ -123,7 +150,7 @@ void IOTreap::HandleMenu(Treap& tree) {
             std::cout << "All trees cleared." << std::endl;
             break;
 
-        case 10:
+        case MenuBack:
             std::cout << "Returning to main menu..." << std::endl;
             break;
 
@@ -132,9 +159,8 @@ void IOTreap::HandleMenu(Treap& tree) {
             break;
         }
 
-        // Очистка буфера ввода
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    } while (choice != 10);
+    } while (choice != MenuBack);
 }
