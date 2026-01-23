@@ -2,19 +2,26 @@
 #include <chrono>
 #include <iostream>
 
-int PerformanceTester::GetIterationsForSize(int size) {
+/// <summary>
+/// Определяет количество итераций тестирования в зависимости от размера структуры данных.
+/// Меньшие размеры тестируются чаще для повышения точности измерений.
+/// </summary>
+/// <param name="size">Размер структуры данных</param>
+/// <returns>Количество итераций</returns>
+int PerformanceTester::GetIterationsForSize(int size)
+{
     if (size <= 200) return 2000;
     if (size <= 1000) return 1000;
     return 300;
 }
 
-// ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
-
-static inline double MeasureOnceInsertFront(int size) {
+static inline double MeasureOnceInsertFront(int size)
+{
     List list;
     DynamicArray arr;
 
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++)
+    {
         list.AddToEnd(new Node(i));
         arr.Add(i);
     }
@@ -34,22 +41,32 @@ static inline double MeasureOnceInsertFront(int size) {
     return tList + (tArr / 1000000.0);
 }
 
-// ---------- ТЕСТ ВСТАВКИ В НАЧАЛО ----------
-int PerformanceTester::MeasureInsertAtBeginning(const int* sizes, int count, MeasureResult* results) {
+/// <summary>
+/// Измеряет производительность вставки элемента в начало списка и массива.
+/// </summary>
+/// <param name="sizes">Массив тестируемых размеров</param>
+/// <param name="count">Количество размеров</param>
+/// <param name="results">Выходной массив результатов</param>
+/// <returns>Количество записанных результатов</returns>
+int PerformanceTester::MeasureInsertAtBeginning(const int* sizes, int count, MeasureResult* results)
+{
     using namespace std::chrono;
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         int size = sizes[i];
         int iters = GetIterationsForSize(size);
 
         double listTimeTotal = 0;
         double arrayTimeTotal = 0;
 
-        for (int it = 0; it < iters; it++) {
+        for (int it = 0; it < iters; it++)
+        {
             List list;
             DynamicArray arr;
 
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++)
+            {
                 list.AddToEnd(new Node(j));
                 arr.Add(j);
             }
@@ -74,22 +91,32 @@ int PerformanceTester::MeasureInsertAtBeginning(const int* sizes, int count, Mea
     return count;
 }
 
-// ---------- ТЕСТ ВСТАВКИ В КОНЕЦ ----------
-int PerformanceTester::MeasureInsertAtEnd(const int* sizes, int count, MeasureResult* results) {
+/// <summary>
+/// Измеряет производительность вставки элемента в конец списка и массива.
+/// </summary>
+/// <param name="sizes">Массив тестируемых размеров</param>
+/// <param name="count">Количество размеров</param>
+/// <param name="results">Выходной массив результатов</param>
+/// <returns>Количество записанных результатов</returns>
+int PerformanceTester::MeasureInsertAtEnd(const int* sizes, int count, MeasureResult* results)
+{
     using namespace std::chrono;
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         int size = sizes[i];
         int iters = GetIterationsForSize(size);
 
         double listTotal = 0;
         double arrTotal = 0;
 
-        for (int it = 0; it < iters; it++) {
+        for (int it = 0; it < iters; it++)
+        {
             List list;
             DynamicArray arr;
 
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++)
+            {
                 list.AddToEnd(new Node(j));
                 arr.Add(j);
             }
@@ -113,22 +140,32 @@ int PerformanceTester::MeasureInsertAtEnd(const int* sizes, int count, MeasureRe
     return count;
 }
 
-// ---------- ТЕСТ ВСТАВКИ В СЕРЕДИНУ ----------
-int PerformanceTester::MeasureInsertAtMiddle(const int* sizes, int count, MeasureResult* results) {
+/// <summary>
+/// Измеряет производительность вставки элемента в середину списка и массива.
+/// </summary>
+/// <param name="sizes">Массив тестируемых размеров</param>
+/// <param name="count">Количество размеров</param>
+/// <param name="results">Выходной массив результатов</param>
+/// <returns>Количество записанных результатов</returns>
+int PerformanceTester::MeasureInsertAtMiddle(const int* sizes, int count, MeasureResult* results)
+{
     using namespace std::chrono;
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         int size = sizes[i];
         int iters = GetIterationsForSize(size);
         int mid = size / 2;
 
         double listTotal = 0, arrTotal = 0;
 
-        for (int it = 0; it < iters; it++) {
+        for (int it = 0; it < iters; it++)
+        {
             List list;
             DynamicArray arr;
 
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++)
+            {
                 list.AddToEnd(new Node(j));
                 arr.Add(j);
             }
@@ -152,21 +189,31 @@ int PerformanceTester::MeasureInsertAtMiddle(const int* sizes, int count, Measur
     return count;
 }
 
-// ---------- УДАЛЕНИЕ ИЗ НАЧАЛА ----------
-int PerformanceTester::MeasureRemoveFromBeginning(const int* sizes, int count, MeasureResult* results) {
+/// <summary>
+/// Измеряет производительность удаления элемента из начала списка и массива.
+/// </summary>
+/// <param name="sizes">Массив тестируемых размеров</param>
+/// <param name="count">Количество размеров</param>
+/// <param name="results">Выходной массив результатов</param>
+/// <returns>Количество записанных результатов</returns>
+int PerformanceTester::MeasureRemoveFromBeginning(const int* sizes, int count, MeasureResult* results)
+{
     using namespace std::chrono;
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         int size = sizes[i];
         int iters = GetIterationsForSize(size);
 
         double listTotal = 0, arrTotal = 0;
 
-        for (int it = 0; it < iters; it++) {
+        for (int it = 0; it < iters; it++)
+        {
             List list;
             DynamicArray arr;
 
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++)
+            {
                 list.AddToEnd(new Node(j));
                 arr.Add(j);
             }
@@ -190,21 +237,31 @@ int PerformanceTester::MeasureRemoveFromBeginning(const int* sizes, int count, M
     return count;
 }
 
-// ---------- УДАЛЕНИЕ С КОНЦА ----------
-int PerformanceTester::MeasureRemoveFromEnd(const int* sizes, int count, MeasureResult* results) {
+/// <summary>
+/// Измеряет производительность удаления элемента с конца списка и массива.
+/// </summary>
+/// <param name="sizes">Массив тестируемых размеров</param>
+/// <param name="count">Количество размеров</param>
+/// <param name="results">Выходной массив результатов</param>
+/// <returns>Количество записанных результатов</returns>
+int PerformanceTester::MeasureRemoveFromEnd(const int* sizes, int count, MeasureResult* results)
+{
     using namespace std::chrono;
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         int size = sizes[i];
         int iters = GetIterationsForSize(size);
 
         double listTotal = 0, arrTotal = 0;
 
-        for (int it = 0; it < iters; it++) {
+        for (int it = 0; it < iters; it++)
+        {
             List list;
             DynamicArray arr;
 
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++)
+            {
                 list.AddToEnd(new Node(j));
                 arr.Add(j);
             }
@@ -228,21 +285,31 @@ int PerformanceTester::MeasureRemoveFromEnd(const int* sizes, int count, Measure
     return count;
 }
 
-// ---------- УДАЛЕНИЕ ИЗ СЕРЕДИНЫ ----------
-int PerformanceTester::MeasureRemoveFromMiddle(const int* sizes, int count, MeasureResult* results) {
+/// <summary>
+/// Измеряет производительность удаления элемента из середины списка и массива.
+/// </summary>
+/// <param name="sizes">Массив тестируемых размеров</param>
+/// <param name="count">Количество размеров</param>
+/// <param name="results">Выходной массив результатов</param>
+/// <returns>Количество записанных результатов</returns>
+int PerformanceTester::MeasureRemoveFromMiddle(const int* sizes, int count, MeasureResult* results)
+{
     using namespace std::chrono;
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         int size = sizes[i];
         int iters = GetIterationsForSize(size);
 
         double listTotal = 0, arrTotal = 0;
 
-        for (int it = 0; it < iters; it++) {
+        for (int it = 0; it < iters; it++)
+        {
             List list;
             DynamicArray arr;
 
-            for (int j = 0; j < size; j++) {
+            for (int j = 0; j < size; j++)
+            {
                 list.AddToEnd(new Node(j));
                 arr.Add(j);
             }

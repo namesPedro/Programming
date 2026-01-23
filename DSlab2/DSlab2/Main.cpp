@@ -13,16 +13,20 @@
 /// <summary>
 /// Сохраняет результаты измерений в текстовый файл в подкаталоге Measures.
 /// </summary>
-/// <param name="results">Вектор результатов измерений</param>
+/// <param name="results">Массив результатов измерений</param>
+/// <param name="count">Количество записей в массиве</param>
 /// <param name="filename">Имя выходного TXT файла</param>
-void SaveToTXT(MeasureResult* results, int count, const std::string& filename) {
+void SaveToTXT(MeasureResult* results, int count, const std::string& filename)
+{
     std::ofstream file("Measures/" + filename);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cout << "Error: Could not open file " << filename << std::endl;
         return;
     }
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         file << results[i].size << " "
             << results[i].listTime << " "
             << results[i].arrayTime << "\n";
@@ -32,48 +36,40 @@ void SaveToTXT(MeasureResult* results, int count, const std::string& filename) {
     std::cout << "Saved to Measures/" << filename << std::endl;
 }
 
-
 /// <summary>
 /// Запускает сравнительное тестирование производительности для двух структур данных.
 /// Тестируются только основные операции вставки и удаления из разных позиций.
 /// Результаты сохраняются в TXT файлы в подкаталоге Measures для последующего построения графиков.
 /// </summary>
-void RunPerformanceTests() {
+void RunPerformanceTests()
+{
     std::cout << "=== PERFORMANCE TESTING STARTED ===" << std::endl;
 
-    // Статический массив размеров (как теперь требуется)
     const int sizes[] = { 100, 500, 1000, 2000, 5000, 10000 };
     const int sizeCount = sizeof(sizes) / sizeof(sizes[0]);
 
-    // Временный буфер для результатов
     MeasureResult results[16];
 
-    // ---- Insert At Beginning ----
     std::cout << "\n=== Testing Insert At Beginning ===" << std::endl;
     int n1 = PerformanceTester::MeasureInsertAtBeginning(sizes, sizeCount, results);
     SaveToTXT(results, n1, "InsertAtBeginning.txt");
 
-    // ---- Insert At End ----
     std::cout << "\n=== Testing Insert At End ===" << std::endl;
     int n2 = PerformanceTester::MeasureInsertAtEnd(sizes, sizeCount, results);
     SaveToTXT(results, n2, "InsertAtEnd.txt");
 
-    // ---- Insert At Middle ----
     std::cout << "\n=== Testing Insert At Middle ===" << std::endl;
     int n3 = PerformanceTester::MeasureInsertAtMiddle(sizes, sizeCount, results);
     SaveToTXT(results, n3, "InsertAtMiddle.txt");
 
-    // ---- Remove From Beginning ----
     std::cout << "\n=== Testing Remove From Beginning ===" << std::endl;
     int n4 = PerformanceTester::MeasureRemoveFromBeginning(sizes, sizeCount, results);
     SaveToTXT(results, n4, "RemoveFromBeginning.txt");
 
-    // ---- Remove From End ----
     std::cout << "\n=== Testing Remove From End ===" << std::endl;
     int n5 = PerformanceTester::MeasureRemoveFromEnd(sizes, sizeCount, results);
     SaveToTXT(results, n5, "RemoveFromEnd.txt");
 
-    // ---- Remove From Middle ----
     std::cout << "\n=== Testing Remove From Middle ===" << std::endl;
     int n6 = PerformanceTester::MeasureRemoveFromMiddle(sizes, sizeCount, results);
     SaveToTXT(results, n6, "RemoveFromMiddle.txt");
@@ -82,17 +78,54 @@ void RunPerformanceTests() {
     std::cout << "TXT files created in Measures folder." << std::endl;
 }
 
-
-// Константы для меню
+/// <summary>
+/// Константа для выхода из меню.
+/// </summary>
 const int ExitOption = 9;
+
+/// <summary>
+/// Константа для удаления элемента по индексу.
+/// </summary>
 const int RemoveByIndexOption = 1;
+
+/// <summary>
+/// Константа для удаления элемента по значению.
+/// </summary>
 const int RemoveByValueOption = 2;
+
+/// <summary>
+/// Константа для вставки элемента в начало списка.
+/// </summary>
 const int InsertAtBeginningOption = 3;
+
+/// <summary>
+/// Константа для вставки элемента в конец списка.
+/// </summary>
 const int InsertAtEndOption = 4;
+
+/// <summary>
+/// Константа для вставки элемента после указанного индекса.
+/// </summary>
 const int InsertAfterIndexOption = 5;
+
+/// <summary>
+/// Константа для вставки элемента перед указанным индексом.
+/// </summary>
 const int InsertBeforeIndexOption = 6;
+
+/// <summary>
+/// Константа для сортировки списка.
+/// </summary>
 const int SortListOption = 7;
+
+/// <summary>
+/// Константа для линейного поиска элемента.
+/// </summary>
 const int LinearSearchOption = 8;
+
+/// <summary>
+/// Константа для запуска тестов производительности.
+/// </summary>
 const int RunPerformanceTestsOption = 10;
 
 /// <summary>
@@ -100,18 +133,22 @@ const int RunPerformanceTestsOption = 10;
 /// </summary>
 /// <param name="prompt">Сообщение для пользователя</param>
 /// <returns>Введенное число</returns>
-int GetValidatedInput(const std::string& prompt) {
+int GetValidatedInput(const std::string& prompt)
+{
     int value;
-    while (true) {
+    while (true)
+    {
         std::cout << prompt;
         std::cin >> value;
 
-        if (std::cin.fail()) {
+        if (std::cin.fail())
+        {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid input. Please enter a number." << std::endl;
         }
-        else {
+        else
+        {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return value;
         }
@@ -122,7 +159,9 @@ int GetValidatedInput(const std::string& prompt) {
 /// Выводит главное меню приложения для работы с двусвязным списком.
 /// Отображает все доступные операции и текущее состояние списка.
 /// </summary>
-void printMenu(const List& list) {
+/// <param name="list">Ссылка на список для отображения его содержимого</param>
+void printMenu(const List& list)
+{
     std::cout << "\nLaboratory Work #2 - Doubly Linked List\n";
     std::cout << "Current list: ";
     list.Print();
@@ -146,7 +185,8 @@ void printMenu(const List& list) {
 /// Обрабатывает пользовательский ввод и выполняет соответствующие операции.
 /// </summary>
 /// <returns>Код завершения программы</returns>
-int main() {
+int main()
+{
     List list;
     int choice = 0;
 
@@ -155,80 +195,97 @@ int main() {
     list.AddToEnd(new Node(1));
     list.AddToEnd(new Node(3));
 
-    /// <summary>
-    /// Главный цикл приложения
-    /// </summary>
-    while (choice != ExitOption) {
+    while (choice != ExitOption)
+    {
         printMenu(list);
         choice = GetValidatedInput("");
 
-        switch (choice) {
-        case RemoveByIndexOption: {
+        switch (choice)
+        {
+        case RemoveByIndexOption:
+        {
             int index = GetValidatedInput("Enter index to remove: ");
-            if (list.RemoveNodeByIndex(index)) {
+            if (list.RemoveNodeByIndex(index))
+            {
                 std::cout << "Element removed successfully.\n";
             }
-            else {
+            else
+            {
                 std::cout << "Failed to remove element. Invalid index.\n";
             }
             break;
         }
-        case RemoveByValueOption: {
+        case RemoveByValueOption:
+        {
             int value = GetValidatedInput("Enter value to remove: ");
-            if (list.RemoveNodeByValue(value)) {
+            if (list.RemoveNodeByValue(value))
+            {
                 std::cout << "Element removed successfully.\n";
             }
-            else {
+            else
+            {
                 std::cout << "Element not found.\n";
             }
             break;
         }
-        case InsertAtBeginningOption: {
+        case InsertAtBeginningOption:
+        {
             int value = GetValidatedInput("Enter value to insert at the beginning: ");
             list.AddToFront(new Node(value));
             std::cout << "Element added.\n";
             break;
         }
-        case InsertAtEndOption: {
+        case InsertAtEndOption:
+        {
             int value = GetValidatedInput("Enter value to insert at the end: ");
             list.AddToEnd(new Node(value));
             std::cout << "Element added.\n";
             break;
         }
-        case InsertAfterIndexOption: {
+        case InsertAfterIndexOption:
+        {
             int newValue = GetValidatedInput("Enter value to insert: ");
             int targetIndex = GetValidatedInput("Enter index after which to insert: ");
-            if (list.InsertAfter(targetIndex, new Node(newValue))) {
+            if (list.InsertAfter(targetIndex, new Node(newValue)))
+            {
                 std::cout << "Element inserted successfully.\n";
             }
-            else {
+            else
+            {
                 std::cout << "Invalid index.\n";
             }
             break;
         }
-        case InsertBeforeIndexOption: {
+        case InsertBeforeIndexOption:
+        {
             int newValue = GetValidatedInput("Enter value to insert: ");
             int targetIndex = GetValidatedInput("Enter index before which to insert: ");
-            if (list.InsertBefore(targetIndex, new Node(newValue))) {
+            if (list.InsertBefore(targetIndex, new Node(newValue)))
+            {
                 std::cout << "Element inserted successfully.\n";
             }
-            else {
+            else
+            {
                 std::cout << "Invalid index.\n";
             }
             break;
         }
-        case SortListOption: {
+        case SortListOption:
+        {
             list.Sort();
             std::cout << "List sorted successfully.\n";
             break;
         }
-        case LinearSearchOption: {
+        case LinearSearchOption:
+        {
             int value = GetValidatedInput("Enter value to search for: ");
             Node* found = list.FindNodeByValue(value);
-            if (found != nullptr) {
+            if (found != nullptr)
+            {
                 std::cout << "Value " << value << " found in the list.\n";
             }
-            else {
+            else
+            {
                 std::cout << "Value " << value << " not found.\n";
             }
             break;
@@ -238,11 +295,13 @@ int main() {
             RunPerformanceTests();
             break;
         }
-        case ExitOption: {
+        case ExitOption:
+        {
             std::cout << "Exiting...\n";
             break;
         }
-        default: {
+        default:
+        {
             std::cout << "Invalid choice. Please try again.\n";
             break;
         }

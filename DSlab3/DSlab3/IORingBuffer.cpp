@@ -2,23 +2,37 @@
 #include "RingBuffer.h"
 #include <iostream>
 
-void RunRingBufferMenu() {
-    RingBuffer buffer(5); // Начальный размер 5
+/// <summary>
+/// Запускает интерактивное меню для работы с кольцевым буфером.
+/// </summary>
+void RunRingBufferMenu()
+{
+    const int MenuPush = 1;
+    const int MenuPop = 2;
+    const int MenuFreeSpace = 3;
+    const int MenuOccupiedSpace = 4;
+    const int MenuResize = 5;
+    const int MenuBack = 6;
+
+    RingBuffer buffer(5);
     int choice;
 
-    do {
+    do
+    {
         std::cout << "\n=== Circular Buffer Menu ===" << std::endl;
-        std::cout << "1. Push" << std::endl;
-        std::cout << "2. Pop" << std::endl;
-        std::cout << "3. Free Space" << std::endl;
-        std::cout << "4. Occupied Space" << std::endl;
-        std::cout << "5. Resize" << std::endl;
-        std::cout << "6. Back to Main Menu" << std::endl;
+        std::cout << MenuPush << ". Push" << std::endl;
+        std::cout << MenuPop << ". Pop" << std::endl;
+        std::cout << MenuFreeSpace << ". Free Space" << std::endl;
+        std::cout << MenuOccupiedSpace << ". Occupied Space" << std::endl;
+        std::cout << MenuResize << ". Resize" << std::endl;
+        std::cout << MenuBack << ". Back to Main Menu" << std::endl;
         std::cout << "Choice: ";
         std::cin >> choice;
 
-        switch (choice) {
-        case 1: {
+        switch (choice)
+        {
+        case MenuPush:
+        {
             int data;
             std::cout << "Enter data to push: ";
             std::cin >> data;
@@ -26,20 +40,23 @@ void RunRingBufferMenu() {
             std::cout << "Data added successfully." << std::endl;
             break;
         }
-        case 2: {
+        case MenuPop:
+        {
             int data = buffer.GetElement();
-            if (data != -1) {
+            if (data != -1)
+            {
                 std::cout << "Retrieved data: " << data << std::endl;
             }
             break;
         }
-        case 3:
+        case MenuFreeSpace:
             std::cout << "Free space: " << buffer.GetFreeSpace() << std::endl;
             break;
-        case 4:
+        case MenuOccupiedSpace:
             std::cout << "Occupied space: " << buffer.GetSize() << std::endl;
             break;
-        case 5: {
+        case MenuResize:
+        {
             int newSize;
             std::cout << "Enter new size: ";
             std::cin >> newSize;
@@ -47,11 +64,11 @@ void RunRingBufferMenu() {
             std::cout << "Buffer resized." << std::endl;
             break;
         }
-        case 6:
+        case MenuBack:
             std::cout << "Returning to main menu..." << std::endl;
             break;
         default:
             std::cout << "Invalid choice!" << std::endl;
         }
-    } while (choice != 6);
+    } while (choice != MenuBack);
 }

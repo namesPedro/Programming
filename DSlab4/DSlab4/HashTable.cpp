@@ -2,16 +2,27 @@
 #include <iostream>
 #include <vector>
 
+/// <summary>
+/// Конструктор хеш-таблицы с заданной начальной ёмкостью.
+/// </summary>
+/// <param name="initialCapacity">Начальный размер таблицы.</param>
 HashTable::HashTable(int initialCapacity)
-    : capacity(initialCapacity), size(0) {
+{
+    capacity = initialCapacity;
+    size = 0;
     table = new KeyValuePair[capacity];
 }
 
-HashTable::~HashTable() {
+/// <summary>
+/// Деструктор хеш-таблицы. Освобождает выделенную память.
+/// </summary>
+HashTable::~HashTable()
+{
     delete[] table;
 }
 
-int HashTable::pearsonHash(const std::string& key, int tableSize) const {
+int HashTable::pearsonHash(const std::string& key, int tableSize) const
+{
     static const unsigned char T[256] = {
         98, 6, 85, 150, 36, 23, 112, 164, 135, 207, 169, 5, 26, 64, 165, 219,
         61, 20, 68, 89, 130, 63, 52, 102, 24, 229, 132, 245, 80, 216, 195, 115,
@@ -31,42 +42,49 @@ int HashTable::pearsonHash(const std::string& key, int tableSize) const {
         43, 119, 224, 71, 122, 142, 42, 160, 104, 48, 247, 103, 15, 11, 138, 239
     };
     unsigned char hash = 0;
-    for (char c : key) {
+    for (char c : key)
+    {
         hash = T[hash ^ static_cast<unsigned char>(c)];
     }
     return hash % tableSize;
 }
 
-int HashTable::hash2(const std::string& key) const {
-    // Простая вторая хеш-функция, возвращает нечётное число
+int HashTable::hash2(const std::string& key) const
+{
     int hash = 0;
-    for (char c : key) {
+    for (char c : key)
+    {
         hash = (hash * 31 + c);
     }
-    return (hash % (capacity - 1)) + 1; // Гарантируем нечётность и ненулевость
+    return (hash % (capacity - 1)) + 1;
 }
 
-int HashTable::findIndex(const std::string& key, bool forInsert) const {
+int HashTable::findIndex(const std::string& key, bool forInsert) const
+{
     int h1 = pearsonHash(key, capacity);
     int h2 = hash2(key);
     int index = h1;
     int i = 0;
 
-    while (i < capacity) {
-        if (table[index].key.empty() || table[index].isDeleted) {
+    while (i < capacity)
+    {
+        if (table[index].key.empty() || table[index].isDeleted)
+        {
             if (forInsert) return index;
-            if (table[index].key.empty()) break; // Конец цепочки при поиске
+            if (table[index].key.empty()) break;
         }
-        else if (table[index].key == key) {
+        else if (table[index].key == key)
+        {
             return index;
         }
         i++;
         index = (h1 + i * h2) % capacity;
     }
-    return -1; // Не найдено
+    return -1;
 }
 
-void HashTable::rehash() {
+void HashTable::rehash()
+{
     int oldCapacity = capacity;
     KeyValuePair* oldTable = table;
 
@@ -74,8 +92,10 @@ void HashTable::rehash() {
     table = new KeyValuePair[capacity];
     size = 0;
 
-    for (int i = 0; i < oldCapacity; i++) {
-        if (!oldTable[i].key.empty() && !oldTable[i].isDeleted) {
+    for (int i = 0; i < oldCapacity; i++)
+    {
+        if (!oldTable[i].key.empty() && !oldTable[i].isDeleted)
+        {
             insert(oldTable[i].key, oldTable[i].value);
         }
     }
@@ -84,37 +104,62 @@ void HashTable::rehash() {
     std::cout << "[Rehashed] New capacity: " << capacity << std::endl;
 }
 
-bool HashTable::insert(const std::string& key, const std::string& value) {
-    if (getLoadFactor() > LOAD_FACTOR_THRESHOLD) {
+/// <summary>
+/// Вставляет пару "ключ-значение" в хеш-таблицу. При необходимости выполняет рехеширование.
+/// Если ключ уже существует, его значение обновляется.
+/// </summary>
+/// <param name="key">Ключ для вставки.</param>
+/// <param name="value">Значение, связанное с ключом.</param>
+/// <returns>true при успешной вставке или обновлении; false, если таблица полна.</returns>
+bool HashTable::insert(const std::string& key, const std::string& value)
+{
+    if (getLoadFactor() > LOAD_FACTOR_THRESHOLD)
+    {
         rehash();
     }
 
     int index = findIndex(key, true);
-    if (index == -1) return false; // Таблица полна
+    if (index == -1) return false;
 
-    if (table[index].key.empty() || table[index].isDeleted) {
+    if (table[index].key.empty() || table[index].isDeleted)
+    {
         table[index] = KeyValuePair(key, value);
         size++;
     }
-    else {
-        // Ключ уже существует (заменяем значение)
+    else
+    {
         table[index].value = value;
     }
     return true;
 }
 
-bool HashTable::find(const std::string& key, std::string& value) const {
+/// <summary>
+/// Ищет значение по заданному ключу.
+/// </summary>
+/// <param name="key">Ключ для поиска.</param>
+/// <param name="value">Сюда будет записано найденное значение (если найдено).</param>
+/// <returns>true, если ключ найден и не помечен как удалённый; иначе false.</returns>
+bool HashTable::find(const std::string& key, std::string& value) const
+{
     int index = findIndex(key, false);
-    if (index != -1 && !table[index].isDeleted) {
+    if (index != -1 && !table[index].isDeleted)
+    {
         value = table[index].value;
         return true;
     }
     return false;
 }
 
-bool HashTable::remove(const std::string& key) {
+/// <summary>
+/// Удаляет запись по ключу (логическое удаление через флаг isDeleted).
+/// </summary>
+/// <param name="key">Ключ для удаления.</param>
+/// <returns>true, если ключ был найден и помечен как удалённый; иначе false.</returns>
+bool HashTable::remove(const std::string& key)
+{
     int index = findIndex(key, false);
-    if (index != -1 && !table[index].isDeleted) {
+    if (index != -1 && !table[index].isDeleted)
+    {
         table[index].isDeleted = true;
         size--;
         return true;
@@ -122,21 +167,29 @@ bool HashTable::remove(const std::string& key) {
     return false;
 }
 
-void HashTable::display() const {
+/// <summary>
+/// Выводит текущее состояние хеш-таблицы (ёмкость, размер, коэффициент заполнения и содержимое).
+/// </summary>
+void HashTable::display() const
+{
     std::cout << "=== Hash Table State ===" << std::endl;
     std::cout << "Capacity: " << capacity << std::endl;
     std::cout << "Size: " << size << std::endl;
     std::cout << "Load Factor: " << getLoadFactor() << std::endl;
     std::cout << "\nKey-value pairs:\n";
-    for (int i = 0; i < capacity; i++) {
+    for (int i = 0; i < capacity; i++)
+    {
         std::cout << "[" << i << "]: ";
-        if (table[i].key.empty()) {
+        if (table[i].key.empty())
+        {
             std::cout << "EMPTY";
         }
-        else if (table[i].isDeleted) {
+        else if (table[i].isDeleted)
+        {
             std::cout << "DELETED";
         }
-        else {
+        else
+        {
             std::cout << "{" << table[i].key << ":" << table[i].value << "}";
         }
         std::cout << std::endl;

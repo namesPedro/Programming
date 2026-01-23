@@ -2,7 +2,11 @@
 #include <iostream>
 #include <string>
 
-void displayMenu() {
+/// <summary>
+/// Выводит главное меню словаря.
+/// </summary>
+void displayMenu()
+{
     std::cout << "\n=== Dictionary Main Menu ===" << std::endl;
     std::cout << "1. Add key-value pair" << std::endl;
     std::cout << "2. Remove by key" << std::endl;
@@ -14,77 +18,93 @@ void displayMenu() {
     std::cout << "Choice: ";
 }
 
-void demonstration(Dictionary& dict) {
+/// <summary>
+/// Выполняет серию демонстрационных сценариев работы со словарём.
+/// </summary>
+/// <param name="dict">Ссылка на экземпляр словаря.</param>
+void demonstration(Dictionary& dict)
+{
     std::cout << "\n=== Demonstration Scenarios ===" << std::endl;
 
-    // 1. Добавление нескольких пар
     dict.add("name", "Alice");
     dict.add("age", "25");
     dict.add("city", "Moscow");
     dict.display();
 
-    // 2. Попытка добавить дубликат
     dict.add("name", "Bob");
 
-    // 3. Поиск
     std::string value;
     dict.find("city", value);
 
-    // 4. Удаление
     dict.remove("age");
     dict.display();
 
-    // 5. Добавление до перехеширования
-    for (int i = 1; i <= 10; i++) {
+    for (int i = 1; i <= 10; i++)
+    {
         dict.add("key" + std::to_string(i), "value" + std::to_string(i));
     }
     dict.display();
 }
 
-int main() {
+/// <summary>
+/// Точка входа программы. Запускает интерактивное меню для работы со словарём.
+/// </summary>
+/// <returns>Код завершения программы (0 — успешно).</returns>
+int main()
+{
+    const int MenuAdd = 1;
+    const int MenuRemove = 2;
+    const int MenuFind = 3;
+    const int MenuDisplay = 4;
+    const int MenuClear = 5;
+    const int MenuDemo = 6;
+    const int MenuExit = 7;
+
     Dictionary dict;
     int choice;
     std::string key, value;
 
-    do {
+    do
+    {
         displayMenu();
         std::cin >> choice;
         std::cin.ignore();
 
-        switch (choice) {
-        case 1:
+        switch (choice)
+        {
+        case MenuAdd:
             std::cout << "Enter key: ";
             std::getline(std::cin, key);
             std::cout << "Enter value: ";
             std::getline(std::cin, value);
             dict.add(key, value);
             break;
-        case 2:
+        case MenuRemove:
             std::cout << "Enter key to remove: ";
             std::getline(std::cin, key);
             dict.remove(key);
             break;
-        case 3:
+        case MenuFind:
             std::cout << "Enter key to find: ";
             std::getline(std::cin, key);
             dict.find(key, value);
             break;
-        case 4:
+        case MenuDisplay:
             dict.display();
             break;
-        case 5:
+        case MenuClear:
             dict.clear();
             break;
-        case 6:
+        case MenuDemo:
             demonstration(dict);
             break;
-        case 7:
+        case MenuExit:
             std::cout << "Exiting..." << std::endl;
             break;
         default:
             std::cout << "Invalid choice." << std::endl;
         }
-    } while (choice != 7);
+    } while (choice != MenuExit);
 
     return 0;
 }

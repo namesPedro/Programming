@@ -1,46 +1,83 @@
 #ifndef NODE_H
 #define NODE_H
 
-//! \brief Структура узла для двусвязного списка.
+/// <summary>
+/// Структура узла для двусвязного списка.
+/// </summary>
 struct Node
 {
 private:
-    //! \brief Данные.
     int _data;
 
-    //! \brief Указатель на следующий узел.
     Node* _nextNode;
 
-    //! \brief Указатель на предыдущий узел.
     Node* _previousNode;
 
 public:
-    // Конструктор
-    Node(int data) : _data(data), _nextNode(nullptr), _previousNode(nullptr) {}
+    /// <summary>
+    /// Конструктор узла.
+    /// </summary>
+    /// <param name="data">Значение, хранимое в узле.</param>
+    Node(int data)
+    {
+        _data = data;
+        _nextNode = nullptr;
+        _previousNode = nullptr;
+    }
 
-    //! \brief Возвращает данные.
-    //! \return Данные.
-    int GetData() const { return _data; }
+    /// <summary>
+    /// Возвращает данные, хранящиеся в узле.
+    /// </summary>
+    /// <returns>Целочисленное значение данных.</returns>
+    int GetData() const
+    {
+        return _data;
+    }
 
-    //! \brief Устанавливает данные
-    //! \param data Данные.
-    void SetData(int data) { _data = data; }
+    /// <summary>
+    /// Устанавливает новые данные в узел.
+    /// </summary>
+    /// <param name="data">Новое значение данных.</param>
+    void SetData(int data)
+    {
+        _data = data;
+    }
 
-    //! \brief Возвращает указатель следующий узел.
-    //! \return Указатель на следующий узел.
-    Node* GetNextNode() const { return _nextNode; }
+    /// <summary>
+    /// Возвращает указатель на следующий узел.
+    /// </summary>
+    /// <returns>Указатель на следующий узел или nullptr, если его нет.</returns>
+    Node* GetNextNode() const
+    {
+        return _nextNode;
+    }
 
-    //! \brief Устанавливает указатель на следующий узел.
-    //! \param node Указатель на следующий узел.
-    void SetNextNode(Node* node) { _nextNode = node; }
+    /// <summary>
+    /// Устанавливает указатель на следующий узел.
+    /// </summary>
+    /// <param name="node">Указатель на следующий узел.</param>
+    void SetNextNode(Node* node)
+    {
+        _nextNode = node;
+    }
 
-    //! \brief Возвращает указатель на предыдущий узел.
-    //! \return Указатель на предыдущий узел.
-    Node* GetPreviousNode() const { return _previousNode; }
+    /// <summary>
+    /// Возвращает указатель на предыдущий узел.
+    /// </summary>
+    /// <returns>Указатель на предыдущий узел или nullptr, если его нет.</returns>
+    Node* GetPreviousNode() const
+    {
+        return _previousNode;
+    }
 
-    //! \brief Устанавливает указатель на предыдущий узел.
-    //! \param node Указатель на предыдущий узел.
-    void SetPreviousNode(Node* node) { _previousNode = node; }
+    /// <summary>
+    /// Устанавливает указатель на предыдущий узел.
+    /// </summary>
+    /// <param name="node">Указатель на предыдущий узел.</param>
+    void SetPreviousNode(Node* node)
+    {
+        _previousNode = node;
+    }
 };
 
 #endif

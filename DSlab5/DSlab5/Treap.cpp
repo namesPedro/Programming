@@ -1,0 +1,193 @@
+﻿#include "Treap.h"
+#include <iostream>
+#include <algorithm>
+#include <cstdlib>
+#include <ctime>
+
+Treap::Treap() : _root(nullptr) {
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+}
+
+Treap::~Treap() {
+    ClearTree();
+}
+
+std::pair<TreapNode*, TreapNode*> Treap::split(TreapNode* root, int key) {
+    if (root == nullptr) {
+        return std::make_pair(nullptr, nullptr);
+    }
+
+    if (root->GetKey() <= key) {
+        std::pair<TreapNode*, TreapNode*> result = split(root->GetRight(), key);
+        root->SetRight(result.first);
+        return std::make_pair(root, result.second);
+    }
+    else {
+        std::pair<TreapNode*, TreapNode*> result = split(root->GetLeft(), key);
+        root->SetLeft(result.second);
+        return std::make_pair(result.first, root);
+    }
+}
+
+TreapNode* Treap::merge(TreapNode* left, TreapNode* right) {
+    if (left == nullptr) return right;
+    if (right == nullptr) return left;
+
+    if (left->GetPriority() > right->GetPriority()) {
+        left->SetRight(merge(left->GetRight(), right));
+        return left;
+    }
+    else {
+        right->SetLeft(merge(left, right->GetLeft()));
+        return right;
+    }
+}
+
+// Оптимизированная вставка
+void Treap::InsertOptimized(int key, int priority) {
+    _root = insertOptimizedRecursive(_root, key, priority);
+}
+
+TreapNode* Treap::insertOptimizedRecursive(TreapNode* root, int key, int priority) {
+    if (root == nullptr) {
+        return new TreapNode(key, priority);
+    }
+
+    if (priority > root->GetPriority()) {
+        std::pair<TreapNode*, TreapNode*> splitResult = split(root, key);
+        TreapNode* newNode = new TreapNode(key, priority);
+        newNode->SetLeft(splitResult.first);
+        newNode->SetRight(splitResult.second);
+        return newNode;
+    }
+
+    if (key < root->GetKey()) {
+        root->SetLeft(insertOptimizedRecursive(root->GetLeft(), key, priority));
+    }
+    else {
+        root->SetRight(insertOptimizedRecursive(root->GetRight(), key, priority));
+    }
+
+    return root;
+}
+
+// Неоптимизированная вставка
+void Treap::InsertUnoptimized(int key, int priority) {
+    std::pair<TreapNode*, TreapNode*> splitResult = split(_root, key);
+    TreapNode* left = splitResult.first;
+    TreapNode* right = splitResult.second;
+
+    TreapNode* newNode = new TreapNode(key, priority);
+    TreapNode* mergedLeft = merge(left, newNode);
+    _root = merge(mergedLeft, right);
+}
+
+// Оптимизированное удаление
+void Treap::RemoveOptimized(int key) {
+    _root = removeOptimizedRecursive(_root, key);
+}
+
+TreapNode* Treap::removeOptimizedRecursive(TreapNode* root, int key) {
+    if (root == nullptr) return nullptr;
+
+    if (root->GetKey() == key) {
+        TreapNode* result = merge(root->GetLeft(), root->GetRight());
+        root->SetLeft(nullptr);
+        root->SetRight(nullptr);
+        delete root;
+        return result;
+    }
+
+    if (key < root->GetKey()) {
+        root->SetLeft(removeOptimizedRecursive(root->GetLeft(), key));
+    }
+    else {
+        root->SetRight(removeOptimizedRecursive(root->GetRight(), key));
+    }
+
+    return root;
+}
+
+// Неоптимизированное удаление
+void Treap::RemoveUnoptimized(int key) {
+    std::pair<TreapNode*, TreapNode*> firstSplit = split(_root, key - 1);
+    TreapNode* left = firstSplit.first;
+    std::pair<TreapNode*, TreapNode*> secondSplit = split(firstSplit.second, key);
+    TreapNode* middle = secondSplit.first;
+    TreapNode* right = secondSplit.second;
+
+    if (middle) {
+        delete middle;
+    }
+    _root = merge(left, right);
+}
+
+TreapNode* Treap::SearchElement(int key) {
+    TreapNode* current = _root;
+    while (current != nullptr) {
+        if (current->GetKey() == key) {
+            return current;
+        }
+        else if (key < current->GetKey()) {
+            current = current->GetLeft();
+        }
+        else {
+            current = current->GetRight();
+        }
+    }
+    return nullptr;
+}
+
+void Treap::SplitTree(int key, Treap& leftTree, Treap& rightTree) {
+    leftTree.ClearTree();
+    rightTree.ClearTree();
+
+    std::pair<TreapNode*, TreapNode*> splitResult = split(_root, key);
+    leftTree._root = splitResult.first;
+    rightTree._root = splitResult.second;
+    _root = nullptr;
+}
+
+void Treap::MergeTrees(Treap& leftTree, Treap& rightTree) {
+    ClearTree();
+    _root = merge(leftTree._root, rightTree._root);
+
+    leftTree._root = nullptr;
+    rightTree._root = nullptr;
+}
+
+void Treap::DisplayTree() {
+    displayRecursive(_root, 0);
+    std::cout << std::endl;
+}
+
+void Treap::displayRecursive(TreapNode* root, int level) {
+    if (root != nullptr) {
+        displayRecursive(root->GetRight(), level + 1);
+
+        for (int i = 0; i < level; i++) {
+            std::cout << "   ";
+        }
+
+        std::cout << root->GetKey() << "[" << root->GetPriority() << "]" << std::endl;
+
+        displayRecursive(root->GetLeft(), level + 1);
+    }
+}
+
+void Treap::ClearTree() {
+    clearRecursive(_root);
+    _root = nullptr;
+}
+
+void Treap::clearRecursive(TreapNode* root) {
+    if (root != nullptr) {
+        clearRecursive(root->GetLeft());
+        clearRecursive(root->GetRight());
+        delete root;
+    }
+}
+
+TreapNode* Treap::GetRoot() {
+    return _root;
+}

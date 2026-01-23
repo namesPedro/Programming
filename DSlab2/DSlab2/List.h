@@ -3,98 +3,150 @@
 
 #include "Node.h"
 
-//! \brief Структура двусвязного списка.
+/// <summary>
+/// Структура двусвязного списка.
+/// </summary>
 struct List
 {
 private:
-    //! \brief Поле указателя начального узла.
     Node* _head;
 
-    //! \brief Поле указателя конечного узла.
     Node* _tail;
 
-    //! \brief Поле количества элементов в списке.
     int _size;
 
 public:
-    // Конструктор (функция создания и инициализации)
-    List() : _head(nullptr), _tail(nullptr), _size(0) {}
+    /// <summary>
+    /// Конструктор по умолчанию. Инициализирует пустой список.
+    /// </summary>
+    List()
+    {
+        _head = nullptr;
+        _tail = nullptr;
+        _size = 0;
+    }
 
-    // Деструктор (очень важный для очистки памяти!)
-    ~List() {
+    /// <summary>
+    /// Деструктор. Освобождает всю память, занятую узлами списка.
+    /// </summary>
+    ~List()
+    {
         Clean();
     }
 
-    //! \brief Возвращает указатель на начальный узел.
-    //! \return Указатель на начальный узел.
-    Node* GetHead() const { return _head; }
+    /// <summary>
+    /// Возвращает указатель на начальный узел списка.
+    /// </summary>
+    /// <returns>Указатель на головной узел или nullptr, если список пуст.</returns>
+    Node* GetHead() const
+    {
+        return _head;
+    }
 
-    //! \brief Возвращает указатель на конечный узел.
-    //! \return Указатель на конечный узел.
-    Node* GetTail() const { return _tail; }
+    /// <summary>
+    /// Возвращает указатель на последний узел списка.
+    /// </summary>
+    /// <returns>Указатель на хвостовой узел или nullptr, если список пуст.</returns>
+    Node* GetTail() const
+    {
+        return _tail;
+    }
 
-    //! \brief Возвращает размер списка.
-    //! \return Размер списка.
-    int GetSize() const { return _size; }
+    /// <summary>
+    /// Возвращает количество элементов в списке.
+    /// </summary>
+    /// <returns>Текущий размер списка.</returns>
+    int GetSize() const
+    {
+        return _size;
+    }
 
-    //! \brief Проверяет, пуст ли список.
-    //! \return true, если список пуст.
-    bool IsEmpty() const { return _size == 0; }
+    /// <summary>
+    /// Проверяет, пуст ли список.
+    /// </summary>
+    /// <returns>true, если список не содержит элементов; иначе false.</returns>
+    bool IsEmpty() const
+    {
+        return _size == 0;
+    }
 
-    //! \brief Возвращает узел по указанному индексу.
-    //! \param index Индекс, по которому нужно получить узел.
-    //! \return Узел или nullptr, если индекс неверный.
+    /// <summary>
+    /// Возвращает узел по указанному индексу.
+    /// </summary>
+    /// <param name="index">Индекс запрашиваемого узла (от 0 до размера - 1).</param>
+    /// <returns>Указатель на узел или nullptr, если индекс недопустим.</returns>
     Node* GetNodeByIndex(int index) const;
 
-    // --- ОСНОВНЫЕ ОПЕРАЦИИ ---
-    //! \brief Добавляет новый узел в начало списка.
-    //! \param node Указатель на новый узел.
+    /// <summary>
+    /// Добавляет новый узел в начало списка.
+    /// </summary>
+    /// <param name="node">Указатель на новый узел (не должен быть nullptr).</param>
     void AddToFront(Node* node);
 
-    //! \brief Добавляет новый узел в конец списка.
-    //! \param node Указатель на новый узел.
+    /// <summary>
+    /// Добавляет новый узел в конец списка.
+    /// </summary>
+    /// <param name="node">Указатель на новый узел (не должен быть nullptr).</param>
     void AddToEnd(Node* node);
 
-    //! \brief Добавляет новый узел в список по индексу.
-    //! \param node Указатель на новый узел.
-    //! \param index Индекс, по которому нужно установить новый узел.
-    //! \return Возвращает true, если удалось добавить элемент.
+    /// <summary>
+    /// Добавляет новый узел в список по указанному индексу.
+    /// </summary>
+    /// <param name="node">Указатель на новый узел (не должен быть nullptr).</param>
+    /// <param name="index">Индекс для вставки (от 0 до размера включительно).</param>
+    /// <returns>true, если вставка выполнена успешно; иначе false.</returns>
     bool AddNode(Node* node, int index);
 
-    //! \brief Вставляет новый узел ПОСЛЕ узла с указанным значением.
-    //! \param node Указатель на новый узел.
-    //! \param value Значение, после которого нужно вставить.
-    //! \return Возвращает true, если узел с значением найден и вставка произведена.
+    /// <summary>
+    /// Вставляет новый узел после узла с заданным индексом.
+    /// </summary>
+    /// <param name="index">Индекс узла, после которого выполняется вставка.</param>
+    /// <param name="node">Указатель на новый узел (не должен быть nullptr).</param>
+    /// <returns>true, если вставка выполнена успешно; иначе false.</returns>
     bool InsertAfter(int index, Node* node);
 
-    //! \brief Вставляет новый узел ПЕРЕД узлом с указанным значением.
-    //! \param node Указатель на новый узел.
-    //! \param value Значение, перед которым нужно вставить.
-    //! \return Возвращает true, если узел с значением найден и вставка произведена.
+    /// <summary>
+    /// Вставляет новый узел перед узлом с заданным индексом.
+    /// </summary>
+    /// <param name="index">Индекс узла, перед которым выполняется вставка.</param>
+    /// <param name="node">Указатель на новый узел (не должен быть nullptr).</param>
+    /// <returns>true, если вставка выполнена успешно; иначе false.</returns>
     bool InsertBefore(int index, Node* node);
 
-    //! \brief Удаляет узел по индексу.
-    //! \param index Индекс узла.
-    //! \return Возвращает true, если удалось удалить элемент.
+    /// <summary>
+    /// Удаляет узел по указанному индексу.
+    /// </summary>
+    /// <param name="index">Индекс удаляемого узла.</param>
+    /// <returns>true, если удаление выполнено успешно; иначе false.</returns>
     bool RemoveNodeByIndex(int index);
 
-    //! \brief Удаляет первый узел по значению внутри узла.
-    //! \param value Значение внутри узла.
-    //! \return Возвращает true, если узел найден и удален.
+    /// <summary>
+    /// Удаляет первый найденный узел с указанным значением.
+    /// </summary>
+    /// <param name="value">Значение, по которому выполняется поиск узла.</param>
+    /// <returns>true, если узел найден и удалён; иначе false.</returns>
     bool RemoveNodeByValue(int value);
 
-    //! \brief Сортирует двусвязный список пузырьком.
+    /// <summary>
+    /// Сортирует список методом пузырька по возрастанию.
+    /// </summary>
     void Sort();
 
-    //! \brief Находит узел по указанному значению.
-    //! \param value Значение, по которому ищется узел.
-    //! \return Найденный узел или nullptr.
+    /// <summary>
+    /// Находит первый узел с указанным значением.
+    /// </summary>
+    /// <param name="value">Значение для поиска.</param>
+    /// <returns>Указатель на найденный узел или nullptr, если не найден.</returns>
     Node* FindNodeByValue(int value) const;
 
-    //! \brief Очищает список от всех элементов.
+    /// <summary>
+    /// Очищает список, удаляя все узлы и освобождая память.
+    /// </summary>
     void Clean();
 
-    //! \brief Выводит список в консоль.
+    /// <summary>
+    /// Выводит содержимое списка в стандартный поток вывода.
+    /// </summary>
     void Print() const;
 };
 

@@ -2,21 +2,33 @@
 #include "QueueRing.h"
 #include <iostream>
 
-void RunQueueRingMenu() {
-    QueueRing queue(5); // Начальный размер 5
+/// <summary>
+/// Запускает интерактивное меню для работы с очередью на основе кольцевого буфера.
+/// </summary>
+void RunQueueRingMenu()
+{
+    const int MenuEnqueue = 1;
+    const int MenuDequeue = 2;
+    const int MenuResize = 3;
+    const int MenuBack = 4;
+
+    QueueRing queue(5);
     int choice;
 
-    do {
+    do
+    {
         std::cout << "\n=== Queue (Circular Buffer) Menu ===" << std::endl;
-        std::cout << "1. Enqueue" << std::endl;
-        std::cout << "2. Dequeue" << std::endl;
-        std::cout << "3. Resize" << std::endl;
-        std::cout << "4. Back to Main Menu" << std::endl;
+        std::cout << MenuEnqueue << ". Enqueue" << std::endl;
+        std::cout << MenuDequeue << ". Dequeue" << std::endl;
+        std::cout << MenuResize << ". Resize" << std::endl;
+        std::cout << MenuBack << ". Back to Main Menu" << std::endl;
         std::cout << "Choice: ";
         std::cin >> choice;
 
-        switch (choice) {
-        case 1: {
+        switch (choice)
+        {
+        case MenuEnqueue:
+        {
             int data;
             std::cout << "Enter data to enqueue: ";
             std::cin >> data;
@@ -24,14 +36,17 @@ void RunQueueRingMenu() {
             std::cout << "Data enqueued successfully." << std::endl;
             break;
         }
-        case 2: {
+        case MenuDequeue:
+        {
             int data = queue.Dequeue();
-            if (data != -1) {
+            if (data != -1)
+            {
                 std::cout << "Dequeued data: " << data << std::endl;
             }
             break;
         }
-        case 3: {
+        case MenuResize:
+        {
             int newSize;
             std::cout << "Enter new size: ";
             std::cin >> newSize;
@@ -39,11 +54,11 @@ void RunQueueRingMenu() {
             std::cout << "Queue resized." << std::endl;
             break;
         }
-        case 4:
+        case MenuBack:
             std::cout << "Returning to main menu..." << std::endl;
             break;
         default:
             std::cout << "Invalid choice!" << std::endl;
         }
-    } while (choice != 4);
+    } while (choice != MenuBack);
 }

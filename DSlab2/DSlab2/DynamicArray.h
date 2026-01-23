@@ -1,66 +1,97 @@
 #ifndef DYNAMICARRAY_H
 #define DYNAMICARRAY_H
 
-//! \brief Класс динамического массива для сравнения со списком.
+/// <summary>
+/// Класс динамического массива для сравнения со списком.
+/// </summary>
 class DynamicArray
 {
 private:
-    //! \brief Указатель на массив данных.
     int* _data;
 
-    //! \brief Текущий размер массива.
     int _size;
 
-    //! \brief Текущая емкость массива.
     int _capacity;
 
-    //! \brief Увеличивает емкость массива при необходимости.
+    /// <summary>
+    /// Увеличивает ёмкость массива вдвое при нехватке места.
+    /// </summary>
     void Resize();
 
 public:
-    //! \brief Конструктор по умолчанию.
+    /// <summary>
+    /// Конструктор по умолчанию. Создаёт массив начальной ёмкостью 10.
+    /// </summary>
     DynamicArray();
 
-    //! \brief Деструктор.
+    /// <summary>
+    /// Деструктор. Освобождает выделенную память.
+    /// </summary>
     ~DynamicArray();
 
-    //! \brief Возвращает текущий размер массива.
-    //! \return Размер массива.
-    int GetSize() const { return _size; }
+    /// <summary>
+    /// Возвращает текущий размер массива (количество элементов).
+    /// </summary>
+    /// <returns>Текущий размер массива.</returns>
+    int GetSize() const
+    {
+        return _size;
+    }
 
-    //! \brief Проверяет, пуст ли массив.
-    //! \return true если массив пуст.
-    bool IsEmpty() const { return _size == 0; }
+    /// <summary>
+    /// Проверяет, пуст ли массив.
+    /// </summary>
+    /// <returns>true, если массив пуст; иначе false.</returns>
+    bool IsEmpty() const
+    {
+        return _size == 0;
+    }
 
-    //! \brief Возвращает элемент по индексу.
-    //! \param index Индекс элемента.
-    //! \return Значение элемента.
+    /// <summary>
+    /// Возвращает значение элемента по указанному индексу.
+    /// </summary>
+    /// <param name="index">Индекс запрашиваемого элемента.</param>
+    /// <returns>Значение элемента.</returns>
+    /// <exception cref="std::out_of_range">Выбрасывается, если индекс вне допустимого диапазона [0, размер).</exception>
     int Get(int index) const;
 
-    //! \brief Устанавливает значение элемента по индексу.
-    //! \param index Индекс элемента.
-    //! \param value Новое значение.
+    /// <summary>
+    /// Устанавливает новое значение элемента по указанному индексу.
+    /// </summary>
+    /// <param name="index">Индекс изменяемого элемента.</param>
+    /// <param name="value">Новое значение.</param>
+    /// <exception cref="std::out_of_range">Выбрасывается, если индекс вне допустимого диапазона [0, размер).</exception>
     void Set(int index, int value);
 
-    //! \brief Добавляет элемент в конец массива.
-    //! \param value Значение для добавления.
+    /// <summary>
+    /// Добавляет элемент в конец массива. При необходимости увеличивает ёмкость.
+    /// </summary>
+    /// <param name="value">Значение для добавления.</param>
     void Add(int value);
 
-    //! \brief Вставляет элемент по указанному индексу.
-    //! \param index Индекс для вставки.
-    //! \param value Значение для вставки.
-    //! \return true если вставка успешна.
+    /// <summary>
+    /// Вставляет элемент по указанному индексу с последующим сдвигом элементов.
+    /// </summary>
+    /// <param name="index">Индекс для вставки (от 0 до размера включительно).</param>
+    /// <param name="value">Значение для вставки.</param>
+    /// <returns>true, если вставка выполнена успешно; иначе false.</returns>
     bool Insert(int index, int value);
 
-    //! \brief Удаляет элемент по индексу.
-    //! \param index Индекс удаляемого элемента.
-    //! \return true если удаление успешно.
+    /// <summary>
+    /// Удаляет элемент по указанному индексу с последующим сдвигом элементов.
+    /// </summary>
+    /// <param name="index">Индекс удаляемого элемента.</param>
+    /// <returns>true, если удаление выполнено успешно; иначе false.</returns>
     bool Remove(int index);
 
-    //! \brief Очищает массив.
+    /// <summary>
+    /// Очищает массив, устанавливая размер в 0 (память не освобождается).
+    /// </summary>
     void Clean();
 
-    //! \brief Выводит массив в консоль.
+    /// <summary>
+    /// Выводит содержимое массива в стандартный поток вывода.
+    /// </summary>
     void Print() const;
 };
 

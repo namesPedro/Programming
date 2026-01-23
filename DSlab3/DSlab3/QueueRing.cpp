@@ -1,29 +1,62 @@
 #include "QueueRing.h"
 
-QueueRing::QueueRing(int capacity) {
+/// <summary>
+/// Конструктор очереди на основе кольцевого буфера.
+/// </summary>
+/// <param name="capacity">Начальная ёмкость очереди.</param>
+QueueRing::QueueRing(int capacity)
+{
     _buffer = new RingBuffer(capacity);
 }
 
-QueueRing::~QueueRing() {
+/// <summary>
+/// Деструктор очереди. Освобождает память, выделенную под кольцевой буфер.
+/// </summary>
+QueueRing::~QueueRing()
+{
     delete _buffer;
 }
 
-void QueueRing::Enqueue(int data) {
+/// <summary>
+/// Добавляет элемент в конец очереди.
+/// </summary>
+/// <param name="data">Данные для добавления.</param>
+void QueueRing::Enqueue(int data)
+{
     _buffer->AddElement(data);
 }
 
-int QueueRing::Dequeue() {
+/// <summary>
+/// Извлекает элемент из начала очереди.
+/// </summary>
+/// <returns>Значение извлечённого элемента или -1, если очередь пуста.</returns>
+int QueueRing::Dequeue()
+{
     return _buffer->GetElement();
 }
 
-void QueueRing::ClearQueue() {
+/// <summary>
+/// Очищает очередь, удаляя все элементы.
+/// </summary>
+void QueueRing::ClearQueue()
+{
     _buffer->ClearRingBuf();
 }
 
-void QueueRing::Resize(int newCapacity) {
+/// <summary>
+/// Изменяет ёмкость очереди.
+/// </summary>
+/// <param name="newCapacity">Новая ёмкость очереди.</param>
+void QueueRing::Resize(int newCapacity)
+{
     _buffer->Resize(newCapacity);
 }
 
-bool QueueRing::IsEmpty() {
+/// <summary>
+/// Проверяет, пуста ли очередь.
+/// </summary>
+/// <returns>true, если очередь пуста; иначе false.</returns>
+bool QueueRing::IsEmpty()
+{
     return _buffer->IsEmpty();
 }

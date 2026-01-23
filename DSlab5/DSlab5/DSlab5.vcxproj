@@ -18,6 +18,23 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BinaryTree.cpp" />
+    <ClCompile Include="BinaryTreeNode.cpp" />
+    <ClCompile Include="IOBinaryTree.cpp" />
+    <ClCompile Include="IOTreap.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Treap.cpp" />
+    <ClCompile Include="TreapNode.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BinaryTree.h" />
+    <ClInclude Include="BinaryTreeNode.h" />
+    <ClInclude Include="IOBinaryTree.h" />
+    <ClInclude Include="IOTreap.h" />
+    <ClInclude Include="Treap.h" />
+    <ClInclude Include="TreapNode.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
