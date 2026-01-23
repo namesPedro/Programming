@@ -51,4 +51,6 @@ public:
     /// </summary>
     /// <param name="node">Указатель на новый правый узел.</param>
     void SetRight(BinaryTreeNode* node);
+
+    void SetData(int newData) { _data = newData; }
 };

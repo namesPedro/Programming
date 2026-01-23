@@ -1,76 +1,49 @@
 #include "Dictionary.h"
+#include <iostream>
 
-/// <summary>
-/// Добавляет новую пару "ключ-значение" в словарь.
-/// Если ключ уже существует, добавление отклоняется.
-/// </summary>
-/// <param name="key">Ключ для добавления.</param>
-/// <param name="value">Значение, связанное с ключом.</param>
-void Dictionary::add(const std::string& key, const std::string& value)
+bool Dictionary::Add(const std::string& key, const std::string& value)
 {
-    std::string existingValue;
-    if (hashTable.find(key, existingValue))
+    if (HasKey(key))
     {
-        std::cout << "[Error] Key '" << key << "' already exists. Cannot add duplicate." << std::endl;
-        return;
+        std::cout << "Error: Key '" << key << "' already exists. Duplicate keys are not allowed." << std::endl;
+        return false;
     }
-    hashTable.insert(key, value);
-    std::cout << "[OK] Added: " << key << " -> " << value << std::endl;
+    _hashTable.Insert(key, value);
+    return true;
 }
 
-/// <summary>
-/// Удаляет запись по указанному ключу из словаря.
-/// </summary>
-/// <param name="key">Ключ для удаления.</param>
-/// <returns>true, если ключ был найден и удалён; иначе false.</returns>
-bool Dictionary::remove(const std::string& key)
+bool Dictionary::Remove(const std::string& key)
 {
-    bool result = hashTable.remove(key);
-    if (result)
-    {
-        std::cout << "[OK] Removed key: " << key << std::endl;
-    }
-    else
-    {
-        std::cout << "[Error] Key not found: " << key << std::endl;
-    }
-    return result;
+    return _hashTable.Remove(key);
 }
 
-/// <summary>
-/// Ищет значение по заданному ключу.
-/// </summary>
-/// <param name="key">Ключ для поиска.</param>
-/// <param name="value">Сюда будет записано найденное значение (если найдено).</param>
-/// <returns>true, если ключ найден; иначе false.</returns>
-bool Dictionary::find(const std::string& key, std::string& value) const
+std::string Dictionary::Find(const std::string& key) const
 {
-    bool result = hashTable.find(key, value);
-    if (result)
-    {
-        std::cout << "[OK] Found: " << key << " -> " << value << std::endl;
-    }
-    else
-    {
-        std::cout << "[Error] Key not found: " << key << std::endl;
-    }
-    return result;
+    return _hashTable.Find(key);
 }
 
-/// <summary>
-/// Выводит текущее состояние словаря (включая количество записей и содержимое).
-/// </summary>
-void Dictionary::display() const
+bool Dictionary::HasKey(const std::string& key) const
+{
+    return !_hashTable.Find(key).empty();
+}
+
+void Dictionary::Display() const
 {
     std::cout << "=== Dictionary State ===" << std::endl;
-    std::cout << "Total entries: " << hashTable.getSize() << std::endl;
-    hashTable.display();
+    std::cout << "Total entries: " << GetSize() << std::endl;
 }
 
-/// <summary>
-/// Очищает словарь (в текущей реализации выводится информационное сообщение).
-/// </summary>
-void Dictionary::clear()
+int Dictionary::GetSize() const
 {
-    std::cout << "[Info] Dictionary cleared." << std::endl;
+    return _hashTable.GetSize();
+}
+
+void Dictionary::Clear()
+{
+    _hashTable = HashTable();
+}
+
+const HashTable& Dictionary::GetHashTable() const
+{
+    return _hashTable;
 }

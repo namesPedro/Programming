@@ -1,84 +1,95 @@
 #pragma once
-#ifndef HASHTABLE_H
-#define HASHTABLE_H
-
+#include <vector>
+#include <string>
 #include "KeyValuePair.h"
 
 /// <summary>
-/// Хеш-таблица с открытой адресацией и двойным хешированием.
-/// Поддерживает вставку, поиск, удаление и автоматическое рехеширование.
+/// Хеш-таблица, реализованная с методом цепочек (chaining).
+/// Использует хеш-функцию Пирсона.
 /// </summary>
 class HashTable
 {
 private:
-    KeyValuePair* table;
-    int capacity;
-    int size;
+    std::vector<std::vector<KeyValuePair>> _buckets;
+    int _capacity;
+    int _size;
     const double LOAD_FACTOR_THRESHOLD = 0.7;
 
-    int pearsonHash(const std::string& key, int tableSize) const;
-    int hash2(const std::string& key) const;
-    int findIndex(const std::string& key, bool forInsert) const;
-    void rehash();
+    /// <summary>
+    /// Таблица Пирсона (случайная перестановка 0..255).
+    /// </summary>
+    static const unsigned char _pearsonTable[256];
+
+    /// <summary>
+    /// Вычисляет хеш-код для строки с использованием метода Пирсона.
+    /// </summary>
+    /// <param name="key">Ключ (строка).</param>
+    /// <returns>Хеш-код в диапазоне [0, capacity-1].</returns>
+    int HashFunction(const std::string& key) const;
+
+    /// <summary>
+    /// Перехеширует таблицу, увеличивая её размер вдвое.
+    /// </summary>
+    void Rehash();
 
 public:
     /// <summary>
-    /// Конструктор хеш-таблицы.
+    /// Конструктор хеш-таблицы с начальной вместимостью 16.
     /// </summary>
-    /// <param name="initialCapacity">Начальная ёмкость таблицы (по умолчанию 16).</param>
-    HashTable(int initialCapacity = 16);
+    HashTable();
 
     /// <summary>
-    /// Деструктор хеш-таблицы. Освобождает выделенную память.
+    /// Конструктор копирования.
+    /// </summary>
+    HashTable(const HashTable& other);
+
+    /// <summary>
+    /// Оператор присваивания.
+    /// </summary>
+    HashTable& operator=(const HashTable& other);
+
+    /// <summary>
+    /// Деструктор хеш-таблицы.
     /// </summary>
     ~HashTable();
 
     /// <summary>
-    /// Вставляет пару "ключ-значение" в таблицу. При переполнении выполняется рехеширование.
-    /// Если ключ уже существует, его значение обновляется.
+    /// Вставляет пару "ключ-значение" в хеш-таблицу.
+    /// Дублирование ключей разрешено.
     /// </summary>
-    /// <param name="key">Ключ для вставки.</param>
-    /// <param name="value">Значение, связанное с ключом.</param>
-    /// <returns>true при успешной вставке или обновлении; false, если таблица полна.</returns>
-    bool insert(const std::string& key, const std::string& value);
+    /// <param name="key">Ключ.</param>
+    /// <param name="value">Значение.</param>
+    /// <returns>true, если вставка успешна.</returns>
+    bool Insert(const std::string& key, const std::string& value);
 
     /// <summary>
-    /// Ищет значение по заданному ключу.
-    /// </summary>
-    /// <param name="key">Ключ для поиска.</param>
-    /// <param name="value">Сюда будет записано найденное значение (если найдено).</param>
-    /// <returns>true, если ключ найден и не помечен как удалённый; иначе false.</returns>
-    bool find(const std::string& key, std::string& value) const;
-
-    /// <summary>
-    /// Удаляет запись по ключу (логическое удаление через флаг isDeleted).
+    /// Удаляет первое вхождение пары по ключу.
     /// </summary>
     /// <param name="key">Ключ для удаления.</param>
-    /// <returns>true, если ключ был найден и помечен как удалённый; иначе false.</returns>
-    bool remove(const std::string& key);
+    /// <returns>true, если удаление успешно.</returns>
+    bool Remove(const std::string& key);
 
     /// <summary>
-    /// Выводит текущее состояние хеш-таблицы (ёмкость, размер, коэффициент заполнения и содержимое).
+    /// Ищет значение по ключу.
     /// </summary>
-    void display() const;
+    /// <param name="key">Ключ для поиска.</param>
+    /// <returns>Значение или пустая строка, если не найдено.</returns>
+    std::string Find(const std::string& key) const;
 
     /// <summary>
-    /// Возвращает текущее количество элементов в таблице.
+    /// Возвращает текущий размер таблицы (количество пар).
     /// </summary>
-    /// <returns>Число активных записей.</returns>
-    int getSize() const { return size; }
+    /// <returns>Количество пар.</returns>
+    int GetSize() const;
 
     /// <summary>
-    /// Возвращает текущую ёмкость таблицы.
+    /// Возвращает вместимость таблицы.
     /// </summary>
-    /// <returns>Размер внутреннего массива.</returns>
-    int getCapacity() const { return capacity; }
+    /// <returns>Вместимость.</returns>
+    int GetCapacity() const;
 
     /// <summary>
-    /// Возвращает текущий коэффициент заполнения таблицы.
+    /// Выводит состояние хеш-таблицы в консоль.
     /// </summary>
-    /// <returns>Отношение количества элементов к ёмкости (от 0.0 до 1.0).</returns>
-    double getLoadFactor() const { return (double)size / capacity; }
+    void Display() const;
 };
-
-#endif

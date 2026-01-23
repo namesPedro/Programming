@@ -26,6 +26,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Treap.cpp" />
     <ClCompile Include="TreapNode.cpp" />
+    <ClCompile Include="Validator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinaryTree.h" />
@@ -34,6 +35,7 @@
     <ClInclude Include="IOTreap.h" />
     <ClInclude Include="Treap.h" />
     <ClInclude Include="TreapNode.h" />
+    <ClInclude Include="Validator.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

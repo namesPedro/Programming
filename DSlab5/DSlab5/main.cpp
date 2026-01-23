@@ -2,6 +2,7 @@
 #include "IOTreap.h"
 #include <iostream>
 #include <limits>
+#include "Validator.h"
 
 int main()
 {
@@ -21,7 +22,8 @@ int main()
         std::cout << MenuTreap << ". Treap (Cartesian Tree)" << std::endl;
         std::cout << MenuExit << ". Exit" << std::endl;
         std::cout << "Choice: ";
-        std::cin >> mainChoice;
+
+        mainChoice = GetValidatedInput("");
 
         switch (mainChoice)
         {

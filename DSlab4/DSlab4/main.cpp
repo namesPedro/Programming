@@ -1,102 +1,122 @@
-#include "Dictionary.h"
 #include <iostream>
-#include <string>
+#include "Dictionary.h"
+#include "HashTable.h"
 
-/// <summary>
-/// Выводит главное меню словаря.
-/// </summary>
-void displayMenu()
+// Константы меню
+const int MenuAdd = 1;
+const int MenuRemove = 2;
+const int MenuFind = 3;
+const int MenuDisplay = 4;
+const int MenuClear = 5;
+const int MenuDemo = 6;
+const int MenuExit = 7;
+
+void DisplayMenu()
 {
     std::cout << "\n=== Dictionary Main Menu ===" << std::endl;
-    std::cout << "1. Add key-value pair" << std::endl;
-    std::cout << "2. Remove by key" << std::endl;
-    std::cout << "3. Find value by key" << std::endl;
-    std::cout << "4. Display current state" << std::endl;
-    std::cout << "5. Clear dictionary" << std::endl;
-    std::cout << "6. Demonstration scenarios" << std::endl;
-    std::cout << "7. Exit" << std::endl;
+    std::cout << MenuAdd << ". Add key-value pair" << std::endl;
+    std::cout << MenuRemove << ". Remove by key" << std::endl;
+    std::cout << MenuFind << ". Find value by key" << std::endl;
+    std::cout << MenuDisplay << ". Display current state" << std::endl;
+    std::cout << MenuClear << ". Clear dictionary" << std::endl;
+    std::cout << MenuDemo << ". Demonstration scenarios" << std::endl;
+    std::cout << MenuExit << ". Exit" << std::endl;
     std::cout << "Choice: ";
 }
 
-/// <summary>
-/// Выполняет серию демонстрационных сценариев работы со словарём.
-/// </summary>
-/// <param name="dict">Ссылка на экземпляр словаря.</param>
-void demonstration(Dictionary& dict)
+void DemonstrationScenarios(Dictionary& dict)
 {
     std::cout << "\n=== Demonstration Scenarios ===" << std::endl;
 
-    dict.add("name", "Alice");
-    dict.add("age", "25");
-    dict.add("city", "Moscow");
-    dict.display();
+    // 1. Добавление нескольких пар
+    std::cout << "1. Adding multiple key-value pairs..." << std::endl;
+    dict.Add("name", "John");
+    dict.Add("age", "25");
+    dict.Add("city", "New York");
+    dict.Add("address", "My Street");
 
-    dict.add("name", "Bob");
+    // 2. Удаление
+    std::cout << "2. Removing 'age'..." << std::endl;
+    dict.Remove("age");
 
-    std::string value;
-    dict.find("city", value);
+    // 3. Поиск
+    std::cout << "3. Finding 'city'..." << std::endl;
+    std::string value = dict.Find("city");
+    std::cout << "Found: " << value << std::endl;
 
-    dict.remove("age");
-    dict.display();
+    // 4. Попытка добавления дублирующего ключа
+    std::cout << "4. Attempting to add duplicate key 'name'..." << std::endl;
+    dict.Add("name", "Alice");
 
-    for (int i = 1; i <= 10; i++)
+    // 5. Добавление до перехеширования
+    std::cout << "5. Adding elements until rehash..." << std::endl;
+    for (int i = 0; i < 20; i++)
     {
-        dict.add("key" + std::to_string(i), "value" + std::to_string(i));
+        dict.Add("key" + std::to_string(i), "value" + std::to_string(i));
     }
-    dict.display();
+
+    // 6. Удаление элементов
+    std::cout << "6. Removing some elements..." << std::endl;
+    dict.Remove("key5");
+    dict.Remove("key10");
 }
 
-/// <summary>
-/// Точка входа программы. Запускает интерактивное меню для работы со словарём.
-/// </summary>
-/// <returns>Код завершения программы (0 — успешно).</returns>
 int main()
 {
-    const int MenuAdd = 1;
-    const int MenuRemove = 2;
-    const int MenuFind = 3;
-    const int MenuDisplay = 4;
-    const int MenuClear = 5;
-    const int MenuDemo = 6;
-    const int MenuExit = 7;
-
     Dictionary dict;
     int choice;
-    std::string key, value;
 
     do
     {
-        displayMenu();
+        DisplayMenu();
         std::cin >> choice;
         std::cin.ignore();
 
         switch (choice)
         {
         case MenuAdd:
+        {
+            std::string key, value;
             std::cout << "Enter key: ";
             std::getline(std::cin, key);
             std::cout << "Enter value: ";
             std::getline(std::cin, value);
-            dict.add(key, value);
+            dict.Add(key, value);
             break;
+        }
         case MenuRemove:
+        {
+            std::string key;
             std::cout << "Enter key to remove: ";
             std::getline(std::cin, key);
-            dict.remove(key);
+            if (dict.Remove(key))
+                std::cout << "Key removed." << std::endl;
+            else
+                std::cout << "Key not found." << std::endl;
             break;
+        }
         case MenuFind:
+        {
+            std::string key;
             std::cout << "Enter key to find: ";
             std::getline(std::cin, key);
-            dict.find(key, value);
+            std::string result = dict.Find(key);
+            if (!result.empty())
+                std::cout << "Value: " << result << std::endl;
+            else
+                std::cout << "Key not found." << std::endl;
             break;
+        }
         case MenuDisplay:
-            dict.display();
+            dict.Display();
+            dict.GetHashTable().Display();
             break;
         case MenuClear:
-            dict.clear();
+            dict.Clear();
+            std::cout << "Dictionary cleared." << std::endl;
             break;
         case MenuDemo:
-            demonstration(dict);
+            DemonstrationScenarios(dict);
             break;
         case MenuExit:
             std::cout << "Exiting..." << std::endl;

@@ -92,14 +92,8 @@ BinaryTreeNode* BinaryTree::removeRecursive(BinaryTreeNode* node, int data)
         }
 
         BinaryTreeNode* temp = findMin(node->GetRight());
-        int minData = temp->GetData();
-        node->SetRight(removeRecursive(node->GetRight(), minData));
-
-        BinaryTreeNode* newNode = new BinaryTreeNode(minData);
-        newNode->SetLeft(node->GetLeft());
-        newNode->SetRight(node->GetRight());
-        delete node;
-        node = newNode;
+        node->SetData(temp->GetData());
+        node->SetRight(removeRecursive(node->GetRight(), temp->GetData()));
     }
 
     return node;

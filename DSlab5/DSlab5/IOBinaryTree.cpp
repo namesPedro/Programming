@@ -1,6 +1,7 @@
 #include "IOBinaryTree.h"
 #include <iostream>
 #include <limits>
+#include "Validator.h"
 
 void IOBinaryTree::ShowMenu()
 {
@@ -33,7 +34,7 @@ void IOBinaryTree::HandleMenu(BinaryTree& tree)
     do
     {
         ShowMenu();
-        std::cin >> choice;
+        choice = GetValidatedInput("");
 
         switch (choice)
         {

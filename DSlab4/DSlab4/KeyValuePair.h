@@ -1,35 +1,38 @@
 #pragma once
-#ifndef KEYVALUEPAIR_H
-#define KEYVALUEPAIR_H
-
 #include <string>
 
 /// <summary>
-/// Представляет пару "ключ-значение" с флагом логического удаления.
-/// Используется в хеш-таблице с открытой адресацией.
+/// Представляет пару "ключ-значение" для хранения в хеш-таблице и словаре.
 /// </summary>
 struct KeyValuePair
 {
-    std::string key;
-    std::string value;
-    bool isDeleted;
+private:
+    std::string _key;
+    std::string _value;
+
+public:
+    /// <summary>
+    /// Конструктор пары "ключ-значение".
+    /// </summary>
+    /// <param name="key">Ключ (строка).</param>
+    /// <param name="value">Значение (строка).</param>
+    KeyValuePair(const std::string& key, const std::string& value);
 
     /// <summary>
-    /// Конструктор по умолчанию. Инициализирует пустой ключ, пустое значение и флаг isDeleted = false.
+    /// Возвращает ключ пары.
     /// </summary>
-    KeyValuePair() : key(""), value(""), isDeleted(false)
-    {
-    }
+    /// <returns>Ключ.</returns>
+    std::string GetKey() const;
 
     /// <summary>
-    /// Конструктор с параметрами.
+    /// Возвращает значение пары.
     /// </summary>
-    /// <param name="k">Ключ.</param>
-    /// <param name="v">Значение.</param>
-    KeyValuePair(const std::string& k, const std::string& v)
-        : key(k), value(v), isDeleted(false)
-    {
-    }
+    /// <returns>Значение.</returns>
+    std::string GetValue() const;
+
+    /// <summary>
+    /// Устанавливает новое значение пары.
+    /// </summary>
+    /// <param name="value">Новое значение.</param>
+    void SetValue(const std::string& value);
 };
-
-#endif

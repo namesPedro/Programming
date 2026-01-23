@@ -3,6 +3,7 @@
 #include <limits>
 #include <cstdlib>
 #include <ctime>
+#include "Validator.h"
 
 void IOTreap::ShowMenu()
 {
@@ -44,7 +45,7 @@ void IOTreap::HandleMenu(Treap& tree)
     do
     {
         ShowMenu();
-        std::cin >> choice;
+        choice = GetValidatedInput("");
 
         switch (choice)
         {

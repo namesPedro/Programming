@@ -129,11 +129,16 @@
   <ItemGroup>
     <ClCompile Include="Dictionary.cpp" />
     <ClCompile Include="HashTable.cpp" />
+    <ClCompile Include="IODictionary.cpp" />
+    <ClCompile Include="IOHashTable.cpp" />
+    <ClCompile Include="KeyValuePair.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dictionary.h" />
     <ClInclude Include="HashTable.h" />
+    <ClInclude Include="IODictionary.h" />
+    <ClInclude Include="IOHashTable.h" />
     <ClInclude Include="KeyValuePair.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
