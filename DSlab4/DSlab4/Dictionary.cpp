@@ -31,6 +31,30 @@ void Dictionary::Display() const
 {
     std::cout << "=== Dictionary State ===" << std::endl;
     std::cout << "Total entries: " << GetSize() << std::endl;
+
+    auto pairs = GetAllPairs();
+
+    for (const auto& pair : pairs)
+    {
+        std::cout << "[" << pair.GetKey() << "]: " << pair.GetValue() << std::endl;
+    }
+}
+
+std::vector<KeyValuePair> Dictionary::GetAllPairs() const
+{
+    std::vector<KeyValuePair> result;
+
+    const auto& buckets = _hashTable.GetBuckets();
+
+    for (const auto& bucket : buckets)
+    {
+        for (const auto& pair : bucket)
+        {
+            result.push_back(pair);
+        }
+    }
+
+    return result;
 }
 
 int Dictionary::GetSize() const

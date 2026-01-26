@@ -66,7 +66,7 @@ bool HashTable::Insert(const std::string& key, const std::string& value)
     _size++;
 
     double loadFactor = static_cast<double>(_size) / _capacity;
-    if (loadFactor > LOAD_FACTOR_THRESHOLD)
+    if (loadFactor > LoadFactorThreshold)
     {
         Rehash();
     }
@@ -160,4 +160,9 @@ void HashTable::Display() const
         }
         std::cout << std::endl;
     }
+}
+
+const std::vector<std::vector<KeyValuePair>>& HashTable::GetBuckets() const
+{
+    return _buckets;
 }

@@ -11,6 +11,12 @@ class Dictionary
 private:
     HashTable _hashTable;
 
+    /// <summary>
+    /// Возвращает все пары ключ-значение из словаря.
+    /// </summary>
+    /// <returns>Вектор пар ключ-значение.</returns>
+    std::vector<KeyValuePair> GetAllPairs() const;
+
 public:
     /// <summary>
     /// Добавляет пару "ключ-значение" в словарь.

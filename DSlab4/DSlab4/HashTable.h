@@ -13,7 +13,7 @@ private:
     std::vector<std::vector<KeyValuePair>> _buckets;
     int _capacity;
     int _size;
-    const double LOAD_FACTOR_THRESHOLD = 0.7;
+    const double LoadFactorThreshold = 0.7;
 
     /// <summary>
     /// Таблица Пирсона (случайная перестановка 0..255).
@@ -92,4 +92,10 @@ public:
     /// Выводит состояние хеш-таблицы в консоль.
     /// </summary>
     void Display() const;
+
+    /// <summary>
+    /// Возвращает все bucket'ы таблицы (для доступа из Dictionary).
+    /// </summary>
+    /// <returns>Константная ссылка на вектор bucket'ов.</returns>
+    const std::vector<std::vector<KeyValuePair>>& GetBuckets() const;
 };
