@@ -6,13 +6,14 @@
 /// <summary>
 /// Хеш-таблица, реализованная с методом цепочек (chaining).
 /// Использует хеш-функцию Пирсона.
+/// Разрешает добавление пар с одинаковыми ключами.
 /// </summary>
 class HashTable
 {
 private:
     std::vector<std::vector<KeyValuePair>> _buckets;
     int _capacity;
-    int _size;
+    int _size;  // Общее количество всех пар (включая дубликаты)
     const double LoadFactorThreshold = 0.7;
 
     /// <summary>
@@ -55,7 +56,7 @@ public:
 
     /// <summary>
     /// Вставляет пару "ключ-значение" в хеш-таблицу.
-    /// Дублирование ключей разрешено.
+    /// Дублирование ключей РАЗРЕШЕНО.
     /// </summary>
     /// <param name="key">Ключ.</param>
     /// <param name="value">Значение.</param>
@@ -70,17 +71,23 @@ public:
     bool Remove(const std::string& key);
 
     /// <summary>
-    /// Ищет значение по ключу.
+    /// Ищет ПЕРВОЕ значение по ключу.
     /// </summary>
     /// <param name="key">Ключ для поиска.</param>
-    /// <returns>Значение или пустая строка, если не найдено.</returns>
+    /// <returns>Первое найденное значение или пустая строка, если не найдено.</returns>
     std::string Find(const std::string& key) const;
 
     /// <summary>
-    /// Возвращает текущий размер таблицы (количество пар).
+    /// Возвращает текущий размер таблицы (количество всех пар, включая дубликаты).
     /// </summary>
-    /// <returns>Количество пар.</returns>
+    /// <returns>Общее количество пар.</returns>
     int GetSize() const;
+
+    /// <summary>
+    /// Возвращает количество уникальных ключей в таблице.
+    /// </summary>
+    /// <returns>Количество уникальных ключей.</returns>
+    int GetUniqueKeyCount() const;
 
     /// <summary>
     /// Возвращает вместимость таблицы.

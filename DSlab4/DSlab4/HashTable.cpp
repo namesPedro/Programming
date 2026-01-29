@@ -1,5 +1,6 @@
 #include "HashTable.h"
 #include <iostream>
+#include <algorithm>
 
 const unsigned char HashTable::_pearsonTable[256] =
 {
@@ -68,6 +69,8 @@ bool HashTable::Insert(const std::string& key, const std::string& value)
     double loadFactor = static_cast<double>(_size) / _capacity;
     if (loadFactor > LoadFactorThreshold)
     {
+        std::cout << "HashTable: Load factor (" << loadFactor << ") exceeded threshold ("
+            << LoadFactorThreshold << "). Rehashing..." << std::endl;
         Rehash();
     }
     return true;
@@ -106,6 +109,25 @@ int HashTable::GetSize() const
     return _size;
 }
 
+int HashTable::GetUniqueKeyCount() const
+{
+    std::vector<std::string> uniqueKeys;
+
+    for (const auto& bucket : _buckets)
+    {
+        for (const auto& pair : bucket)
+        {
+            std::string key = pair.GetKey();
+            if (std::find(uniqueKeys.begin(), uniqueKeys.end(), key) == uniqueKeys.end())
+            {
+                uniqueKeys.push_back(key);
+            }
+        }
+    }
+
+    return uniqueKeys.size();
+}
+
 int HashTable::GetCapacity() const
 {
     return _capacity;
@@ -113,8 +135,12 @@ int HashTable::GetCapacity() const
 
 void HashTable::Rehash()
 {
+    int oldCapacity = _capacity;
     int newCapacity = _capacity * 2;
     std::vector<std::vector<KeyValuePair>> newBuckets(newCapacity);
+
+    std::cout << "HashTable: Rehashing from capacity " << oldCapacity
+        << " to " << newCapacity << std::endl;
 
     for (const auto& bucket : _buckets)
     {
@@ -133,15 +159,18 @@ void HashTable::Rehash()
 
     _buckets = std::move(newBuckets);
     _capacity = newCapacity;
+
+    std::cout << "HashTable: Rehash completed. New capacity: " << _capacity << std::endl;
 }
 
 void HashTable::Display() const
 {
-    std::cout << "=== Hash Table State ===" << std::endl;
+    std::cout << "\n=== Hash Table State ===" << std::endl;
     std::cout << "Capacity: " << _capacity << std::endl;
-    std::cout << "Size: " << _size << std::endl;
+    std::cout << "Total pairs (including duplicates): " << _size << std::endl;
+    std::cout << "Unique keys: " << GetUniqueKeyCount() << std::endl;
     std::cout << "Load Factor: " << static_cast<double>(_size) / _capacity << std::endl;
-    std::cout << "Key-value pairs:" << std::endl;
+    std::cout << "Key-value pairs (duplicates allowed):" << std::endl;
 
     for (int i = 0; i < _capacity; i++)
     {

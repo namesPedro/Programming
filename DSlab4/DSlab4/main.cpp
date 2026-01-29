@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include "Dictionary.h"
 #include "HashTable.h"
 
@@ -24,41 +25,69 @@ void DisplayMenu()
     std::cout << "Choice: ";
 }
 
-void DemonstrationScenarios(Dictionary& dict)
+void DemonstrationScenarios(Dictionary& dict, HashTable& hashTable)
 {
     std::cout << "\n=== Demonstration Scenarios ===" << std::endl;
 
     // 1. Добавление нескольких пар
-    std::cout << "1. Adding multiple key-value pairs..." << std::endl;
+    std::cout << "\n1. Adding multiple key-value pairs..." << std::endl;
     dict.Add("name", "John");
     dict.Add("age", "25");
     dict.Add("city", "New York");
     dict.Add("address", "My Street");
 
     // 2. Удаление
-    std::cout << "2. Removing 'age'..." << std::endl;
+    std::cout << "\n2. Removing 'age'..." << std::endl;
     dict.Remove("age");
 
     // 3. Поиск
-    std::cout << "3. Finding 'city'..." << std::endl;
+    std::cout << "\n3. Finding 'city'..." << std::endl;
     std::string value = dict.Find("city");
-    std::cout << "Found: " << value << std::endl;
 
-    // 4. Попытка добавления дублирующего ключа
-    std::cout << "4. Attempting to add duplicate key 'name'..." << std::endl;
-    dict.Add("name", "Alice");
+    // 4. Попытка добавления дублирующего ключа (разные результаты для Dictionary и HashTable)
+    std::cout << "\n4. Attempting to add duplicate key 'name'..." << std::endl;
+    dict.Add("name", "Alice");  // В словаре не добавится, в хеш-таблицу добавится
 
-    // 5. Добавление до перехеширования
-    std::cout << "5. Adding elements until rehash..." << std::endl;
+    // 5. Добавление еще одного дубликата для демонстрации
+    std::cout << "\n5. Adding another duplicate key 'name'..." << std::endl;
+    dict.Add("name", "Bob");  // В словаре не добавится, в хеш-таблицу добавится
+
+    // 6. Поиск ключа с дубликатами
+    std::cout << "\n6. Finding 'name' (which has duplicates in HashTable)..." << std::endl;
+    dict.Find("name");
+
+    // 7. Показать разницу в размерах
+    std::cout << "\n7. Showing size difference between Dictionary and HashTable..." << std::endl;
+    std::cout << "Dictionary size (unique keys): " << dict.GetSize() << std::endl;
+    std::cout << "HashTable size (all pairs): " << hashTable.GetSize() << std::endl;
+
+    // 8. Добавление до перехеширования
+    std::cout << "\n8. Adding elements until rehash..." << std::endl;
     for (int i = 0; i < 20; i++)
     {
         dict.Add("key" + std::to_string(i), "value" + std::to_string(i));
     }
 
-    // 6. Удаление элементов
-    std::cout << "6. Removing some elements..." << std::endl;
+    // 9. Добавление дубликатов для новых ключей
+    std::cout << "\n9. Adding duplicates for some keys..." << std::endl;
+    dict.Add("key1", "duplicate1");
+    dict.Add("key5", "duplicate5");
+    dict.Add("key10", "duplicate10");
+
+    // 10. Показать разницу в размерах после добавления дубликатов
+    std::cout << "\n10. Size difference after adding duplicates..." << std::endl;
+    std::cout << "Dictionary size (unique keys): " << dict.GetSize() << std::endl;
+    std::cout << "HashTable size (all pairs): " << hashTable.GetSize() << std::endl;
+
+    // 11. Удаление элементов с дубликатами
+    std::cout << "\n11. Removing elements that have duplicates..." << std::endl;
     dict.Remove("key5");
     dict.Remove("key10");
+
+    // 12. Отображение финального состояния
+    std::cout << "\n12. Final state:" << std::endl;
+    dict.Display();
+    hashTable.Display();
 }
 
 /// <summary>
@@ -90,8 +119,21 @@ int GetValidatedInput(const std::string& prompt)
 
 int main()
 {
-    Dictionary dict;
+    // Создаем хеш-таблицу отдельно
+    HashTable hashTable;
+
+    // Создаем словарь, передавая ссылку на хеш-таблицу
+    Dictionary dict(hashTable);
+
     int choice;
+
+    std::cout << "==========================================" << std::endl;
+    std::cout << "Dictionary and HashTable Demo Program" << std::endl;
+    std::cout << "==========================================" << std::endl;
+    std::cout << "Key differences:" << std::endl;
+    std::cout << "- Dictionary: Unique keys only, stores data separately" << std::endl;
+    std::cout << "- HashTable: Allows duplicate keys, stores all operations" << std::endl;
+    std::cout << "==========================================" << std::endl;
 
     do
     {
@@ -115,10 +157,7 @@ int main()
             std::string key;
             std::cout << "Enter key to remove: ";
             std::getline(std::cin, key);
-            if (dict.Remove(key))
-                std::cout << "Key removed." << std::endl;
-            else
-                std::cout << "Key not found." << std::endl;
+            dict.Remove(key);
             break;
         }
         case MenuFind:
@@ -126,23 +165,19 @@ int main()
             std::string key;
             std::cout << "Enter key to find: ";
             std::getline(std::cin, key);
-            std::string result = dict.Find(key);
-            if (!result.empty())
-                std::cout << "Value: " << result << std::endl;
-            else
-                std::cout << "Key not found." << std::endl;
+            dict.Find(key);
             break;
         }
         case MenuDisplay:
             dict.Display();
-            dict.GetHashTable().Display();
+            hashTable.Display();
             break;
         case MenuClear:
             dict.Clear();
-            std::cout << "Dictionary cleared." << std::endl;
+            // Хеш-таблицу не очищаем для демонстрации
             break;
         case MenuDemo:
-            DemonstrationScenarios(dict);
+            DemonstrationScenarios(dict, hashTable);
             break;
         case MenuExit:
             std::cout << "Exiting..." << std::endl;

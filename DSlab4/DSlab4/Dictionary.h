@@ -1,51 +1,47 @@
 #pragma once
 #include <string>
-#include "HashTable.h"
+#include <vector>
+#include <unordered_map>  // или своя реализация уникального хранилища
 
 /// <summary>
-/// Словарь, реализованный на основе хеш-таблицы.
-/// Ключи уникальны, дублирование не допускается.
+/// Словарь - хранит только уникальные ключи.
+/// Использует собственную структуру для хранения данных.
 /// </summary>
 class Dictionary
 {
 private:
-    HashTable _hashTable;
+    // Внутреннее хранилище для уникальных пар ключ-значение
+    std::unordered_map<std::string, std::string> _data;
 
-    /// <summary>
-    /// Возвращает все пары ключ-значение из словаря.
-    /// </summary>
-    /// <returns>Вектор пар ключ-значение.</returns>
-    std::vector<KeyValuePair> GetAllPairs() const;
+    // Ссылка на хеш-таблицу для демонстрации работы с дубликатами
+    class HashTable* _hashTableRef;
 
 public:
+    /// <summary>
+    /// Конструктор словаря.
+    /// </summary>
+    /// <param name="hashTable">Ссылка на хеш-таблицу для записи всех операций</param>
+    Dictionary(class HashTable& hashTable);
+
     /// <summary>
     /// Добавляет пару "ключ-значение" в словарь.
     /// Если ключ уже существует, выводится ошибка.
     /// </summary>
-    /// <param name="key">Ключ.</param>
-    /// <param name="value">Значение.</param>
-    /// <returns>true, если добавление успешно.</returns>
     bool Add(const std::string& key, const std::string& value);
 
     /// <summary>
     /// Удаляет пару по ключу.
     /// </summary>
-    /// <param name="key">Ключ для удаления.</param>
-    /// <returns>true, если удаление успешно.</returns>
     bool Remove(const std::string& key);
 
     /// <summary>
     /// Ищет значение по ключу.
     /// </summary>
-    /// <param name="key">Ключ для поиска.</param>
-    /// <returns>Значение или пустая строка, если не найдено.</returns>
     std::string Find(const std::string& key) const;
 
     /// <summary>
     /// Проверяет наличие ключа в словаре.
     /// </summary>
-    /// <param name="key">Ключ.</param>
-    /// <returns>true, если ключ существует.</returns>
     bool HasKey(const std::string& key) const;
 
     /// <summary>
@@ -56,7 +52,6 @@ public:
     /// <summary>
     /// Возвращает количество пар в словаре.
     /// </summary>
-    /// <returns>Количество пар.</returns>
     int GetSize() const;
 
     /// <summary>
@@ -65,8 +60,7 @@ public:
     void Clear();
 
     /// <summary>
-    /// Возвращает ссылку на внутреннюю хеш-таблицу для демонстрации.
+    /// Возвращает все пары ключ-значение.
     /// </summary>
-    /// <returns>Ссылка на HashTable.</returns>
-    const HashTable& GetHashTable() const;
+    std::vector<std::pair<std::string, std::string>> GetAllPairs() const;
 };
