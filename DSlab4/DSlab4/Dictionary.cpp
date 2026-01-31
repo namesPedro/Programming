@@ -8,6 +8,20 @@ Dictionary::Dictionary(HashTable& hashTable) : _hashTableRef(&hashTable)
 
 bool Dictionary::Add(const std::string& key, const std::string& value)
 {
+    if (key.empty())
+    {
+        std::cout << "Dictionary: Error! Key is empty. NOT added." << std::endl;
+        std::cout << "HashTable: NOT added (empty key)." << std::endl;
+        return false;
+    }
+
+    if (value.empty())
+    {
+        std::cout << "Dictionary: Error! Value is empty. NOT added." << std::endl;
+        std::cout << "HashTable: NOT added (empty value)." << std::endl;
+        return false;
+    }
+
     auto it = _data.find(key);
 
     if (it != _data.end())
