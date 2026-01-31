@@ -8,18 +8,30 @@ Dictionary::Dictionary(HashTable& hashTable) : _hashTableRef(&hashTable)
 
 bool Dictionary::Add(const std::string& key, const std::string& value)
 {
-    if (HasKey(key))
+    auto it = _data.find(key);
+
+    if (it != _data.end())
     {
-        std::cout << "Dictionary: Error! Key '" << key << "' already exists. Key NOT added to Dictionary." << std::endl;
+        if (it->second == value)
+        {
+            std::cout << "Dictionary: Error!  Pair (key '" << key
+                << "' with value '" << value << "') already exists. NOT added anywhere." << std::endl;
+            std::cout << "HashTable: NOT added (full duplicate)." << std::endl;
+            return false;
+        }
+        else
+        {
+            std::cout << "Dictionary: Error! Key '" << key << "' already exists with different value ('"
+                << it->second << "'). Key NOT added to Dictionary." << std::endl;
 
-        _hashTableRef->Insert(key, value);
-        std::cout << "HashTable: Key '" << key << "' added." << std::endl;
+            _hashTableRef->Insert(key, value);
+            std::cout << "HashTable: Key '" << key << "' added (different value allowed in HashTable)." << std::endl;
 
-        return false;
+            return false;
+        }
     }
 
     _data[key] = value;
-
     _hashTableRef->Insert(key, value);
 
     std::cout << "Dictionary: Key '" << key << "' added." << std::endl;
