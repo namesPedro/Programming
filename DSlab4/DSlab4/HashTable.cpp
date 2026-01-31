@@ -157,33 +157,6 @@ void HashTable::Rehash()
     std::cout << "HashTable: Rehash completed. New capacity: " << _capacity << std::endl;
 }
 
-void HashTable::Display() const
-{
-    std::cout << "\n=== Hash Table State ===" << std::endl;
-    std::cout << "Capacity: " << _capacity << std::endl;
-    std::cout << "Size: " << _size << std::endl;
-    std::cout << "Load Factor: " << static_cast<double>(_size) / _capacity << std::endl;
-    std::cout << "\nKey-value pairs:" << std::endl;
-
-    for (int i = 0; i < _capacity; i++)
-    {
-        std::cout << "[" << i << "]: ";
-        if (_buckets[i].empty())
-        {
-            std::cout << "EMPTY";
-        }
-        else
-        {
-            for (size_t j = 0; j < _buckets[i].size(); j++)
-            {
-                std::cout << "{" << _buckets[i][j].GetKey() << ":" << _buckets[i][j].GetValue() << "}";
-                if (j != _buckets[i].size() - 1) std::cout << ", ";
-            }
-        }
-        std::cout << std::endl;
-    }
-}
-
 const std::vector<std::vector<KeyValuePair>>& HashTable::GetBuckets() const
 {
     return _buckets;

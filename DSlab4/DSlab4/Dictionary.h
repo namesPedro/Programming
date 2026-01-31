@@ -45,11 +45,6 @@ public:
     bool HasKey(const std::string& key) const;
 
     /// <summary>
-    /// Выводит текущее состояние словаря.
-    /// </summary>
-    void Display() const;
-
-    /// <summary>
     /// Возвращает количество пар в словаре.
     /// </summary>
     int GetSize() const;

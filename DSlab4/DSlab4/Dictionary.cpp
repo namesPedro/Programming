@@ -95,17 +95,6 @@ bool Dictionary::HasKey(const std::string& key) const
     return _data.find(key) != _data.end();
 }
 
-void Dictionary::Display() const
-{
-    std::cout << "\n=== Dictionary State ===" << std::endl;
-    std::cout << "Total entries: " << GetSize() << std::endl;
-
-    for (const auto& pair : _data)
-    {
-        std::cout << "[" << pair.first << "]: " << pair.second << std::endl;
-    }
-}
-
 int Dictionary::GetSize() const
 {
     return _data.size();

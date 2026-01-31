@@ -96,11 +96,6 @@ public:
     int GetCapacity() const;
 
     /// <summary>
-    /// Выводит состояние хеш-таблицы в консоль.
-    /// </summary>
-    void Display() const;
-
-    /// <summary>
     /// Возвращает все bucket'ы таблицы (для доступа из Dictionary).
     /// </summary>
     /// <returns>Константная ссылка на вектор bucket'ов.</returns>

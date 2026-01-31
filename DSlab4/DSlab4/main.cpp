@@ -2,6 +2,8 @@
 #include <limits>
 #include "Dictionary.h"
 #include "HashTable.h"
+#include "IODictionary.h"
+#include "IOHashTable.h"
 
 // Константы меню
 const int MenuAdd = 1;
@@ -78,11 +80,6 @@ void DemonstrationScenarios(Dictionary& dict, HashTable& hashTable)
     std::cout << "\n10. Removing elements that have duplicates..." << std::endl;
     dict.Remove("key5");
     dict.Remove("key10");
-
-    // 11. Отображение финального состояния
-    std::cout << "\n11. Final state:" << std::endl;
-    dict.Display();
-    hashTable.Display();
 }
 
 /// <summary>
@@ -143,6 +140,8 @@ int main()
             std::cout << "Enter value: ";
             std::getline(std::cin, value);
             dict.Add(key, value);
+            IODictionary::Display(dict);
+            IOHashTable::Display(hashTable);
             break;
         }
         case MenuRemove:
@@ -151,6 +150,8 @@ int main()
             std::cout << "Enter key to remove: ";
             std::getline(std::cin, key);
             dict.Remove(key);
+            IODictionary::Display(dict);
+            IOHashTable::Display(hashTable);
             break;
         }
         case MenuFind:
@@ -162,14 +163,18 @@ int main()
             break;
         }
         case MenuDisplay:
-            dict.Display();
-            hashTable.Display();
+            IODictionary::Display(dict);
+            IOHashTable::Display(hashTable);
             break;
         case MenuClear:
             dict.Clear();
+            IODictionary::Display(dict);
+            IOHashTable::Display(hashTable);
             break;
         case MenuDemo:
             DemonstrationScenarios(dict, hashTable);
+            IODictionary::Display(dict);
+            IOHashTable::Display(hashTable);
             break;
         case MenuExit:
             std::cout << "Exiting..." << std::endl;
