@@ -67,12 +67,9 @@ bool HashTable::Insert(const std::string& key, const std::string& value)
     _size++;
 
     double loadFactor = static_cast<double>(_size) / _capacity;
-    if (loadFactor > LoadFactorThreshold)
-    {
-        std::cout << "HashTable: Load factor (" << loadFactor << ") exceeded threshold ("
-            << LoadFactorThreshold << "). Rehashing..." << std::endl;
-        Rehash();
-    }
+
+    if (loadFactor > LoadFactorThreshold) Rehash();
+
     return true;
 }
 
@@ -139,9 +136,6 @@ void HashTable::Rehash()
     int newCapacity = _capacity * 2;
     std::vector<std::vector<KeyValuePair>> newBuckets(newCapacity);
 
-    std::cout << "HashTable: Rehashing from capacity " << oldCapacity
-        << " to " << newCapacity << std::endl;
-
     for (const auto& bucket : _buckets)
     {
         for (const auto& pair : bucket)
@@ -167,10 +161,9 @@ void HashTable::Display() const
 {
     std::cout << "\n=== Hash Table State ===" << std::endl;
     std::cout << "Capacity: " << _capacity << std::endl;
-    std::cout << "Total pairs (including duplicates): " << _size << std::endl;
-    std::cout << "Unique keys: " << GetUniqueKeyCount() << std::endl;
+    std::cout << "Size: " << _size << std::endl;
     std::cout << "Load Factor: " << static_cast<double>(_size) / _capacity << std::endl;
-    std::cout << "Key-value pairs (duplicates allowed):" << std::endl;
+    std::cout << "\nKey-value pairs:" << std::endl;
 
     for (int i = 0; i < _capacity; i++)
     {

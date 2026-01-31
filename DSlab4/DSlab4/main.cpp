@@ -53,7 +53,7 @@ void DemonstrationScenarios(Dictionary& dict, HashTable& hashTable)
     dict.Add("name", "Bob");  // В словаре не добавится, в хеш-таблицу добавится
 
     // 6. Поиск ключа с дубликатами
-    std::cout << "\n6. Finding 'name' (which has duplicates in HashTable)..." << std::endl;
+    std::cout << "\n6. Finding 'name'..." << std::endl;
     dict.Find("name");
 
     // 7. Показать разницу в размерах
@@ -74,18 +74,13 @@ void DemonstrationScenarios(Dictionary& dict, HashTable& hashTable)
     dict.Add("key5", "duplicate5");
     dict.Add("key10", "duplicate10");
 
-    // 10. Показать разницу в размерах после добавления дубликатов
-    std::cout << "\n10. Size difference after adding duplicates..." << std::endl;
-    std::cout << "Dictionary size (unique keys): " << dict.GetSize() << std::endl;
-    std::cout << "HashTable size (all pairs): " << hashTable.GetSize() << std::endl;
-
-    // 11. Удаление элементов с дубликатами
-    std::cout << "\n11. Removing elements that have duplicates..." << std::endl;
+    // 10. Удаление элементов с дубликатами
+    std::cout << "\n10. Removing elements that have duplicates..." << std::endl;
     dict.Remove("key5");
     dict.Remove("key10");
 
-    // 12. Отображение финального состояния
-    std::cout << "\n12. Final state:" << std::endl;
+    // 11. Отображение финального состояния
+    std::cout << "\n11. Final state:" << std::endl;
     dict.Display();
     hashTable.Display();
 }
@@ -119,10 +114,8 @@ int GetValidatedInput(const std::string& prompt)
 
 int main()
 {
-    // Создаем хеш-таблицу отдельно
     HashTable hashTable;
 
-    // Создаем словарь, передавая ссылку на хеш-таблицу
     Dictionary dict(hashTable);
 
     int choice;
@@ -174,7 +167,6 @@ int main()
             break;
         case MenuClear:
             dict.Clear();
-            // Хеш-таблицу не очищаем для демонстрации
             break;
         case MenuDemo:
             DemonstrationScenarios(dict, hashTable);

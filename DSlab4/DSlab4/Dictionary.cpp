@@ -8,43 +8,28 @@ Dictionary::Dictionary(HashTable& hashTable) : _hashTableRef(&hashTable)
 
 bool Dictionary::Add(const std::string& key, const std::string& value)
 {
-    std::cout << "\n=== Dictionary Operation: Add ===" << std::endl;
-    std::cout << "Attempting to add: [" << key << "] = " << value << std::endl;
-
-    // Проверяем уникальность ключа в словаре
     if (HasKey(key))
     {
-        std::cout << "Dictionary: Error! Key '" << key << "' already exists. Duplicate keys are not allowed in Dictionary." << std::endl;
-        std::cout << "Dictionary: Key NOT added to Dictionary." << std::endl;
+        std::cout << "Dictionary: Error! Key '" << key << "' already exists. Key NOT added to Dictionary." << std::endl;
 
-        // В хеш-таблицу добавляем, т.к. там разрешены дубликаты
         _hashTableRef->Insert(key, value);
-        std::cout << "HashTable: Key added to HashTable (duplicates allowed)." << std::endl;
+        std::cout << "HashTable: Key '" << key << "' added." << std::endl;
 
         return false;
     }
 
-    // Добавляем в словарь (уникальные ключи)
     _data[key] = value;
 
-    // Добавляем в хеш-таблицу (разрешены дубликаты)
     _hashTableRef->Insert(key, value);
 
-    std::cout << "Dictionary: Key successfully added." << std::endl;
-    std::cout << "HashTable: Key added to HashTable." << std::endl;
-
-    // Показываем статистику
-    std::cout << "Dictionary size: " << GetSize() << std::endl;
-    std::cout << "HashTable size: " << _hashTableRef->GetSize() << std::endl;
+    std::cout << "Dictionary: Key '" << key << "' added." << std::endl;
+    std::cout << "HashTable: Key '" << key << "' added." << std::endl;
 
     return true;
 }
 
 bool Dictionary::Remove(const std::string& key)
 {
-    std::cout << "\n=== Dictionary Operation: Remove ===" << std::endl;
-    std::cout << "Attempting to remove key: '" << key << "'" << std::endl;
-
     bool dictHasKey = HasKey(key);
 
     if (dictHasKey)
@@ -70,18 +55,11 @@ bool Dictionary::Remove(const std::string& key)
         std::cout << "HashTable: Key '" << key << "' was NOT found." << std::endl;
     }
 
-    // Показываем статистику
-    std::cout << "Dictionary size: " << GetSize() << std::endl;
-    std::cout << "HashTable size: " << _hashTableRef->GetSize() << std::endl;
-
     return dictHasKey;
 }
 
 std::string Dictionary::Find(const std::string& key) const
 {
-    std::cout << "\n=== Dictionary Operation: Find ===" << std::endl;
-    std::cout << "Searching for key: '" << key << "'" << std::endl;
-
     auto it = _data.find(key);
     if (it != _data.end())
     {
@@ -135,13 +113,9 @@ int Dictionary::GetSize() const
 
 void Dictionary::Clear()
 {
-    std::cout << "\n=== Dictionary Operation: Clear ===" << std::endl;
-    std::cout << "Clearing Dictionary..." << std::endl;
-
     _data.clear();
 
     std::cout << "Dictionary: Cleared." << std::endl;
-    // Хеш-таблицу не очищаем, чтобы показать разницу
 }
 
 std::vector<std::pair<std::string, std::string>> Dictionary::GetAllPairs() const
