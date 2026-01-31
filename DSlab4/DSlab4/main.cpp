@@ -117,14 +117,6 @@ int main()
 
     int choice;
 
-    std::cout << "==========================================" << std::endl;
-    std::cout << "Dictionary and HashTable Demo Program" << std::endl;
-    std::cout << "==========================================" << std::endl;
-    std::cout << "Key differences:" << std::endl;
-    std::cout << "- Dictionary: Unique keys only, stores data separately" << std::endl;
-    std::cout << "- HashTable: Allows duplicate keys, stores all operations" << std::endl;
-    std::cout << "==========================================" << std::endl;
-
     do
     {
         DisplayMenu();

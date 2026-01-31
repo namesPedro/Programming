@@ -34,7 +34,6 @@ bool Dictionary::Remove(const std::string& key)
 
     if (dictHasKey)
     {
-        // Удаляем из словаря
         _data.erase(key);
         std::cout << "Dictionary: Key '" << key << "' was found and removed." << std::endl;
     }
@@ -43,7 +42,6 @@ bool Dictionary::Remove(const std::string& key)
         std::cout << "Dictionary: Key '" << key << "' was NOT found." << std::endl;
     }
 
-    // Удаляем только одно вхождение из хеш-таблицы
     bool hashTableRemoved = _hashTableRef->Remove(key);
 
     if (hashTableRemoved)
@@ -65,7 +63,6 @@ std::string Dictionary::Find(const std::string& key) const
     {
         std::cout << "Dictionary: Key '" << key << "' found. Value: " << it->second << std::endl;
 
-        // Также ищем в хеш-таблице для сравнения
         std::string hashTableResult = _hashTableRef->Find(key);
         std::cout << "HashTable: Key '" << key << "' found. Value: " << hashTableResult << std::endl;
 
@@ -75,7 +72,6 @@ std::string Dictionary::Find(const std::string& key) const
     {
         std::cout << "Dictionary: Key '" << key << "' NOT found." << std::endl;
 
-        // Проверяем хеш-таблицу
         std::string hashTableResult = _hashTableRef->Find(key);
         if (!hashTableResult.empty())
         {

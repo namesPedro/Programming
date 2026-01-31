@@ -4,16 +4,14 @@
 #include "KeyValuePair.h"
 
 /// <summary>
-/// Хеш-таблица, реализованная с методом цепочек (chaining).
-/// Использует хеш-функцию Пирсона.
-/// Разрешает добавление пар с одинаковыми ключами.
+/// Хеш-таблица.
 /// </summary>
 class HashTable
 {
 private:
     std::vector<std::vector<KeyValuePair>> _buckets;
     int _capacity;
-    int _size;  // Общее количество всех пар (включая дубликаты)
+    int _size;
     const double LoadFactorThreshold = 0.7;
 
     /// <summary>
