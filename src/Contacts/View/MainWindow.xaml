@@ -5,29 +5,42 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View"
         mc:Ignorable="d"
-        Title="Contacts" Height="509" Width="800" WindowStartupLocation="CenterScreen">
-    <Grid>
-        <GroupBox x:Name="EditContactGroupBox" Header="Edit Contact" HorizontalAlignment="Left" Width="380" Margin="15,15,0,0" VerticalAlignment="Top" Height="433">
-            <StackPanel>
-                <Label x:Name="EditContactNameLabel" Content="Name:"/>
-                <TextBox x:Name="EditContactNameTextBox" TextWrapping="Wrap" Text="TextBox" Margin="3,0,3,0"/>
-                <Label x:Name="EditContactPhoneNumberLabel" Content="Phone Number:"/>
-                <TextBox x:Name="EditContactPhoneNumberTextBox" TextWrapping="Wrap" Text="TextBox" Margin="3,0,3,0"/>
-                <Label x:Name="EditContactEmailLabel" Content="Email:"/>
-                <TextBox x:Name="EditContactEmailTextBox" TextWrapping="Wrap" Text="TextBox" Margin="3,0,3,0"/>
-            </StackPanel>
-        </GroupBox>
-        <GroupBox x:Name="ReadContactGroupBox" Header="Read Contact" HorizontalAlignment="Right" Margin="0,15,15,0" Width="380" VerticalAlignment="Top" Height="433">
-            <StackPanel>
-                <Label x:Name="ReadContactNameLabel" Content="Name:"/>
-                <Label x:Name="ReadContactNameBoldLabel" Content="Name" FontWeight="Bold"/>
-                <Label x:Name="ReadContactPhoneNumberLabel" Content="Phone Number:"/>
-                <Label x:Name="ReadContactPhoneNumberBoldLabel" Content="Phone Number" FontWeight="Bold"/>
-                <Label x:Name="ReadContactEmailLabel" Content="Email:"/>
-                <Label x:Name="ReadContactEmailBoldLabel" Content="Email" FontWeight="Bold"/>
-            </StackPanel>
-        </GroupBox>
-        <Button x:Name="LoadButton" Content="Load" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="75" Height="25"/>
-        <Button x:Name="SaveButton" Content="Save" HorizontalAlignment="Right" Margin="0,0,93,15" VerticalAlignment="Bottom" Width="75" Height="25"/>
-    </Grid>
+        Title="Contacts" Height="450" Width="800">
+	<Grid Margin="15">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+
+		<GroupBox Grid.Column="0" Grid.Row="0" Header="Edit Contact" Margin="3">
+			<StackPanel Margin="3">
+				<Label Content="Name:" Margin="3"/>
+				<TextBox TextWrapping="Wrap" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="3" HorizontalAlignment="Stretch"/>
+				<Label Content="Phone Number:" Margin="3"/>
+				<TextBox TextWrapping="Wrap" Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}" Margin="3" HorizontalAlignment="Stretch"/>
+				<Label Content="Email:" Margin="3"/>
+				<TextBox TextWrapping="Wrap" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Margin="3" HorizontalAlignment="Stretch"/>
+			</StackPanel>
+		</GroupBox>
+
+		<GroupBox Grid.Column="1" Grid.Row="0" Header="Read Contact" Margin="3">
+			<StackPanel Margin="3">
+				<Label Content="Name:" Margin="3"/>
+				<Label Content="{Binding Name}" FontWeight="Bold" Margin="3"/>
+				<Label Content="Phone Number:" Margin="3"/>
+				<Label Content="{Binding PhoneNumber}" FontWeight="Bold" Margin="3"/>
+				<Label Content="Email:" Margin="3"/>
+				<Label Content="{Binding Email}" FontWeight="Bold" Margin="3"/>
+			</StackPanel>
+		</GroupBox>
+
+		<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="3">
+			<Button Content="Save" Width="75" Height="25" Margin="0,0,3,0" Command="{Binding SaveCommand}"/>
+			<Button Content="Load" Width="75" Height="25" Command="{Binding LoadCommand}"/>
+		</StackPanel>
+	</Grid>
 </Window>
