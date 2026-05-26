@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using View.ViewModel;
+using Contacts.ViewModel;
 
-namespace View
+namespace Contacts.View
 {
 	public partial class MainWindow : Window
 	{

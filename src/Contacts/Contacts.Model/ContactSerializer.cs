@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace View.Model.Services
+namespace Contacts.Model
 {
 	public class ContactSerializer
 	{

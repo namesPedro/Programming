@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace View.Controls
+namespace Contacts.View.Controls
 {
 	public partial class ContactControl : UserControl
 	{

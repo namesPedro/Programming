@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace View.Converters // ⚠️ Должно строго совпадать с xmlns в XAML
+namespace Contacts.View.Converters
 {
 	public class BoolToVisibilityConverter : IValueConverter
 	{
