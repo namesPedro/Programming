@@ -4,32 +4,49 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View"
+        xmlns:controls="clr-namespace:View.Controls"
         xmlns:converters="clr-namespace:View.Converters"
         mc:Ignorable="d"
         Title="Contacts" Height="500" Width="900">
 
 	<Window.Resources>
+		<!-- Шаблон для элементов списка (Задание 4, пункт 1) -->
+		<DataTemplate x:Key="ContactItemTemplate">
+			<StackPanel Margin="3">
+				<TextBlock Text="{Binding Name}" FontSize="12" FontWeight="SemiBold"/>
+				<TextBlock Text="{Binding PhoneNumber}" FontSize="10" Foreground="Gray"/>
+			</StackPanel>
+		</DataTemplate>
+
+		<!-- Конвертер видимости для Apply -->
 		<converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
 	</Window.Resources>
 
 	<Grid>
+		<!-- Левая колонка (*), Разделитель, Правая колонка (2*) -->
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
 			<ColumnDefinition Width="3"/>
 			<ColumnDefinition Width="2*"/>
 		</Grid.ColumnDefinitions>
 
+		<!-- ЛЕВАЯ ПАНЕЛЬ (Список и управление) -->
 		<Border Grid.Column="0" Background="#f8f8f8" Padding="8">
 			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="*"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
-				<ListBox Grid.Row="1" ItemsSource="{Binding Contacts}" SelectedItem="{Binding SelectedContact}" DisplayMemberPath="Name" Margin="3"/>
+				<!-- Список контактов с кастомным шаблоном -->
+				<ListBox Grid.Row="0" 
+                         ItemsSource="{Binding Contacts}" 
+                         SelectedItem="{Binding SelectedContact}"
+                         ItemTemplate="{StaticResource ContactItemTemplate}" 
+                         Margin="3"/>
 
-				<Grid Grid.Row="2" Margin="3">
+				<!-- Кнопки управления (адаптивная ширина через Grid) -->
+				<Grid Grid.Row="1" Margin="3">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="*"/>
@@ -43,33 +60,25 @@
 			</Grid>
 		</Border>
 
+		<!-- РАЗДЕЛИТЕЛЬ -->
 		<GridSplitter Grid.Column="1" Width="3" Background="White" HorizontalAlignment="Stretch"/>
 
+		<!-- ПРАВАЯ ПАНЕЛЬ (Детали контакта + Apply) -->
 		<Border Grid.Column="2" Background="White" Padding="8">
 			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
 
-				<Border Width="100" Height="100" Background="LightGray" Margin="3" VerticalAlignment="Top">
-					<TextBlock Text="Photo" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Gray"/>
-				</Border>
+				<!-- Пользовательский контрол (Задание 4, пункт 2) -->
+				<controls:ContactControl Grid.Row="0" DataContext="{Binding SelectedContact}" Margin="3"/>
 
-				<StackPanel Grid.Column="1">
-					<Label Content="Name:" Margin="3"/>
-					<TextBox Text="{Binding SelectedContact.Name, UpdateSourceTrigger=PropertyChanged}" Margin="3" IsReadOnly="{Binding IsReadOnlyMode}"/>
-
-					<Label Content="Phone Number:" Margin="3"/>
-					<TextBox Text="{Binding SelectedContact.PhoneNumber, UpdateSourceTrigger=PropertyChanged}" Margin="3" IsReadOnly="{Binding IsReadOnlyMode}"/>
-
-					<Label Content="Email:" Margin="3"/>
-					<TextBox Text="{Binding SelectedContact.Email, UpdateSourceTrigger=PropertyChanged}" Margin="3" IsReadOnly="{Binding IsReadOnlyMode}"/>
-
-					<Button Content="Apply" Width="75" Height="25" Margin="3,50,3,3" HorizontalAlignment="Left"
-                            Command="{Binding ApplyCommand}" 
-                            Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
-				</StackPanel>
+				<!-- Кнопка Apply (Задание 4, пункт 3) -->
+				<Button Grid.Row="1" Content="Apply" Width="75" Height="25" Margin="3,50,3,3" HorizontalAlignment="Left"
+                        Command="{Binding ApplyCommand}" 
+                        Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"
+                        IsEnabled="{Binding CanApply}"/>
 			</Grid>
 		</Border>
 	</Grid>
