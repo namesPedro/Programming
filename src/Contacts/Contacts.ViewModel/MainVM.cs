@@ -6,29 +6,40 @@ using Contacts.Model;
 
 namespace Contacts.ViewModel
 {
-	// 1. Наследуемся от ObservableObject (вместо INotifyPropertyChanged)
+	/// <summary>
+	/// ViewModel для управления коллекцией контактов.
+	/// Реализует добавление, редактирование, удаление и сохранение контактов.
+	/// </summary>
 	public partial class MainVM : ObservableObject
 	{
 		private readonly ContactSerializer _serializer = new();
 
-		// 2. [ObservableProperty] автоматически генерирует свойство Contacts
-		// и вызывает уведомление при изменении коллекции
+		/// <summary>
+		/// Коллекция контактов, привязанная к списку в интерфейсе.
+		/// </summary>
 		[ObservableProperty]
 		private ObservableCollection<Contact> _contacts = new();
 
-		// 3. NotifyCanExecuteChangedFor обновляет доступность кнопок при смене контакта
+		/// <summary>
+		/// Выбранный в списке контакт. Используется для отображения и редактирования данных.
+		/// </summary>
 		[ObservableProperty]
 		[NotifyCanExecuteChangedFor(nameof(EditCommand))]
 		[NotifyCanExecuteChangedFor(nameof(RemoveCommand))]
 		[NotifyCanExecuteChangedFor(nameof(ApplyCommand))]
 		private Contact? _selectedContact;
 
-		// 4. Флаг режима редактирования
+		/// <summary>
+		/// Флаг, указывающий, активен ли режим редактирования или добавления контакта.
+		/// </summary>
 		[ObservableProperty]
 		private bool _isEditing;
 
-		// Метод, вызываемый ПЕРЕД изменением SelectedContact
-		// Здесь мы реализуем логику "Отмены" из Задания 3
+		/// <summary>
+		/// Вызывается перед изменением свойства SelectedContact.
+		/// Отменяет незавершённое редактирование при смене выбора.
+		/// </summary>
+		/// <param name="value">Новое значение выбранного контакта.</param>
 		partial void OnSelectedContactChanging(Contact? value)
 		{
 			if (IsEditing)
@@ -37,11 +48,17 @@ namespace Contacts.ViewModel
 			}
 		}
 
+		/// <summary>
+		/// Инициализирует новый экземпляр класса MainVM и загружает контакты из файла.
+		/// </summary>
 		public MainVM()
 		{
 			LoadContacts();
 		}
 
+		/// <summary>
+		/// Загружает контакты из файла и заполняет коллекцию.
+		/// </summary>
 		private void LoadContacts()
 		{
 			var list = _serializer.LoadContacts();
@@ -49,14 +66,17 @@ namespace Contacts.ViewModel
 			foreach (var c in list) Contacts.Add(c);
 		}
 
+		/// <summary>
+		/// Сохраняет текущую коллекцию контактов в файл.
+		/// </summary>
 		private void SaveContacts()
 		{
 			_serializer.SaveContacts(Contacts.ToList());
 		}
 
-		// === КОМАНДЫ (Задание 5, шаг 4) ===
-
-		// Add Command
+		/// <summary>
+		/// Создает новый пустой контакт и переходит в режим редактирования.
+		/// </summary>
 		[RelayCommand(CanExecute = nameof(CanAdd))]
 		private void Add()
 		{
@@ -64,17 +84,31 @@ namespace Contacts.ViewModel
 			SelectedContact = new Contact();
 			Contacts.Add(SelectedContact);
 		}
+
+		/// <summary>
+		/// Определяет, доступна ли команда добавления контакта.
+		/// </summary>
+		/// <returns>True, если не активен режим редактирования.</returns>
 		private bool CanAdd() => !IsEditing;
 
-		// Edit Command
+		/// <summary>
+		/// Переводит выбранный контакт в режим редактирования.
+		/// </summary>
 		[RelayCommand(CanExecute = nameof(CanEdit))]
 		private void Edit()
 		{
 			if (SelectedContact != null) IsEditing = true;
 		}
+
+		/// <summary>
+		/// Определяет, доступна ли команда редактирования.
+		/// </summary>
+		/// <returns>True, если контакт выбран и не активен режим редактирования.</returns>
 		private bool CanEdit() => SelectedContact != null && !IsEditing;
 
-		// Remove Command
+		/// <summary>
+		/// Удаляет выбранный контакт из коллекции и сохраняет изменения.
+		/// </summary>
 		[RelayCommand(CanExecute = nameof(CanRemove))]
 		private void Remove()
 		{
@@ -94,9 +128,16 @@ namespace Contacts.ViewModel
 				SelectedContact = null;
 			}
 		}
+
+		/// <summary>
+		/// Определяет, доступна ли команда удаления.
+		/// </summary>
+		/// <returns>True, если контакт выбран и не активен режим редактирования.</returns>
 		private bool CanRemove() => SelectedContact != null && !IsEditing;
 
-		// Apply Command
+		/// <summary>
+		/// Завершает редактирование и сохраняет изменения контакта.
+		/// </summary>
 		[RelayCommand(CanExecute = nameof(CanApply))]
 		private void Apply()
 		{
@@ -107,13 +148,17 @@ namespace Contacts.ViewModel
 			}
 		}
 
-		// Логика блокировки кнопки Apply
+		/// <summary>
+		/// Определяет, доступна ли команда применения изменений.
+		/// </summary>
+		/// <returns>True, если активен режим редактирования, контакт выбран и не имеет ошибок валидации.</returns>
 		private bool CanApply() => IsEditing && SelectedContact != null && !SelectedContact.HasErrors;
 
-		// Метод отмены редактирования (вызывается при смене контакта)
+		/// <summary>
+		/// Отменяет незавершённое редактирование или добавление контакта.
+		/// </summary>
 		private void CancelEditing()
 		{
-			// Если контакт был создан только что (Add) и не сохранен — удаляем его
 			if (SelectedContact != null && !Contacts.Contains(SelectedContact))
 			{
 				// В простой реализации просто сбрасываем флаг

@@ -7,32 +7,25 @@
              d:DesignHeight="450" d:DesignWidth="800">
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<!-- Колонка под картинку -->
 			<ColumnDefinition Width="Auto"/>
-			<!-- Колонка под поля ввода -->
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 
-		<!-- Плейсхолдер для фото (100x100) -->
 		<Border Grid.Column="0" Width="100" Height="100" Background="LightGray" Margin="3" VerticalAlignment="Top">
 			<TextBlock Text="Photo" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Gray"/>
 		</Border>
 
-		<!-- Поля ввода справа -->
 		<StackPanel Grid.Column="1">
-			<!-- Имя -->
 			<Label Content="Name:" Margin="3"/>
 			<TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" 
                      Margin="3"/>
 
-			<!-- Телефон -->
 			<Label Content="Phone Number:" Margin="3"/>
 			<TextBox Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" 
                      Margin="3"
                      PreviewTextInput="PhoneTextBox_PreviewTextInput"
                      DataObject.Pasting="PhoneTextBox_DataObjectPasting"/>
 
-			<!-- Email -->
 			<Label Content="Email:" Margin="3"/>
 			<TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" 
                      Margin="3"/>
