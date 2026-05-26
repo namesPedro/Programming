@@ -1,17 +1,20 @@
-﻿namespace View.Model
-{
-	public class Contact
-	{
-		public string Name { get; set; } = string.Empty;
-		public string PhoneNumber { get; set; } = string.Empty;
-		public string Email { get; set; } = string.Empty;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-		public Contact() { }
-		public Contact(string name, string phone, string email)
-		{
-			Name = name;
-			PhoneNumber = phone;
-			Email = email;
-		}
+namespace View.Model
+{
+	public class Contact : INotifyPropertyChanged
+	{
+		private string _name = string.Empty;
+		private string _phoneNumber = string.Empty;
+		private string _email = string.Empty;
+
+		public string Name { get => _name; set { _name = value; OnPropertyChanged(); } }
+		public string PhoneNumber { get => _phoneNumber; set { _phoneNumber = value; OnPropertyChanged(); } }
+		public string Email { get => _email; set { _email = value; OnPropertyChanged(); } }
+
+		public event PropertyChangedEventHandler? PropertyChanged;
+		protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 	}
 }

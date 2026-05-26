@@ -4,43 +4,73 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:View"
+        xmlns:converters="clr-namespace:View.Converters"
         mc:Ignorable="d"
-        Title="Contacts" Height="450" Width="800">
-	<Grid Margin="15">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
+        Title="Contacts" Height="500" Width="900">
+
+	<Window.Resources>
+		<converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+	</Window.Resources>
+
+	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="3"/>
+			<ColumnDefinition Width="2*"/>
 		</Grid.ColumnDefinitions>
 
-		<GroupBox Grid.Column="0" Grid.Row="0" Header="Edit Contact" Margin="3">
-			<StackPanel Margin="3">
-				<Label Content="Name:" Margin="3"/>
-				<TextBox TextWrapping="Wrap" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="3" HorizontalAlignment="Stretch"/>
-				<Label Content="Phone Number:" Margin="3"/>
-				<TextBox TextWrapping="Wrap" Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}" Margin="3" HorizontalAlignment="Stretch"/>
-				<Label Content="Email:" Margin="3"/>
-				<TextBox TextWrapping="Wrap" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Margin="3" HorizontalAlignment="Stretch"/>
-			</StackPanel>
-		</GroupBox>
+		<Border Grid.Column="0" Background="#f8f8f8" Padding="8">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
 
-		<GroupBox Grid.Column="1" Grid.Row="0" Header="Read Contact" Margin="3">
-			<StackPanel Margin="3">
-				<Label Content="Name:" Margin="3"/>
-				<Label Content="{Binding Name}" FontWeight="Bold" Margin="3"/>
-				<Label Content="Phone Number:" Margin="3"/>
-				<Label Content="{Binding PhoneNumber}" FontWeight="Bold" Margin="3"/>
-				<Label Content="Email:" Margin="3"/>
-				<Label Content="{Binding Email}" FontWeight="Bold" Margin="3"/>
-			</StackPanel>
-		</GroupBox>
+				<ListBox Grid.Row="1" ItemsSource="{Binding Contacts}" SelectedItem="{Binding SelectedContact}" DisplayMemberPath="Name" Margin="3"/>
 
-		<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="3">
-			<Button Content="Save" Width="75" Height="25" Margin="0,0,3,0" Command="{Binding SaveCommand}"/>
-			<Button Content="Load" Width="75" Height="25" Command="{Binding LoadCommand}"/>
-		</StackPanel>
+				<Grid Grid.Row="2" Margin="3">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+
+					<Button Grid.Column="0" Content="Add" Height="25" Command="{Binding AddCommand}" Margin="3"/>
+					<Button Grid.Column="1" Content="Edit" Height="25" Command="{Binding EditCommand}" Margin="3"/>
+					<Button Grid.Column="2" Content="Remove" Height="25" Command="{Binding RemoveCommand}" Margin="3"/>
+				</Grid>
+			</Grid>
+		</Border>
+
+		<GridSplitter Grid.Column="1" Width="3" Background="White" HorizontalAlignment="Stretch"/>
+
+		<Border Grid.Column="2" Background="White" Padding="8">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+
+				<Border Width="100" Height="100" Background="LightGray" Margin="3" VerticalAlignment="Top">
+					<TextBlock Text="Photo" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Gray"/>
+				</Border>
+
+				<StackPanel Grid.Column="1">
+					<Label Content="Name:" Margin="3"/>
+					<TextBox Text="{Binding SelectedContact.Name, UpdateSourceTrigger=PropertyChanged}" Margin="3" IsReadOnly="{Binding IsReadOnlyMode}"/>
+
+					<Label Content="Phone Number:" Margin="3"/>
+					<TextBox Text="{Binding SelectedContact.PhoneNumber, UpdateSourceTrigger=PropertyChanged}" Margin="3" IsReadOnly="{Binding IsReadOnlyMode}"/>
+
+					<Label Content="Email:" Margin="3"/>
+					<TextBox Text="{Binding SelectedContact.Email, UpdateSourceTrigger=PropertyChanged}" Margin="3" IsReadOnly="{Binding IsReadOnlyMode}"/>
+
+					<Button Content="Apply" Width="75" Height="25" Margin="3,50,3,3" HorizontalAlignment="Left"
+                            Command="{Binding ApplyCommand}" 
+                            Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}"/>
+				</StackPanel>
+			</Grid>
+		</Border>
 	</Grid>
 </Window>
