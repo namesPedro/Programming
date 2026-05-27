@@ -12,12 +12,31 @@ namespace Contacts.ViewModel
 	/// </summary>
 	public partial class MainVM : ObservableObject
 	{
+		private bool _skipCancelOnSelectionChange;
+		private Contact? _prevContact;
+
+		private Contact? _editSnapshot;
+		private bool _isAddingNew;
+
 		private readonly ContactSerializer _serializer = new();
 
-		/// <summary>
-		/// Коллекция контактов, привязанная к списку в интерфейсе.
-		/// </summary>
 		[ObservableProperty]
+		private Contact? _editingContact;
+
+        partial void OnEditingContactChanged(Contact? value)
+        {
+			if (value != null)
+				value.ErrorsChanged += EditingContact_ErrorsChanged;
+			ApplyCommand.NotifyCanExecuteChanged();
+        }
+
+		private void EditingContact_ErrorsChanged(object sender, System.ComponentModel.DataErrorsChangedEventArgs e) =>
+			ApplyCommand.NotifyCanExecuteChanged();
+
+        /// <summary>
+        /// Коллекция контактов, привязанная к списку в интерфейсе.
+        /// </summary>
+        [ObservableProperty]
 		private ObservableCollection<Contact> _contacts = new();
 
 		/// <summary>
@@ -42,9 +61,20 @@ namespace Contacts.ViewModel
 		/// <param name="value">Новое значение выбранного контакта.</param>
 		partial void OnSelectedContactChanging(Contact? value)
 		{
-			if (IsEditing)
+			if (IsEditing && !_skipCancelOnSelectionChange)
 			{
-				CancelEditing();
+				if (_isAddingNew && SelectedContact != null)
+					Contacts.Remove(SelectedContact);
+				else if(_editSnapshot != null && SelectedContact != null)
+				{
+					SelectedContact.Name = _editSnapshot.Name;
+					SelectedContact.PhoneNumber = _editSnapshot.PhoneNumber;
+					SelectedContact.Email = _editSnapshot.Email;
+				}
+
+				IsEditing = false;
+				_editSnapshot = null;
+				_isAddingNew = false;
 			}
 		}
 
@@ -80,8 +110,13 @@ namespace Contacts.ViewModel
 		[RelayCommand(CanExecute = nameof(CanAdd))]
 		private void Add()
 		{
+			_skipCancelOnSelectionChange = true;
+            SelectedContact = new Contact();
+			_skipCancelOnSelectionChange = false;
+
+            _isAddingNew = true;
+			_editSnapshot = null;
 			IsEditing = true;
-			SelectedContact = new Contact();
 			Contacts.Add(SelectedContact);
 		}
 
@@ -97,7 +132,17 @@ namespace Contacts.ViewModel
 		[RelayCommand(CanExecute = nameof(CanEdit))]
 		private void Edit()
 		{
-			if (SelectedContact != null) IsEditing = true;
+			if(SelectedContact != null)
+			{
+				_isAddingNew = false;
+				_editSnapshot = new Contact
+				{
+					Name = SelectedContact.Name,
+					PhoneNumber = SelectedContact.PhoneNumber,
+					Email = SelectedContact.Email
+				};
+				IsEditing = true;
+			}
 		}
 
 		/// <summary>
@@ -118,6 +163,7 @@ namespace Contacts.ViewModel
 			Contacts.Remove(SelectedContact);
 			SaveContacts();
 
+			_skipCancelOnSelectionChange = true;
 			if (Contacts.Count > 0)
 			{
 				if (index >= Contacts.Count) index = Contacts.Count - 1;
@@ -127,6 +173,7 @@ namespace Contacts.ViewModel
 			{
 				SelectedContact = null;
 			}
+			_skipCancelOnSelectionChange = false;
 		}
 
 		/// <summary>
@@ -141,10 +188,19 @@ namespace Contacts.ViewModel
 		[RelayCommand(CanExecute = nameof(CanApply))]
 		private void Apply()
 		{
-			if (SelectedContact != null && !SelectedContact.HasErrors)
+			if(EditingContact != null && !EditingContact.HasErrors)
 			{
+				if (SelectedContact!= null)
+				{
+					SelectedContact.Name = EditingContact.Name;
+					SelectedContact.PhoneNumber = EditingContact.PhoneNumber;
+					SelectedContact.Email = EditingContact.Email;
+				}
+				else
+				{
+					SelectedContact = EditingContact;
+				}
 				IsEditing = false;
-				SaveContacts();
 			}
 		}
 
@@ -152,21 +208,46 @@ namespace Contacts.ViewModel
 		/// Определяет, доступна ли команда применения изменений.
 		/// </summary>
 		/// <returns>True, если активен режим редактирования, контакт выбран и не имеет ошибок валидации.</returns>
-		private bool CanApply() => IsEditing && SelectedContact != null && !SelectedContact.HasErrors;
+		private bool CanApply() => IsEditing && EditingContact != null && !EditingContact.HasErrors;
 
-		/// <summary>
-		/// Отменяет незавершённое редактирование или добавление контакта.
-		/// </summary>
+        partial void OnSelectedContactChanged(Contact? value)
+		{
+			if (_prevContact != null) _prevContact.ErrorsChanged -= OnContactErrorsChanged;
+			if (value != null) value.ErrorsChanged += OnContactErrorsChanged;
+			_prevContact = value;
+
+			ApplyCommand.NotifyCanExecuteChanged();
+
+            if (!IsEditing)
+            {
+                EditingContact = value;
+            }
+        }
+
+		private void OnContactErrorsChanged(object? sender, System.ComponentModel.DataErrorsChangedEventArgs e) =>
+			ApplyCommand.NotifyCanExecuteChanged();
+
+        partial void OnIsEditingChanged(bool value)
+        {
+			if (value)
+			{
+				EditingContact = SelectedContact != null ? new Contact
+				{
+					Name = SelectedContact.Name,
+					PhoneNumber = SelectedContact.PhoneNumber,
+					Email = SelectedContact.Email
+				}
+				: new Contact();
+			}
+			else
+			{
+				EditingContact = SelectedContact;
+			}
+        }
+
 		private void CancelEditing()
 		{
-			if (SelectedContact != null && !Contacts.Contains(SelectedContact))
-			{
-				// В простой реализации просто сбрасываем флаг
-				// Но если нужно удалить "черновик", то:
-				// Contacts.Remove(SelectedContact); 
-			}
-
 			IsEditing = false;
 		}
-	}
+    }
 }

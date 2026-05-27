@@ -74,7 +74,11 @@ namespace Contacts.Model
 			List<string> errors = new List<string>();
 			string strValue = value as string ?? string.Empty;
 
-			if (propertyName == nameof(Name))
+			if (string.IsNullOrWhiteSpace(strValue))
+			{
+				errors.Add("Поле не может быть пустым или состоять из пробелов");
+			}
+			else if (propertyName == nameof(Name))
 			{
 				if (strValue.Length > 100)
 					errors.Add("Имя не должно превышать 100 символов");
