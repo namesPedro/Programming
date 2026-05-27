@@ -64,7 +64,7 @@
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
-				<controls:ContactControl Grid.Row="0" DataContext="{Binding SelectedContact}" Margin="3"/>
+				<controls:ContactControl Grid.Row="0" DataContext="{Binding EditingContact}" Margin="3"/>
 
 				<Button Grid.Row="1" Content="Apply" Width="75" Height="25" Margin="3,50,3,3" HorizontalAlignment="Left"
                         Command="{Binding ApplyCommand}" 
